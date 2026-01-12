@@ -1,2 +1,2 @@
-# data_science_raw_notes
+# Data Science Raw Notes
 Schematic raw notes about data science topics
