@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>LLM Evals</title>
+<title>. - LLM Evals</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,6 +24,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
@@ -39,11 +40,11 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -67,16 +68,84 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
+<link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">.</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#your-ai-product-needs-evals" id="toc-your-ai-product-needs-evals" class="nav-link active" data-scroll-target="#your-ai-product-needs-evals">Your AI Product Needs Evals</a>
+  <ul class="collapse">
+  <li><a href="#iterating-quickly-success" id="toc-iterating-quickly-success" class="nav-link" data-scroll-target="#iterating-quickly-success">Iterating Quickly == Success</a></li>
+  <li><a href="#case-study" id="toc-case-study" class="nav-link" data-scroll-target="#case-study">Case study</a></li>
+  <li><a href="#evals" id="toc-evals" class="nav-link" data-scroll-target="#evals">Evals</a></li>
+  <li><a href="#unit-tests" id="toc-unit-tests" class="nav-link" data-scroll-target="#unit-tests">Unit tests</a></li>
+  <li><a href="#level-2-human-model-eval" id="toc-level-2-human-model-eval" class="nav-link" data-scroll-target="#level-2-human-model-eval">Level 2: Human &amp; Model Eval</a></li>
+  </ul></li>
+  <li><a href="#using-llm-as-a-judge-for-evaluation-a-complete-guide" id="toc-using-llm-as-a-judge-for-evaluation-a-complete-guide" class="nav-link" data-scroll-target="#using-llm-as-a-judge-for-evaluation-a-complete-guide">Using LLM-as-a-Judge For Evaluation: A Complete Guide</a>
+  <ul class="collapse">
+  <li><a href="#step-1-find-the-principal-domain-expert." id="toc-step-1-find-the-principal-domain-expert." class="nav-link" data-scroll-target="#step-1-find-the-principal-domain-expert.">Step 1: Find the principal domain expert.</a></li>
+  <li><a href="#step-2-create-dataset" id="toc-step-2-create-dataset" class="nav-link" data-scroll-target="#step-2-create-dataset">Step 2: Create dataset</a></li>
+  <li><a href="#step-3-evaluate-accuracy-on-created-dataset" id="toc-step-3-evaluate-accuracy-on-created-dataset" class="nav-link" data-scroll-target="#step-3-evaluate-accuracy-on-created-dataset">Step 3: Evaluate accuracy on created dataset</a></li>
+  <li><a href="#step-4-fix-errors" id="toc-step-4-fix-errors" class="nav-link" data-scroll-target="#step-4-fix-errors">Step 4: Fix Errors</a></li>
+  <li><a href="#step-5-build-llm-as-judge" id="toc-step-5-build-llm-as-judge" class="nav-link" data-scroll-target="#step-5-build-llm-as-judge">Step 5: Build LLM as judge</a></li>
+  <li><a href="#step-6-error-analysis" id="toc-step-6-error-analysis" class="nav-link" data-scroll-target="#step-6-error-analysis">Step 6: Error Analysis</a></li>
+  <li><a href="#step-7-create-more-specialized-llm-judges-if-needed" id="toc-step-7-create-more-specialized-llm-judges-if-needed" class="nav-link" data-scroll-target="#step-7-create-more-specialized-llm-judges-if-needed">Step 7: Create More Specialized LLM Judges, if needed</a></li>
+  </ul></li>
+  <li><a href="#a-field-guide-to-rapidly-improving-ai-products" id="toc-a-field-guide-to-rapidly-improving-ai-products" class="nav-link" data-scroll-target="#a-field-guide-to-rapidly-improving-ai-products">A Field Guide to Rapidly Improving AI Products</a>
+  <ul class="collapse">
+  <li><a href="#error-analysis" id="toc-error-analysis" class="nav-link" data-scroll-target="#error-analysis">Error Analysis</a></li>
+  <li><a href="#custom-data-viewer" id="toc-custom-data-viewer" class="nav-link" data-scroll-target="#custom-data-viewer">Custom Data Viewer</a></li>
+  <li><a href="#empower-domain-experts" id="toc-empower-domain-experts" class="nav-link" data-scroll-target="#empower-domain-experts">Empower Domain Experts</a></li>
+  <li><a href="#generate-syntethic-data" id="toc-generate-syntethic-data" class="nav-link" data-scroll-target="#generate-syntethic-data">Generate syntethic data</a></li>
+  <li><a href="#keep-trust-in-eval-system" id="toc-keep-trust-in-eval-system" class="nav-link" data-scroll-target="#keep-trust-in-eval-system">Keep trust in Eval system</a>
+  <ul class="collapse">
+  <li><a href="#criteria-drift" id="toc-criteria-drift" class="nav-link" data-scroll-target="#criteria-drift">Criteria drift</a></li>
+  <li><a href="#trustworthy-evaluation-systems" id="toc-trustworthy-evaluation-systems" class="nav-link" data-scroll-target="#trustworthy-evaluation-systems">Trustworthy evaluation systems</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 

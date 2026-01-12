@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>index</title>
+<title>. - index</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,6 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
@@ -73,11 +74,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -101,16 +102,182 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
+<link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">.</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#state-reducers" id="toc-state-reducers" class="nav-link active" data-scroll-target="#state-reducers">State Reducers</a>
+  <ul class="collapse">
+  <li><a href="#custom-reducers" id="toc-custom-reducers" class="nav-link" data-scroll-target="#custom-reducers">Custom Reducers</a></li>
+  <li><a href="#re-writing" id="toc-re-writing" class="nav-link" data-scroll-target="#re-writing">Re-writing</a></li>
+  </ul></li>
+  <li><a href="#new-message-to-add" id="toc-new-message-to-add" class="nav-link" data-scroll-target="#new-message-to-add">New message to add</a>
+  <ul class="collapse">
+  <li><a href="#removal" id="toc-removal" class="nav-link" data-scroll-target="#removal">Removal</a></li>
+  </ul></li>
+  <li><a href="#multiple-schemas" id="toc-multiple-schemas" class="nav-link" data-scroll-target="#multiple-schemas">Multiple Schemas</a>
+  <ul class="collapse">
+  <li><a href="#private-state" id="toc-private-state" class="nav-link" data-scroll-target="#private-state">Private State</a></li>
+  <li><a href="#input-output-schema" id="toc-input-output-schema" class="nav-link" data-scroll-target="#input-output-schema">Input / Output Schema</a></li>
+  </ul></li>
+  <li><a href="#trim-filter-messages" id="toc-trim-filter-messages" class="nav-link" data-scroll-target="#trim-filter-messages">Trim / Filter Messages</a>
+  <ul class="collapse">
+  <li><a href="#reducer" id="toc-reducer" class="nav-link" data-scroll-target="#reducer">Reducer</a></li>
+  <li><a href="#filtering-messages" id="toc-filtering-messages" class="nav-link" data-scroll-target="#filtering-messages">Filtering messages</a></li>
+  <li><a href="#trim-messages" id="toc-trim-messages" class="nav-link" data-scroll-target="#trim-messages">Trim messages</a></li>
+  </ul></li>
+  <li><a href="#chatbot-summarization" id="toc-chatbot-summarization" class="nav-link" data-scroll-target="#chatbot-summarization">Chatbot Summarization</a></li>
+  <li><a href="#chatbot-with-external-memory" id="toc-chatbot-with-external-memory" class="nav-link" data-scroll-target="#chatbot-with-external-memory">Chatbot with External Memory</a>
+  <ul class="collapse">
+  <li><a href="#sqlite" id="toc-sqlite" class="nav-link" data-scroll-target="#sqlite">SQLite</a></li>
+  </ul></li>
+  <li><a href="#ux-and-human-in-the-loop" id="toc-ux-and-human-in-the-loop" class="nav-link" data-scroll-target="#ux-and-human-in-the-loop">UX and Human-in-the-Loop</a></li>
+  <li><a href="#streaming-and-interruption" id="toc-streaming-and-interruption" class="nav-link" data-scroll-target="#streaming-and-interruption">Streaming and Interruption</a>
+  <ul class="collapse">
+  <li><a href="#streaming-modes" id="toc-streaming-modes" class="nav-link" data-scroll-target="#streaming-modes">Streaming modes</a>
+  <ul class="collapse">
+  <li><a href="#messages-mode" id="toc-messages-mode" class="nav-link" data-scroll-target="#messages-mode">messages mode</a></li>
+  </ul></li>
+  <li><a href="#langraph-studio" id="toc-langraph-studio" class="nav-link" data-scroll-target="#langraph-studio">Langraph studio</a></li>
+  </ul></li>
+  <li><a href="#breakpoints" id="toc-breakpoints" class="nav-link" data-scroll-target="#breakpoints">Breakpoints</a>
+  <ul class="collapse">
+  <li><a href="#breakpoints-with-langgraph-api" id="toc-breakpoints-with-langgraph-api" class="nav-link" data-scroll-target="#breakpoints-with-langgraph-api">Breakpoints with LangGraph API</a>
+  <ul class="collapse">
+  <li><a href="#langgraph-studio" id="toc-langgraph-studio" class="nav-link" data-scroll-target="#langgraph-studio">Langgraph studio</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#editing-state-and-human-feedback" id="toc-editing-state-and-human-feedback" class="nav-link" data-scroll-target="#editing-state-and-human-feedback">Editing state and human feedback</a>
+  <ul class="collapse">
+  <li><a href="#update-state-message" id="toc-update-state-message" class="nav-link" data-scroll-target="#update-state-message">Update state / message</a></li>
+  <li><a href="#langgraph-studio-1" id="toc-langgraph-studio-1" class="nav-link" data-scroll-target="#langgraph-studio-1">Langgraph studio</a></li>
+  <li><a href="#awaiting-user-input" id="toc-awaiting-user-input" class="nav-link" data-scroll-target="#awaiting-user-input">Awaiting user input</a></li>
+  </ul></li>
+  <li><a href="#dynamic-breakpoints" id="toc-dynamic-breakpoints" class="nav-link" data-scroll-target="#dynamic-breakpoints">Dynamic breakpoints</a>
+  <ul class="collapse">
+  <li><a href="#conditional" id="toc-conditional" class="nav-link" data-scroll-target="#conditional">Conditional</a></li>
+  </ul></li>
+  <li><a href="#time-travel" id="toc-time-travel" class="nav-link" data-scroll-target="#time-travel">Time Travel</a>
+  <ul class="collapse">
+  <li><a href="#replay" id="toc-replay" class="nav-link" data-scroll-target="#replay">Replay</a></li>
+  <li><a href="#fork" id="toc-fork" class="nav-link" data-scroll-target="#fork">Fork</a>
+  <ul class="collapse">
+  <li><a href="#using-langgraph-studio" id="toc-using-langgraph-studio" class="nav-link" data-scroll-target="#using-langgraph-studio">Using Langgraph studio</a></li>
+  <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes">Notes</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#building-your-assistant" id="toc-building-your-assistant" class="nav-link" data-scroll-target="#building-your-assistant">Building your assistant</a></li>
+  <li><a href="#parallelization" id="toc-parallelization" class="nav-link" data-scroll-target="#parallelization">Parallelization</a>
+  <ul class="collapse">
+  <li><a href="#control-execution-order-of-parallel-nodes" id="toc-control-execution-order-of-parallel-nodes" class="nav-link" data-scroll-target="#control-execution-order-of-parallel-nodes">Control execution order of parallel nodes</a></li>
+  <li><a href="#realistic-example" id="toc-realistic-example" class="nav-link" data-scroll-target="#realistic-example">Realistic example</a></li>
+  </ul></li>
+  <li><a href="#sub-graphs" id="toc-sub-graphs" class="nav-link" data-scroll-target="#sub-graphs">Sub-graphs</a>
+  <ul class="collapse">
+  <li><a href="#notes-1" id="toc-notes-1" class="nav-link" data-scroll-target="#notes-1">Notes</a></li>
+  </ul></li>
+  <li><a href="#map-reduce" id="toc-map-reduce" class="nav-link" data-scroll-target="#map-reduce">Map-Reduce</a>
+  <ul class="collapse">
+  <li><a href="#using-send-and-conditional-edges" id="toc-using-send-and-conditional-edges" class="nav-link" data-scroll-target="#using-send-and-conditional-edges">Using send and conditional edges</a></li>
+  <li><a href="#notes-about-example-used-in-tutorial" id="toc-notes-about-example-used-in-tutorial" class="nav-link" data-scroll-target="#notes-about-example-used-in-tutorial">Notes about example used in tutorial</a>
+  <ul class="collapse">
+  <li><a href="#implementation-details" id="toc-implementation-details" class="nav-link" data-scroll-target="#implementation-details">Implementation details</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#long-term-memory" id="toc-long-term-memory" class="nav-link" data-scroll-target="#long-term-memory">Long term memory</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#short-vs-long-term-memory" id="toc-short-vs-long-term-memory" class="nav-link" data-scroll-target="#short-vs-long-term-memory">Short vs Long term memory</a></li>
+  <li><a href="#long-term-memory-1" id="toc-long-term-memory-1" class="nav-link" data-scroll-target="#long-term-memory-1">Long term memory:</a>
+  <ul class="collapse">
+  <li><a href="#type-of-memory" id="toc-type-of-memory" class="nav-link" data-scroll-target="#type-of-memory">Type of memory:</a></li>
+  <li><a href="#updates" id="toc-updates" class="nav-link" data-scroll-target="#updates">Updates</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#langgraph-store" id="toc-langgraph-store" class="nav-link" data-scroll-target="#langgraph-store">LangGraph Store</a>
+  <ul class="collapse">
+  <li><a href="#implementation-details-1" id="toc-implementation-details-1" class="nav-link" data-scroll-target="#implementation-details-1">Implementation details</a></li>
+  </ul></li>
+  <li><a href="#memory-schema-profile" id="toc-memory-schema-profile" class="nav-link" data-scroll-target="#memory-schema-profile">Memory schema + profile</a>
+  <ul class="collapse">
+  <li><a href="#model-with-structured-output" id="toc-model-with-structured-output" class="nav-link" data-scroll-target="#model-with-structured-output">Model with structured output</a></li>
+  <li><a href="#trustcall" id="toc-trustcall" class="nav-link" data-scroll-target="#trustcall">TrustCall</a>
+  <ul class="collapse">
+  <li><a href="#call" id="toc-call" class="nav-link" data-scroll-target="#call">Call</a></li>
+  </ul></li>
+  <li><a href="#update" id="toc-update" class="nav-link" data-scroll-target="#update">Update</a></li>
+  </ul></li>
+  <li><a href="#memory-schema-collection" id="toc-memory-schema-collection" class="nav-link" data-scroll-target="#memory-schema-collection">Memory Schema + Collection</a>
+  <ul class="collapse">
+  <li><a href="#model-with-structured-output-1" id="toc-model-with-structured-output-1" class="nav-link" data-scroll-target="#model-with-structured-output-1">model with structured output</a></li>
+  <li><a href="#trustcall-1" id="toc-trustcall-1" class="nav-link" data-scroll-target="#trustcall-1">TrustCall</a></li>
+  <li><a href="#graph-trustcall" id="toc-graph-trustcall" class="nav-link" data-scroll-target="#graph-trustcall">Graph + TrustCall</a></li>
+  </ul></li>
+  <li><a href="#memory-agent" id="toc-memory-agent" class="nav-link" data-scroll-target="#memory-agent">Memory agent</a>
+  <ul class="collapse">
+  <li><a href="#listener-in-trustcall" id="toc-listener-in-trustcall" class="nav-link" data-scroll-target="#listener-in-trustcall">Listener in TrustCall</a></li>
+  <li><a href="#implementation-details-2" id="toc-implementation-details-2" class="nav-link" data-scroll-target="#implementation-details-2">Implementation details</a></li>
+  <li><a href="#managing-runs" id="toc-managing-runs" class="nav-link" data-scroll-target="#managing-runs">managing runs</a></li>
+  <li><a href="#threads" id="toc-threads" class="nav-link" data-scroll-target="#threads">threads</a></li>
+  <li><a href="#across-thread-memory" id="toc-across-thread-memory" class="nav-link" data-scroll-target="#across-thread-memory">across-thread memory</a></li>
+  </ul></li>
+  <li><a href="#double-texting" id="toc-double-texting" class="nav-link" data-scroll-target="#double-texting">Double-texting</a>
+  <ul class="collapse">
+  <li><a href="#reject" id="toc-reject" class="nav-link" data-scroll-target="#reject">Reject</a></li>
+  <li><a href="#enqueue" id="toc-enqueue" class="nav-link" data-scroll-target="#enqueue">Enqueue</a></li>
+  <li><a href="#interrupt" id="toc-interrupt" class="nav-link" data-scroll-target="#interrupt">Interrupt</a></li>
+  <li><a href="#rollback" id="toc-rollback" class="nav-link" data-scroll-target="#rollback">Rollback</a></li>
+  </ul></li>
+  <li><a href="#assistants" id="toc-assistants" class="nav-link" data-scroll-target="#assistants">Assistants</a>
+  <ul class="collapse">
+  <li><a href="#creating-assistants" id="toc-creating-assistants" class="nav-link" data-scroll-target="#creating-assistants">Creating assistants</a></li>
+  <li><a href="#updating-assistants" id="toc-updating-assistants" class="nav-link" data-scroll-target="#updating-assistants">Updating assistants</a></li>
+  <li><a href="#managing-assistants" id="toc-managing-assistants" class="nav-link" data-scroll-target="#managing-assistants">Managing assistants</a></li>
+  <li><a href="#using-assistants" id="toc-using-assistants" class="nav-link" data-scroll-target="#using-assistants">Using assistants</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 

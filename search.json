@@ -126,6 +126,20 @@
     "text": "Keep trust in Eval system\n\nCriteria drift\n\nEvaluation criteria evolve as you observe more model outputs.\n\nThe process of reviewing AI outputs helps articulate our own evaluation standards.\nWe need to treat evaluation criteria as living documents that evolve with our understanding.\nDifferent stakeholders may have different criteria and we need to reconcile them rather than imposing a single standard.\n\n\n\n\nTrustworthy evaluation systems\n\nHow:\n\nAs discussed: binary metrics + critiques, and measuring alignment with human judgements.\nAnd scaling correctly:\n\nstart with high human involvement\nstudy alignment patterns and focus manual evaluation on areas of disagreement\nuse strategic sampling:\n\nsample outputs that provide more information.\nmore weight on areas of disagreement.\n\nkeep regular calibration as you scale.\n\n\nScaling is not about reducing human effort but redirecting it towards the most impactful areas."
   },
   {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": ".",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  },
+  {
     "objectID": "llm/langchain_courses.html",
     "href": "llm/langchain_courses.html",
     "title": "index",
