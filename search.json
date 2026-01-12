@@ -7,445 +7,431 @@
     "text": "About this site"
   },
   {
-    "objectID": "llm/langchain_courses.html",
-    "href": "llm/langchain_courses.html",
-    "title": "index",
-    "section": "",
-    "text": "https://github.com/langchain-ai/langchain-academy/blob/main/module-2/state-reducers.ipynb\n\n\ndef reduce_list(left: list | None, right: list | None) -&gt; list:\nclass CustomReducerState(TypedDict): foo: Annotated[list[int], reduce_list]\n\n\n\nIf we pass a message with the same ID as an existing one in our messages list, it will get overwritten!"
-  },
-  {
     "objectID": "llm/langchain_courses.html#custom-reducers",
     "href": "llm/langchain_courses.html#custom-reducers",
-    "title": "index",
-    "section": "",
-    "text": "def reduce_list(left: list | None, right: list | None) -&gt; list:\nclass CustomReducerState(TypedDict): foo: Annotated[list[int], reduce_list]"
+    "title": "Langchain courses",
+    "section": "Custom Reducers",
+    "text": "Custom Reducers\ndef reduce_list(left: list | None, right: list | None) -&gt; list:\nclass CustomReducerState(TypedDict): foo: Annotated[list[int], reduce_list]"
   },
   {
     "objectID": "llm/langchain_courses.html#re-writing",
     "href": "llm/langchain_courses.html#re-writing",
-    "title": "index",
-    "section": "",
-    "text": "If we pass a message with the same ID as an existing one in our messages list, it will get overwritten!"
+    "title": "Langchain courses",
+    "section": "Re-writing",
+    "text": "Re-writing\nIf we pass a message with the same ID as an existing one in our messages list, it will get overwritten!"
   },
   {
     "objectID": "llm/langchain_courses.html#removal",
     "href": "llm/langchain_courses.html#removal",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Removal",
     "text": "Removal\nWe can remove messages by using RemoveMessage.\ndelete_messages = [RemoveMessage(id=m.id) for m in messages[:-2]] add_messages(messages , delete_messages)"
   },
   {
     "objectID": "llm/langchain_courses.html#private-state",
     "href": "llm/langchain_courses.html#private-state",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Private State",
     "text": "Private State\nclass OverallState(TypedDict): foo: int\nclass PrivateState(TypedDict): baz: int\ndef node_1(state: OverallState) -&gt; PrivateState: print(“—Node 1—”) return {“baz”: state[‘foo’] + 1}\ndef node_2(state: PrivateState) -&gt; OverallState: print(“—Node 2—”) return {“foo”: state[‘baz’] + 1}"
   },
   {
     "objectID": "llm/langchain_courses.html#input-output-schema",
     "href": "llm/langchain_courses.html#input-output-schema",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Input / Output Schema",
     "text": "Input / Output Schema\nclass InputState(TypedDict): question: str\nclass OutputState(TypedDict): answer: str\nclass OverallState(TypedDict): question: str answer: str notes: str\ndef thinking_node(state: InputState): return {“answer”: “bye”, “notes”: “… his is name is Lance”}\ndef answer_node(state: OverallState) -&gt; OutputState: return {“answer”: “bye Lance”}\ngraph = StateGraph(OverallState, input_schema=InputState, output_schema=OutputState) graph.add_node(“answer_node”, answer_node)"
   },
   {
     "objectID": "llm/langchain_courses.html#reducer",
     "href": "llm/langchain_courses.html#reducer",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Reducer",
     "text": "Reducer\nfrom langchain_core.messages import RemoveMessage\ndef filter_messages(state: MessagesState): # Delete all but the 2 most recent messages delete_messages = [RemoveMessage(id=m.id) for m in state[“messages”][:-2]] return {“messages”: delete_messages}\ndef chat_model_node(state: MessagesState):\nreturn {“messages”: [llm.invoke(state[“messages”])]}\nbuilder = StateGraph(MessagesState) builder.add_node(“filter”, filter_messages) builder.add_node(“chat_model”, chat_model_node)"
   },
   {
     "objectID": "llm/langchain_courses.html#filtering-messages",
     "href": "llm/langchain_courses.html#filtering-messages",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Filtering messages",
     "text": "Filtering messages\ndef chat_model_node(state: MessagesState): return {“messages”: [llm.invoke(state[“messages”][-1:])]}"
   },
   {
     "objectID": "llm/langchain_courses.html#trim-messages",
     "href": "llm/langchain_courses.html#trim-messages",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Trim messages",
     "text": "Trim messages\nfrom langchain_core.messages import trim_messages\ndef chat_model_node(state: MessagesState): messages = trim_messages( state[“messages”], max_tokens=100, strategy=“last”, token_counter=ChatOpenAI(model=“gpt-4o”), allow_partial=False, ) return {“messages”: [llm.invoke(messages)]}"
   },
   {
     "objectID": "llm/langchain_courses.html#sqlite",
     "href": "llm/langchain_courses.html#sqlite",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "SQLite",
     "text": "SQLite\nimport sqlite3 db_path = “state_db/example.db” conn = sqlite3.connect(db_path, check_same_thread=False)\nfrom langgraph.checkpoint.sqlite import SqliteSaver memory = SqliteSaver(conn)"
   },
   {
     "objectID": "llm/langchain_courses.html#streaming-modes",
     "href": "llm/langchain_courses.html#streaming-modes",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Streaming modes",
-    "text": "Streaming modes\n\nvalues, updates =&gt; full state, only updated part\ntokens\n\nstate-wise:\nconfig = {\"configurable\": {\"thread_id\": \"1\"}}\nfor chunk in graph.stream({\"messages\": [HumanMessage(content=\"hi! I'm Lance\")]}, config, stream_mode=\"updates\"):\n    print(chunk)\ntoken-wise: - no stream_mode - async mode:\nasync for event in graph.astream_events\n\nwe print: event[“metadata”] (includes node in “langraph_node” field), event[“event”] (type), event[“name”]\nwe could also print event[“data”]\nwe can select to print only the llm calls from the node of the graph that we’re interested in, in the example “conversation”.\n\nwe also indicate the event type, in our case “on_chat_model_stream” if we want to see llm responses\n\nThis provides chunk outputs, which are the tokens. We can print them nicely as\n\nif event[\"event\"]==\"on..\" and event[\"metadata\"][\"langgraph_node\"]==\"conversation\"\ndata = event[\"data\"]\nprint (data[\"chunk\"].content, end=\"|\")\n\nmessages mode\n\nassume messages field, which is list of messages."
+    "text": "Streaming modes\n\nvalues, updates =&gt; full state, only updated part\ntokens\n\nstate-wise:\nconfig = {\"configurable\": {\"thread_id\": \"1\"}}\nfor chunk in graph.stream({\"messages\": [HumanMessage(content=\"hi! I'm Lance\")]}, config, stream_mode=\"updates\"):\n    print(chunk)\ntoken-wise: - no stream_mode - async mode:\nasync for event in graph.astream_events\n\nwe print: event[“metadata”] (includes node in “langraph_node” field), event[“event”] (type), event[“name”]\nwe could also print event[“data”]\nwe can select to print only the llm calls from the node of the graph that we’re interested in, in the example “conversation”.\n\nwe also indicate the event type, in our case “on_chat_model_stream” if we want to see llm responses\n\nThis provides chunk outputs, which are the tokens. We can print them nicely as\n\nif event[\"event\"]==\"on..\" and event[\"metadata\"][\"langgraph_node\"]==\"conversation\"\ndata = event[\"data\"]\nprint (data[\"chunk\"].content, end=\"|\")\nmessages mode\n\nassume messages field, which is list of messages."
   },
   {
     "objectID": "llm/langchain_courses.html#langraph-studio",
     "href": "llm/langchain_courses.html#langraph-studio",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Langraph studio",
     "text": "Langraph studio\n\nWe can take the client handle and retrieve:\n\ngraphs running: assistants\n\nAlso create threads\nPrint data:\n\nthis is the payload, and “messages” is the state\n{\n    'messages': [\n        {\n            'content': 'Multiply 2 and 3', \n            'additional_kwargs': {}, \n            'response_metadata': {}, \n            'type': 'human', \n            'name': None, \n            'id': '9aaa247f-1e6e-4451-af25-ac678fe46d82'\n        }\n    ]\n}"
   },
   {
     "objectID": "llm/langchain_courses.html#breakpoints-with-langgraph-api",
     "href": "llm/langchain_courses.html#breakpoints-with-langgraph-api",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Breakpoints with LangGraph API",
-    "text": "Breakpoints with LangGraph API\n\nWe add interrupt_before=[tools] to the call graph.compile(...)\n\ngraph = builder.compile(interrupt_before=[\"tools\"], checkpointer=memory)\n\nx_ray to get_graph =&gt; visualizes the breakpoints\n\nImage(graph.get_graph(xray=True).draw_mermaid_png())\n\npass None when we invoke the graph =&gt; resume from previous checkpoint:\n\nfor event in graph.stream(None, thread, stream_mode=\"values\"):\n\nLanggraph studio\nEquivalent calls:\n\nFirst call for indicating interruption:\n\nthread = client.threads.create() # Difference 1: instead of creating thread = {\"configurable\": {\"thread_id\": \"1\"}}\nasync for chunk in client.runs.stream ( # Difference 2: `async for` instead of `for`\n    thread[\"thread_id\"],\n    assistant_id=\"agent\", # Difference 3, we have several graphs and need to indicate which one\n    input=initial_input, # if placed as first argument, no need to use keyword input\n    stream_mode=\"values\", # same\n    interrupt_before=[\"tools\"], # Difference 4: breakpoint indicating in stream command \n                                # instead of compile (since the graph has already been compiled)\n)\n\nSecond call for resuming:\n\nasync for chunk in client.runs.stream ( \n    thread[\"thread_id\"],\n    assistant_id=\"agent\", \n    input=None, # None goes here\n    stream_mode=\"values\", \n    interrupt_before=[\"tools\"],"
+    "text": "Breakpoints with LangGraph API\n\nWe add interrupt_before=[tools] to the call graph.compile(...)\n\ngraph = builder.compile(interrupt_before=[\"tools\"], checkpointer=memory)\n\nx_ray to get_graph =&gt; visualizes the breakpoints\n\nImage(graph.get_graph(xray=True).draw_mermaid_png())\n\npass None when we invoke the graph =&gt; resume from previous checkpoint:\n\nfor event in graph.stream(None, thread, stream_mode=\"values\"):\nLanggraph studio\nEquivalent calls:\n\nFirst call for indicating interruption:\n\nthread = client.threads.create() # Difference 1: instead of creating thread = {\"configurable\": {\"thread_id\": \"1\"}}\nasync for chunk in client.runs.stream ( # Difference 2: `async for` instead of `for`\n    thread[\"thread_id\"],\n    assistant_id=\"agent\", # Difference 3, we have several graphs and need to indicate which one\n    input=initial_input, # if placed as first argument, no need to use keyword input\n    stream_mode=\"values\", # same\n    interrupt_before=[\"tools\"], # Difference 4: breakpoint indicating in stream command \n                                # instead of compile (since the graph has already been compiled)\n)\n\nSecond call for resuming:\n\nasync for chunk in client.runs.stream ( \n    thread[\"thread_id\"],\n    assistant_id=\"agent\", \n    input=None, # None goes here\n    stream_mode=\"values\", \n    interrupt_before=[\"tools\"],"
   },
   {
     "objectID": "llm/langchain_courses.html#update-state-message",
     "href": "llm/langchain_courses.html#update-state-message",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Update state / message",
     "text": "Update state / message\n\nFirst option: append message to previous list (add_messages reducer)\n\ngraph.update_state (\n    thread,\n    {\"messages\": [HumanMessage(content=\"my new message\")]}\n)\n\nSecond option: replace the message. We need to supply the message id\n\nstate = graph.get_state(thread)\nor\nstate = await client.threads.get_state(thread[\"thread_id\"])\nand then:\nnew_message = state[\"values\"][\"messages\"][-1]\nnew_message[\"content\"] = \"my new message\"\nnew_state = {\"messages\": new_message}\nand:\ngraph.update_state(thread, new_state)\nor:\nawait client.threads.update_state(thread[\"thread_id\"], new_state)"
   },
   {
     "objectID": "llm/langchain_courses.html#langgraph-studio-1",
     "href": "llm/langchain_courses.html#langgraph-studio-1",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Langgraph studio",
     "text": "Langgraph studio\n\nWe can add interruptions through the UI, besides the node icon in the graph\nWe can edit the messages in the chat. Afterwards, we need to fork the thread by pressing the button “fork” below the message.\nAfter editing"
   },
   {
     "objectID": "llm/langchain_courses.html#awaiting-user-input",
     "href": "llm/langchain_courses.html#awaiting-user-input",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Awaiting user input",
     "text": "Awaiting user input\n\nadd placeholder (no-op) function for collecting human feedback:\n\ndef human_feedback (state: MessageState):\n    pass\n\nbuilder.add_node (\"human_feedback\", human_feedback)\n\nadd interruption before human feedback node.\n\ngraph = builder.compile (..., interrupt_before=[\"human_feedback\"])\n\nwhen updating state, add as_node=\"human_feedback\" to imitate the case that the message was updated in that node.\n\nnew_message = input (\"new message: \")\ngraph.update_state (thread, new_message, as_node=\"human_feedback\")"
   },
   {
     "objectID": "llm/langchain_courses.html#conditional",
     "href": "llm/langchain_courses.html#conditional",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Conditional",
     "text": "Conditional\n\nBenefits:\n\ntriggered only on certain conditions.\nallows to communicate reason.\n\nIn node, if condition occurs, a NodeInterrupt error is raised:\n\nfrom langgraph.errors import NodeInterrupt\n\ndef node (state: MyStateClass):\n    if condition:\n        raise NodeInterrupt (f\"State {state} meets condition\")\nWe can see breakpoint information as:\nstate = graph.get_state (thread_config)\nprint (state.tasks)"
   },
   {
     "objectID": "llm/langchain_courses.html#replay",
     "href": "llm/langchain_courses.html#replay",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Replay",
-    "text": "Replay\n\nGet history with:\n\nstate_history = [s for s in graph.get_state_history(thread)]\n\nReplay using:\n\nfor event in graph.stream (input=None, state_history[idx].config, stream_mode=\"values\"):\n    ... \n\n\n\ncheckpoint_history.jpg"
+    "text": "Replay\n\nGet history with:\n\nstate_history = [s for s in graph.get_state_history(thread)]\n\nReplay using:\n\nfor event in graph.stream (input=None, state_history[idx].config, stream_mode=\"values\"):\n    ... \n\ncheckpoint_history.jpg"
   },
   {
     "objectID": "llm/langchain_courses.html#fork",
     "href": "llm/langchain_courses.html#fork",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Fork",
-    "text": "Fork\n\nUsed to replay with different state values.\n\nnew_state = ...\nfork_config = graph.update_state (state_history[idx].config, new_state)\nfor event in graph.stream (None, fork_config, stream_mode=\"values\"):\n    ...\nIn case we use MessageState, we’ll want to overwrite the previous message with a new one, by passing the message ID:\nnew_state = {\"messages\": [HumanMessage(content=\"new message\", id=state_history[idx].values[\"messages\"][0].id)]}\n\nUsing Langgraph studio\nstate_history = client.threads.get_history (thread[\"thread_id\"])\nforked_input = {\"messages\": [HumanMessage(content=\"my new message\", id=state_histor[idx][\"values\"][\"messages\"][0][\"id\"]]}\nawait client.threads.update_state (\n    thread[\"thread_id\"],\n    forked_input,\n    checkpoint_id=state_history[idx][\"checkpoint_id\"]\n)\nasync for chunk in client.runs.stream (\n    thread[\"thread_id\"],\n    assistant_id=\"agent\",\n    input=None,\n    stream_updates=\"updates\",\n    checkpoint_id=state_history[idx][\"checkpoint_id\"]\n)\n\n\nNotes\nWhen we udpate the state we are actually adding a new checkpoint to the history, so it becomes larger and larger."
+    "text": "Fork\n\nUsed to replay with different state values.\n\nnew_state = ...\nfork_config = graph.update_state (state_history[idx].config, new_state)\nfor event in graph.stream (None, fork_config, stream_mode=\"values\"):\n    ...\nIn case we use MessageState, we’ll want to overwrite the previous message with a new one, by passing the message ID:\nnew_state = {\"messages\": [HumanMessage(content=\"new message\", id=state_history[idx].values[\"messages\"][0].id)]}\nUsing Langgraph studio\nstate_history = client.threads.get_history (thread[\"thread_id\"])\nforked_input = {\"messages\": [HumanMessage(content=\"my new message\", id=state_histor[idx][\"values\"][\"messages\"][0][\"id\"]]}\nawait client.threads.update_state (\n    thread[\"thread_id\"],\n    forked_input,\n    checkpoint_id=state_history[idx][\"checkpoint_id\"]\n)\nasync for chunk in client.runs.stream (\n    thread[\"thread_id\"],\n    assistant_id=\"agent\",\n    input=None,\n    stream_updates=\"updates\",\n    checkpoint_id=state_history[idx][\"checkpoint_id\"]\n)\nNotes\nWhen we udpate the state we are actually adding a new checkpoint to the history, so it becomes larger and larger."
   },
   {
     "objectID": "llm/langchain_courses.html#control-execution-order-of-parallel-nodes",
     "href": "llm/langchain_courses.html#control-execution-order-of-parallel-nodes",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Control execution order of parallel nodes",
     "text": "Control execution order of parallel nodes\nSeveral ways:\n\nReducer `\n\ndef sorted_reducer (left, right):\n    if not isinstance(left, list):\n        left = [left]\n    if not isinstance(right, list):\n        right = [right]\n\n    return sorted (left+right)\n\nSink node:\n\n\nWrite updates to different fields of the state\nSink node joins the updates in whichever way considers appropriate\nThen it deletes the temporary fields from state."
   },
   {
     "objectID": "llm/langchain_courses.html#realistic-example",
     "href": "llm/langchain_courses.html#realistic-example",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Realistic example",
     "text": "Realistic example\n\nQuery web and wikipedia to get context, and have LLM use it to respond query.\nWeb search: tavily, with API key. Import from langchain_tavily\nWikipedia search: WikipediaLoader from langchain_community.document_loaders"
   },
   {
     "objectID": "llm/langchain_courses.html#using-send-and-conditional-edges",
     "href": "llm/langchain_courses.html#using-send-and-conditional-edges",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Using send and conditional edges",
     "text": "Using send and conditional edges\n\nTo go from a single node before_map to copies of a node that run in parallel (map step), define a function that uses Send to the node:\n\ndef my_map (state):\n    return [Send(\"my_map_node\", {\"my_node_input\": s}) for s in state[\"my_list_of_inputs\"]] \nThen add a conditional edge from the single node before_map to the parallel list of clones of my_map node:\nbuilder.add_conditional_edges (\"before_map\", \"my_map\", [\"my_map_node\"])\nAnd add a normal edge that goes from my_map_node to my_reducer_node:\nbuilder.add_edge (\"my_map_node\", \"my_reducer_node\")\n\nmy_map_node needs to output to a field which has a reducer function in it:\n\nclass MyOverallState ():\n    my_output_field: Annotated[my_output_type, my_reducer_function]\n\ndef my_map_node (state: MyOverallState):\n    ...\n    return {\"my_output_field\": my_return_value}"
   },
   {
     "objectID": "llm/langchain_courses.html#notes-about-example-used-in-tutorial",
     "href": "llm/langchain_courses.html#notes-about-example-used-in-tutorial",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Notes about example used in tutorial",
-    "text": "Notes about example used in tutorial\n\nWe use structured output for the LLM:\n\nmodel = ChatOpenAI (...)\n\ndef my_node ():\n    response = model.with_structured_output(MyStateClass).invoke(my_prompt)\n    return {\"my_output_field\": response.my_field}\n\nImplementation details\nWe can get access to the model response content as response.content"
+    "text": "Notes about example used in tutorial\n\nWe use structured output for the LLM:\n\nmodel = ChatOpenAI (...)\n\ndef my_node ():\n    response = model.with_structured_output(MyStateClass).invoke(my_prompt)\n    return {\"my_output_field\": response.my_field}\nImplementation details\nWe can get access to the model response content as response.content"
   },
   {
     "objectID": "llm/langchain_courses.html#short-vs-long-term-memory",
     "href": "llm/langchain_courses.html#short-vs-long-term-memory",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Short vs Long term memory",
     "text": "Short vs Long term memory\n\nShort term memory:\n\nin session, single thread\nwith checkpointer\npast messages can be summarized or filtered (e.g., truncate them)\n\nLong term memory:\n\nacross sessions, across threads\nwith store"
   },
   {
     "objectID": "llm/langchain_courses.html#long-term-memory-1",
     "href": "llm/langchain_courses.html#long-term-memory-1",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Long term memory:",
-    "text": "Long term memory:\n\nType of memory:\n\n1 Semantic\n\nfacts, user data\nstructure: profile (dict with fields) or list of items (e.g., locations), updated after each session\nPros:\n\nSingle document (profile): easily retrieved\nList: narrow scope, easy to add\n\nCons:\n\nSingle document: difficult to maintain when it grows\nList: costly to retrieve as it grows.\n\n\n\n\n2 Episodic\n\nmemories: agent actions\n\n\n\n3 Procedural\n\nprompts\nUsing AI to generate prompts based on human feedback, tests and evaluation scores (LangSmith)\n\nvideo notebook\n\n\n\nUpdates\n\n1 Hot path\nPro: Real-time and transparent Con: delays / bad UX github code\n\n\n2 Background\nPro: no delays / good UX Con: Frequency of writing to be tuned github code"
+    "text": "Long term memory:\nType of memory:\n1 Semantic\n\nfacts, user data\nstructure: profile (dict with fields) or list of items (e.g., locations), updated after each session\nPros:\n\nSingle document (profile): easily retrieved\nList: narrow scope, easy to add\n\nCons:\n\nSingle document: difficult to maintain when it grows\nList: costly to retrieve as it grows.\n\n\n2 Episodic\n\nmemories: agent actions\n\n3 Procedural\n\nprompts\nUsing AI to generate prompts based on human feedback, tests and evaluation scores (LangSmith)\n\nvideo notebook\nUpdates\n1 Hot path\nPro: Real-time and transparent Con: delays / bad UX github code\n2 Background\nPro: no delays / good UX Con: Frequency of writing to be tuned github code"
   },
   {
     "objectID": "llm/langchain_courses.html#implementation-details-1",
     "href": "llm/langchain_courses.html#implementation-details-1",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Implementation details",
     "text": "Implementation details\nfrom langgraph.store.memory import InMemoryStore\n\nMemory saved using:\n\nnamespace: tuple, like directory\n\nnamespace = (user_id, \"memories\")\n\nkey: string, like filename\n\nkey = \"user_memory\"\n\nvalue: like content of file:\n\nvalue = {\"food_preference\" : \"I like pizza\"}\nWrite: put\n\n    store.put (namespace, key, value)\n\nRead: get\n\n    memory = store.get (namespace, key)\n\nRetrieve all:\n\n    memories = store.search (namespace)\n\nconfig passed:\n\n{\"configurable\": {\"thread_id\": thread_id, \"my_key_info\": my_key_info}}\n\nImportant: The store needs to be passed to the node so that it can explicitly read values from the history and act on them, e.g., summarizing the memories or considering them in some specific manner:\n\ndef my_node_function (state: MyStateClass, config: RunnableConfig, store: BaseStore):\n    user_id = config[\"configurable\"][\"user_id\"]\n\ncompiling with both short-term and long-term memory:\n\nbuilder.compile (\n    checkpointer=my_checkpointer, # short_term_memory\n    store=my_store, # long_term_memory\n)\nconfig = {\"configurable\": {\"thread_id\": \"1\", \"user_id\": \"1\"}}\nfor event in graph.stream (my_messages, config, stream_mode=\"values\"):\n    ...\n\n# we have across-session memory, so we can pass another thread_id:\nconfig = {\"configurable\": {\"thread_id\": \"2\", \"user_id\": \"1\"}}\nfor event in graph.stream (my_messages, config, stream_mode=\"values\"):\n    ..."
   },
   {
     "objectID": "llm/langchain_courses.html#model-with-structured-output",
     "href": "llm/langchain_courses.html#model-with-structured-output",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Model with structured output",
     "text": "Model with structured output\n\nUse with_structured_output method to adhere to specific profile fields\n\nnew_memory = model.with_structured_output (MyProfileSchema)\nnew_memory = my_format.format(new_memory)"
   },
   {
     "objectID": "llm/langchain_courses.html#trustcall",
     "href": "llm/langchain_courses.html#trustcall",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "TrustCall",
-    "text": "TrustCall\n\nAdhere to more complex schemas (e.g., based on pydantic and multiple classes)\nUpdate complex schemas without having to regenerate the whole schema and overwrite (i.e., more efficiently)\n\n\nCall\nWe pass:\n\nA model\nA schema as a tool: tools = [MySchema]\nA tool choice name for enforcing output to respect this schema: tool_choise = \"MySchema\"\n\nWe retrieve:\n\nAI messages:\n\nresult[\"messages\"]\n\nStructured output:\n\nresult[\"responses\"] # list of MySchema objects \nresult[\"responses\"][0].model_dump()\n\nMetadata: result[“response_metadata”]\n\nExample:\nfrom trustcall import create_extractor\nfrom pydantic import BaseModel, Field, ValidationError\n\nclass MySchema (BaseModel):\n    name: str = Field (description=\"user name\")\n    interests: List[str] = Field (description=\"list of user interests\")\n\nconversation = [\n    HumanMessage (content=\"Hi I'm Jaume\"),\n    AIMessage (content=\"Hi Jaume, how can I assist you?\")\n    HumanMessage (content=\"I like biking for cardio and sightseeing\")\n]\n\nextractor = create_extractor (\n    model=model,\n    tools=[MySchema],\n    tool_choice=\"MySchema\",\n)\n\nsystem_message=SystemMessage(content=\"Extract user details from this conversation\")\nextractor.invoke ({\"messages\": [system_message] + conversation})"
+    "text": "TrustCall\n\nAdhere to more complex schemas (e.g., based on pydantic and multiple classes)\nUpdate complex schemas without having to regenerate the whole schema and overwrite (i.e., more efficiently)\n\nCall\nWe pass:\n\nA model\nA schema as a tool: tools = [MySchema]\nA tool choice name for enforcing output to respect this schema: tool_choise = \"MySchema\"\n\nWe retrieve:\n\nAI messages:\n\nresult[\"messages\"]\n\nStructured output:\n\nresult[\"responses\"] # list of MySchema objects \nresult[\"responses\"][0].model_dump()\n\nMetadata: result[“response_metadata”]\n\nExample:\nfrom trustcall import create_extractor\nfrom pydantic import BaseModel, Field, ValidationError\n\nclass MySchema (BaseModel):\n    name: str = Field (description=\"user name\")\n    interests: List[str] = Field (description=\"list of user interests\")\n\nconversation = [\n    HumanMessage (content=\"Hi I'm Jaume\"),\n    AIMessage (content=\"Hi Jaume, how can I assist you?\")\n    HumanMessage (content=\"I like biking for cardio and sightseeing\")\n]\n\nextractor = create_extractor (\n    model=model,\n    tools=[MySchema],\n    tool_choice=\"MySchema\",\n)\n\nsystem_message=SystemMessage(content=\"Extract user details from this conversation\")\nextractor.invoke ({\"messages\": [system_message] + conversation})"
   },
   {
     "objectID": "llm/langchain_courses.html#update",
     "href": "llm/langchain_courses.html#update",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Update",
     "text": "Update\n\nProduce a json patch\nWe pass the serialized object using\n\n{\"existing\": {\"MySchema\": result[\"response\"][0].model_dump()}}\nNote that we indicate the name of the class to respect, “MySchema”\nFull call:\ncreator.invoke (\n    {\"messages\": [system_message] + updated_conversation}, \n    {\"existing\": {\"MySchema\": result[\"response\"][0].model_dump()}}\n)\nWe can also put “messages” and “existing” into a single dictionary:\n{\"messages\": [...], \"existing\": existing_memory_as_dict}\nWhen writing into our store, we need to deserialize the object:\nmy_store.put (namespace, key, result[\"responses\"][0].model_dump())"
   },
   {
     "objectID": "llm/langchain_courses.html#model-with-structured-output-1",
     "href": "llm/langchain_courses.html#model-with-structured-output-1",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "model with structured output",
     "text": "model with structured output\n\nDefine using BaseModel\n\nclass MyMemory (BaseModel):\n    memory: str = Field (description=\"One of the memories\")\n\nclass MyCollection (BaseModel):\n    my_collection: List[MyMemory] = Field (description=\"\")\n\nmodel_with_structure = mode.with_structured_output (MyCollection)\nresult = model_with_structure.invoke (...)\n\nSave to store using put with one key per item in the collection:\n\nfor item in result.my_collection:\n    key = str(uuid.uuid4 ())\n    my_store.put (namespace, key, item.model_dump())"
   },
   {
     "objectID": "llm/langchain_courses.html#trustcall-1",
     "href": "llm/langchain_courses.html#trustcall-1",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "TrustCall",
     "text": "TrustCall\n\nuse single element class (MyMemory in previous example)\npass enable_inserts=True when building the extractor object\n\nextractor = create_extractor (\n    model,\n    tools=[MyMemory],\n    tool_choice=[\"MyMemory\"],\n    enable_inserts=True,\n)\n\nsystem_msg = \"\"\"Update existing memories and create new ones based on the following conversation:\"\"\"\n\nextractor.invoke({\"messages\": [SystemMessage(content=system_msg)]+updated_conversation, \"existing\": existing_memories})"
   },
   {
     "objectID": "llm/langchain_courses.html#graph-trustcall",
     "href": "llm/langchain_courses.html#graph-trustcall",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Graph + TrustCall",
     "text": "Graph + TrustCall\n\nTrustCall instruction prompt: “… use parallel tool calling to handle updates and insertions simulatenously:”\nwhen using memories to adapt the assistant response: since it is a list, we format the {memory} section of the prompt using the list of memories so far retrieved with search:\n\nmemories = my_store.search(namespace)\nformatted_memories = \"\\n\".join([mem.value[\"content\"] for mem in memories])\n\nexisting_memories construction:\n\nnamespace=(\"memory\", user_id)\nexisting_items = my_store.search(namespace)\ntool_name=\"Memory\"\nexisting_memories = ([(existing_item.key, tool_name, existing_item.value) for existing_item in existing_items] if existing_items else None)\n\nusing merge_message_runs\n\nsystem_msg = SystemMessage(content=\"my prompt message\")\nupdated_messages = list(merge_message_runs(messages=[system_msg]+state[\"messages\"]))\nresult=creator.invoke ({\"messages\": updated_messages, \"existing\": existing_memories})\n\nstore update\n\nfor resp, rmeta in zip(result[\"responses\"], result[\"response_metadata\"]):\n    my_store.put (\n        namespace, \n        rmeta.get(\"json_doc_id\", uuid.uuid4()), # if memory is new, it is appended (add_messages reducer) since it has a new ID. If it is an existing one, it is overwritten, since we provide its previous json_doc_id as ID\n        resp.model_dump(mode=\"json\")\n    )"
   },
   {
     "objectID": "llm/langchain_courses.html#listener-in-trustcall",
     "href": "llm/langchain_courses.html#listener-in-trustcall",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Listener in TrustCall",
     "text": "Listener in TrustCall\nLog tool calls done by TrustCall\nSurface things like: - actions to solve schema validation errors, and - updates done to previous memories\nclass Spy:\n    ...\nspy = Spy()\nextractor = create_extractor(...)\nextractor_with_listener = extractor.with_listeners(on_end=spy)\n\n\nclass Spy:\n    def __init__ (self):\n        self.called_tools = []\n    \n    def __call__ (self, run):\n        q = [run]\n        while q:\n            r = q.pop()\n            if r.child_runs:\n                q.extend(r.child_runs)\n            if r.run_type==\"chat_model\":\n                self.called_tools.append(r.outputs[\"generations\"][0][0][\"messages\"][\"kwargs\"][\"tool_calls\"])"
   },
   {
     "objectID": "llm/langchain_courses.html#implementation-details-2",
     "href": "llm/langchain_courses.html#implementation-details-2",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Implementation details",
     "text": "Implementation details\nWhen calling a tool node it is very important that the node responds back notifying that the call was made:\ndef tool_node (...):\n    # ...\n    tool_calls = state[\"messages\"][-1].tool_calls\n    return {\"messages\": [{\"role\": \"tool\", \"content\": \"my tool response\", \"tool_call_id\": tool_calls[0][\"id\"]}]}\n\n# Deployment\n\n# Deployment concepts\n\n[notebook](https://files.cdn.thinkific.com/file_uploads/967498/attachments/5d8/68e/5fd/LangChain_Academy_-_Introduction_to_LangGraph_-_Deployment.pdf)\n\n# creating\n\n[notebook](https://github.com/langchain-ai/langchain-academy/blob/main/module-6/creating.ipynb)\n\n- langgraph cli, docker and docker compose\n\n# connecting\n\n## client / remote graph\n\n```python\n\nfrom langgraph_sdk import get_client\n\n\n# langgraph-api:\n#         image: \"lg_image\"\n#         ports:\n#             - \"8123:8000\"\n\nurl = \"http://localhost:8123\" # \nclient = get_client (url=url)\n\n# or ...\nremote_graph = RemoteGraph (graph_name, url=url)\n# (how to use remote_graph?)"
   },
   {
     "objectID": "llm/langchain_courses.html#managing-runs",
     "href": "llm/langchain_courses.html#managing-runs",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "managing runs",
     "text": "managing runs\n\nlist: client.runs.list(thread[\"thread_id\"])\ncreate thread: client.threads.create()\ncreate run: python     client.runs.create(thread[\"thread_id\"], graph_name, input=input_message, config=config)\n\nNote: config here only contains the user_id, not the thread_id, since that piece is passed in the first argument.\n\nget run status: client.runs.get(...)\nblock until complete (join): client.runs.join(...)\nstream (e.g., tokens): client.runs.stream(...): same as create run, but adding parameter stream_mode=\"messages-tuple\""
   },
   {
     "objectID": "llm/langchain_courses.html#threads",
     "href": "llm/langchain_courses.html#threads",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "threads",
     "text": "threads\n\nFor working with multi-turn interactions, with multiple graphs executions for a given thread.\nThe server stores the checkpoints of the thread in Postgres.\nWe can:\n\nget state checkpoints saved:\n\nthread_state = await client.threads.get_state(thread[\"thread_id\"])\nfor m in convert_to_messages (thread_state[\"values\"][\"messages\"]):\n    m.pretty_print()\n\ncopy (fork) thread: client.threads.copy(thread[\"thread_id\"])\ndo human-in-the-loop:\n\nstates = await client.threads.get_history(thread[\"thread_id\"])\nto_fork = states[-2]\n# to_fork[\"values\"], to_fork[\"next\"]\nmessage_id = to_fork[\"values\"][\"messages\"][0][\"id\"]\ncheckpoint_id = to_fork[\"checkpoint_id\"]\nforked_input = {\n    \"messages\": [HumanMessage(content=\"my new message\", id=message_id)] # overwrite previuos message by supplying ID\n}\nforked_config = await.client.threads.update_state(\n    thread[\"thread_id\"],\n    forked_input,\n    checkpoint_id=checkpoint_id\n)\n\nstream using updated input from new checkpoint\n\nsame call as last stream but with:\n\ninput=None, so that it resumes\nadding checkpoint_id=checkpoint_id"
   },
   {
     "objectID": "llm/langchain_courses.html#across-thread-memory",
     "href": "llm/langchain_courses.html#across-thread-memory",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "across-thread memory",
     "text": "across-thread memory\nThe memory store is stored in Postgres\nWe can:\n\nsearch items by namespace: client.store.search(namespace) where namspace is a tuple\nput new items: client.store.put_item (namespace, key=key, value=value)\ndelete items: client.store.delete_item(namespace, key=key)"
   },
   {
     "objectID": "llm/langchain_courses.html#reject",
     "href": "llm/langchain_courses.html#reject",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Reject",
     "text": "Reject\n\nruns.create with input_1\ntry:\n\nruns.create with input_2\n\nexcept httpx.HTTPStatusError as e: …"
   },
   {
     "objectID": "llm/langchain_courses.html#enqueue",
     "href": "llm/langchain_courses.html#enqueue",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Enqueue",
     "text": "Enqueue\n\nTo new runs we add the argument multitask_strategy=\"enqueue\"\n\nsecond_run = await client.runs.create(..., multitask_strategy=\"enqueue\")\n\nWe await for the last run: await client.runs.join(thread[\"thread_id\"], second_run[\"run_id\"])"
   },
   {
     "objectID": "llm/langchain_courses.html#interrupt",
     "href": "llm/langchain_courses.html#interrupt",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Interrupt",
     "text": "Interrupt\n\nThe previous message will be interrupted and the new one take over.\nHow: as before, but we pass the argument multitask_strategy=\"interrupt\". Again, we await for the last run to complete.\nThe final status is “interrupted”."
   },
   {
     "objectID": "llm/langchain_courses.html#rollback",
     "href": "llm/langchain_courses.html#rollback",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Rollback",
     "text": "Rollback\n\nInstead of keeping the interrupted messages, a new run is created, the old one is deleted, and the new run takes only the new message.\nHow, as before, but we pass the argument multitask_strategy=\"rollback\"."
   },
   {
     "objectID": "llm/langchain_courses.html#creating-assistants",
     "href": "llm/langchain_courses.html#creating-assistants",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Creating assistants",
     "text": "Creating assistants\npersonal_assistant = await client.assistants.create(graph_name, config={\"configurable\": {\"todo_category\": \"personal\"}})"
   },
   {
     "objectID": "llm/langchain_courses.html#updating-assistants",
     "href": "llm/langchain_courses.html#updating-assistants",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Updating assistants",
     "text": "Updating assistants\n\nWhen updading an assistant, we are creating a new version of it.\n\nconfigurations = {\n    \"todo_category\": \"personal\",\n    \"user_id\": \"lance\",\n    \"task_maistro_role\": new_prompt,\n}\npersonal_assistant = await client.assistants.update(\n    personal_assistant[\"assistant_id\"],\n    config={\"configurable\": configurations},\n)\n\nNotes:\n\nThe fields in the configurations dict coincide with the attributes of the Configurations class defined in deployment/configuration.py\nInside the llm node of the graph, in the task_maistro.py file, we have an argument of type RunnableConfig, which gives us a dictionary. This dictionary is transformed into a Configurations object using the classmethod from_runnable_config:\n\n\ndef task_mAIstro (state: MessagesState, config: RunnableConfig, store: BaseStore):\n    configurable = configuration.Configuration.from_runnable_config(config)\n    # configurable.todo_category, configurable.user_id, configurable.task_maistro_role"
   },
   {
     "objectID": "llm/langchain_courses.html#managing-assistants",
     "href": "llm/langchain_courses.html#managing-assistants",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Managing assistants",
     "text": "Managing assistants\n\nList assistants:\n\nassistants = await client.assistants.search()\n\nfor assistant in assistants:\n    print ({\n        \"assistant_id\": assistant[\"assistant_id\"],\n        \"version\": assistant[\"version\"],\n        \"config\": assistant[\"config\"], \n    })\n\n# config includes category, user_id, and role, as supplied in configurations dict above\n\nDelete assistant:\n\nawait client.assistants.delete(assistant[\"assistant_id\"])"
   },
   {
     "objectID": "llm/langchain_courses.html#using-assistants",
     "href": "llm/langchain_courses.html#using-assistants",
-    "title": "index",
+    "title": "Langchain courses",
     "section": "Using assistants",
     "text": "Using assistants\nthread = await client.threads.create()\nasync for chunk in client.runs.stream(\n    thread[\"thread_id\"],\n    assistant_id,\n    input={\"messages\": [HumanMessage(content=\"my message\")]},\n    stream_mode=\"values\",\n):\n    if chunk.event == \"values\":\n        state = chunk.data\n        convert_to_messages(state[\"messages\"])[-1].pretty_print()\n\nNotes:\n\nwhen using graph.stream, we get an event dict where event[\"messages] is a list of Message objects (e.g., HumanMessage, AIMessage, etc.) on which we can call pretty_print, i.e., event[\"messages\"][-1].pretty_print()\nwhen using client.runs.stream, we get a chunk object, and the data is in chunk.data. Furthermore, chunk.data[\"messages\"] is a list of dicts on which cannot call pretty_print() directly, so we need to convert them first using convert_to_messages.\n\n\nfor event in graph.stream(None, to_replay.config, stream_mode=\"values\"):\n    event['messages'][-1].pretty_print()"
   },
   {
-    "objectID": "llm/evals_hamel.html",
-    "href": "llm/evals_hamel.html",
-    "title": "LLM Evals",
-    "section": "",
-    "text": "web site\n\n\nYou must have tools and processes for:\n\nEvaluating quality (Testing)\nDebugging (logging and inspecting data)\nChanging behaviour (prompt engineering, fine tuning, Writing code)\n\nRecommended processes:\nflowchart LR\n    A --&gt; B\n    A --&gt; C\n    B --&gt; D\n    C --&gt; D\n    D --&gt; E\n    D --&gt; F\n    E --&gt; G\n    F --&gt; G\n    D -.-&gt; D_note[\"Human review\\nModel-based\\nA/B tests\"]\n\n    A[\"LLM\\nInvocation\\n(synthetic/human inputs)\"]\n    B[\"Unit\\ntests\"]\n    C[\"Logging\\nTraces\"]\n    D[\"Eval &\\nCuration\"]\n    E[\"Fine-tuning\"]\n    F[\"Prompt Eng.\"]\n    G[\"Improve\\nModel\"]\n    \n\n    style D fill:#FFD966,stroke:#333,stroke-width:2px,color:#000\n    style D_note fill:none,stroke:none,color:#FFFFFF\n\n\n\n\nFirst stages of fast improvement due to prompt. engineering.\nThen stuck due to improvement in one place leading to failures in others.\n\n\n\n\n\nCost of A/B testing &gt; cost of model-based and human evals &gt; cost of unit tests\nCadence: unit-tests after each code change, model-based + human evals with some cadence, A/B tests after major changes.\n\n\n\n\n\nAssertions like in pytest\nIn more places: data cleaning and automatic retries (using assertions to course-correct) during inference.\nShould be fast to run often.\nTo come up with unit tests:\n\nThink about your traces and the failure modes they incur.\nAsk your model to brainstorm.\n\nStep 1: write scoped tests\n\nBreak down the scope into features and scenarios\nFor example, one feature of Lucy is to find real estate listings, for example: “Find listings with more than 3 bedrooms and less than $2M in San Jose, CA”\nThe assertion verifies that the expected number of results is returned, scenarios:\n\nonly one listing, more than one listing, no listing.\n\nGeneric tests: do not include UUID of user in response.\n\nStep 2: create test cases:\n\nInputs that trigger each of the scenarios.\nUse synthetic inputs based on LLM.\nIf possible, write both instructions for obtaining the response as well as instructions for verifying the result.\n\nFor example “write 50 different instructions that a real estate agent can give to his assistant to create contacts on his CRM. For each of the instructions, generate a second instruction to look up the created contact”.\nFor each of the test cases, we execute the first user input to create the contact and then execute the second to fetch the contact. If the result length is not exactly 1, the test fails.\n\nOne signal the tests are good is when the model struggles to pass them.\nYou don’t need 100% pass rate.\n\nStep 3: run and track your tests regularly.\n\n\n\n\n\nLogging traces\n\nFor example, LangSmith\n\nLooking at traces\n\nRemove all friction from the process of looking at data.\n\nBuild your own data viewing and labelling tool =&gt; Shiny for python.\nFilter by scenario or feature, go to trace, check if input is human or synthetic, …\n\nMake the output of the LLM editable.\nLilac:\n\nSearch and filter data semantically.\nFind a set of similar data points while debugging an issue\n\n\nHow much data:\n\nAt least read traces for all test cases and all user-generated traces. Sample over time.\n\nAutomated Evaluation with LLMs\n\nHave humans periodically evaluate a sample of traces.\n\nTrack correlation between human and model evaluations.\n\nCollect “critiques” from labelers explainig why they are making a decision.\n\nUse them for prompt engineering and fine tuning of the LLM evaluator.\n\nUse the most powerful model you can afford."
-  },
-  {
     "objectID": "llm/evals_hamel.html#iterating-quickly-success",
     "href": "llm/evals_hamel.html#iterating-quickly-success",
-    "title": "LLM Evals",
-    "section": "",
-    "text": "You must have tools and processes for:\n\nEvaluating quality (Testing)\nDebugging (logging and inspecting data)\nChanging behaviour (prompt engineering, fine tuning, Writing code)\n\nRecommended processes:\nflowchart LR\n    A --&gt; B\n    A --&gt; C\n    B --&gt; D\n    C --&gt; D\n    D --&gt; E\n    D --&gt; F\n    E --&gt; G\n    F --&gt; G\n    D -.-&gt; D_note[\"Human review\\nModel-based\\nA/B tests\"]\n\n    A[\"LLM\\nInvocation\\n(synthetic/human inputs)\"]\n    B[\"Unit\\ntests\"]\n    C[\"Logging\\nTraces\"]\n    D[\"Eval &\\nCuration\"]\n    E[\"Fine-tuning\"]\n    F[\"Prompt Eng.\"]\n    G[\"Improve\\nModel\"]\n    \n\n    style D fill:#FFD966,stroke:#333,stroke-width:2px,color:#000\n    style D_note fill:none,stroke:none,color:#FFFFFF"
+    "title": "Hamel Husain Eval Notes",
+    "section": "Iterating Quickly == Success",
+    "text": "Iterating Quickly == Success\nYou must have tools and processes for:\n\nEvaluating quality (Testing)\nDebugging (logging and inspecting data)\nChanging behaviour (prompt engineering, fine tuning, Writing code)\n\nRecommended processes:\nflowchart LR\n    A --&gt; B\n    A --&gt; C\n    B --&gt; D\n    C --&gt; D\n    D --&gt; E\n    D --&gt; F\n    E --&gt; G\n    F --&gt; G\n    D -.-&gt; D_note[\"Human review\\nModel-based\\nA/B tests\"]\n\n    A[\"LLM\\nInvocation\\n(synthetic/human inputs)\"]\n    B[\"Unit\\ntests\"]\n    C[\"Logging\\nTraces\"]\n    D[\"Eval &\\nCuration\"]\n    E[\"Fine-tuning\"]\n    F[\"Prompt Eng.\"]\n    G[\"Improve\\nModel\"]\n    \n\n    style D fill:#FFD966,stroke:#333,stroke-width:2px,color:#000\n    style D_note fill:none,stroke:none,color:#FFFFFF"
   },
   {
     "objectID": "llm/evals_hamel.html#case-study",
     "href": "llm/evals_hamel.html#case-study",
-    "title": "LLM Evals",
-    "section": "",
-    "text": "First stages of fast improvement due to prompt. engineering.\nThen stuck due to improvement in one place leading to failures in others."
+    "title": "Hamel Husain Eval Notes",
+    "section": "Case study",
+    "text": "Case study\n\nFirst stages of fast improvement due to prompt. engineering.\nThen stuck due to improvement in one place leading to failures in others."
   },
   {
     "objectID": "llm/evals_hamel.html#evals",
     "href": "llm/evals_hamel.html#evals",
-    "title": "LLM Evals",
-    "section": "",
-    "text": "Cost of A/B testing &gt; cost of model-based and human evals &gt; cost of unit tests\nCadence: unit-tests after each code change, model-based + human evals with some cadence, A/B tests after major changes."
+    "title": "Hamel Husain Eval Notes",
+    "section": "Evals",
+    "text": "Evals\n\nCost of A/B testing &gt; cost of model-based and human evals &gt; cost of unit tests\nCadence: unit-tests after each code change, model-based + human evals with some cadence, A/B tests after major changes."
   },
   {
     "objectID": "llm/evals_hamel.html#unit-tests",
     "href": "llm/evals_hamel.html#unit-tests",
-    "title": "LLM Evals",
-    "section": "",
-    "text": "Assertions like in pytest\nIn more places: data cleaning and automatic retries (using assertions to course-correct) during inference.\nShould be fast to run often.\nTo come up with unit tests:\n\nThink about your traces and the failure modes they incur.\nAsk your model to brainstorm.\n\nStep 1: write scoped tests\n\nBreak down the scope into features and scenarios\nFor example, one feature of Lucy is to find real estate listings, for example: “Find listings with more than 3 bedrooms and less than $2M in San Jose, CA”\nThe assertion verifies that the expected number of results is returned, scenarios:\n\nonly one listing, more than one listing, no listing.\n\nGeneric tests: do not include UUID of user in response.\n\nStep 2: create test cases:\n\nInputs that trigger each of the scenarios.\nUse synthetic inputs based on LLM.\nIf possible, write both instructions for obtaining the response as well as instructions for verifying the result.\n\nFor example “write 50 different instructions that a real estate agent can give to his assistant to create contacts on his CRM. For each of the instructions, generate a second instruction to look up the created contact”.\nFor each of the test cases, we execute the first user input to create the contact and then execute the second to fetch the contact. If the result length is not exactly 1, the test fails.\n\nOne signal the tests are good is when the model struggles to pass them.\nYou don’t need 100% pass rate.\n\nStep 3: run and track your tests regularly."
+    "title": "Hamel Husain Eval Notes",
+    "section": "Unit tests",
+    "text": "Unit tests\n\nAssertions like in pytest\nIn more places: data cleaning and automatic retries (using assertions to course-correct) during inference.\nShould be fast to run often.\nTo come up with unit tests:\n\nThink about your traces and the failure modes they incur.\nAsk your model to brainstorm.\n\nStep 1: write scoped tests\n\nBreak down the scope into features and scenarios\nFor example, one feature of Lucy is to find real estate listings, for example: “Find listings with more than 3 bedrooms and less than $2M in San Jose, CA”\nThe assertion verifies that the expected number of results is returned, scenarios:\n\nonly one listing, more than one listing, no listing.\n\nGeneric tests: do not include UUID of user in response.\n\nStep 2: create test cases:\n\nInputs that trigger each of the scenarios.\nUse synthetic inputs based on LLM.\nIf possible, write both instructions for obtaining the response as well as instructions for verifying the result.\n\nFor example “write 50 different instructions that a real estate agent can give to his assistant to create contacts on his CRM. For each of the instructions, generate a second instruction to look up the created contact”.\nFor each of the test cases, we execute the first user input to create the contact and then execute the second to fetch the contact. If the result length is not exactly 1, the test fails.\n\nOne signal the tests are good is when the model struggles to pass them.\nYou don’t need 100% pass rate.\n\nStep 3: run and track your tests regularly."
   },
   {
     "objectID": "llm/evals_hamel.html#level-2-human-model-eval",
     "href": "llm/evals_hamel.html#level-2-human-model-eval",
-    "title": "LLM Evals",
-    "section": "",
-    "text": "Logging traces\n\nFor example, LangSmith\n\nLooking at traces\n\nRemove all friction from the process of looking at data.\n\nBuild your own data viewing and labelling tool =&gt; Shiny for python.\nFilter by scenario or feature, go to trace, check if input is human or synthetic, …\n\nMake the output of the LLM editable.\nLilac:\n\nSearch and filter data semantically.\nFind a set of similar data points while debugging an issue\n\n\nHow much data:\n\nAt least read traces for all test cases and all user-generated traces. Sample over time.\n\nAutomated Evaluation with LLMs\n\nHave humans periodically evaluate a sample of traces.\n\nTrack correlation between human and model evaluations.\n\nCollect “critiques” from labelers explainig why they are making a decision.\n\nUse them for prompt engineering and fine tuning of the LLM evaluator.\n\nUse the most powerful model you can afford."
+    "title": "Hamel Husain Eval Notes",
+    "section": "Level 2: Human & Model Eval",
+    "text": "Level 2: Human & Model Eval\n\nLogging traces\n\nFor example, LangSmith\n\nLooking at traces\n\nRemove all friction from the process of looking at data.\n\nBuild your own data viewing and labelling tool =&gt; Shiny for python.\nFilter by scenario or feature, go to trace, check if input is human or synthetic, …\n\nMake the output of the LLM editable.\nLilac:\n\nSearch and filter data semantically.\nFind a set of similar data points while debugging an issue\n\n\nHow much data:\n\nAt least read traces for all test cases and all user-generated traces. Sample over time.\n\nAutomated Evaluation with LLMs\n\nHave humans periodically evaluate a sample of traces.\n\nTrack correlation between human and model evaluations.\n\nCollect “critiques” from labelers explainig why they are making a decision.\n\nUse them for prompt engineering and fine tuning of the LLM evaluator.\n\nUse the most powerful model you can afford."
   },
   {
     "objectID": "llm/evals_hamel.html#step-1-find-the-principal-domain-expert.",
     "href": "llm/evals_hamel.html#step-1-find-the-principal-domain-expert.",
-    "title": "LLM Evals",
+    "title": "Hamel Husain Eval Notes",
     "section": "Step 1: Find the principal domain expert.",
     "text": "Step 1: Find the principal domain expert.\n\nGet one principal domain expert evaluate LLM output\nUse binary decisions.\nInclude critique."
   },
   {
     "objectID": "llm/evals_hamel.html#step-2-create-dataset",
     "href": "llm/evals_hamel.html#step-2-create-dataset",
-    "title": "LLM Evals",
+    "title": "Hamel Husain Eval Notes",
     "section": "Step 2: Create dataset",
     "text": "Step 2: Create dataset\n\nDiverse: define problem in terms of dimensions and have inputs for each combination.\n\nExample of dimensions: features, scenarios, personas\nOne input per each combination of feature, scenario and persona.\n\nTypes:\n\nlogged real interactions\nsynthetic\n\nUse real DB and APIs to get the data so it is a realistic as possible."
   },
   {
     "objectID": "llm/evals_hamel.html#step-3-evaluate-accuracy-on-created-dataset",
     "href": "llm/evals_hamel.html#step-3-evaluate-accuracy-on-created-dataset",
-    "title": "LLM Evals",
+    "title": "Hamel Husain Eval Notes",
     "section": "Step 3: Evaluate accuracy on created dataset",
     "text": "Step 3: Evaluate accuracy on created dataset\n\nRemove friction for domain exper to evaluate.\n\nMay need to get additional context: metadata about the user, state of current system (time, inventory levels …), resources to check =&gt; ability to check a database.\nAll this into single page\nBuild simple web app to review data =&gt; Shiny for python.\n\nHow much data:\n\n30 examples and keep going until no more failures. Then keep going until I don’t learn anything new."
   },
   {
     "objectID": "llm/evals_hamel.html#step-4-fix-errors",
     "href": "llm/evals_hamel.html#step-4-fix-errors",
-    "title": "LLM Evals",
+    "title": "Hamel Husain Eval Notes",
     "section": "Step 4: Fix Errors",
     "text": "Step 4: Fix Errors\n\nPervasive errors? (or failures?)"
   },
   {
     "objectID": "llm/evals_hamel.html#step-5-build-llm-as-judge",
     "href": "llm/evals_hamel.html#step-5-build-llm-as-judge",
-    "title": "LLM Evals",
+    "title": "Hamel Husain Eval Notes",
     "section": "Step 5: Build LLM as judge",
     "text": "Step 5: Build LLM as judge\n\nSpreadsheet with:\n\nmodel response\njugdge critique\njugdge decision\nExpert critique\nExpert decision\nExpert revised response (what the model should have outputted)\nAgreement between judge and expert (true / false)\n\nSometimes we need precision / recall instead of agreement if the dataset is imbalanced (more failures than passes, or the other way)\nIterate using better prompts (with expert’s critiques as new examples?) until &gt; 90% accuracy / F1 / …\nAdjust prompts by hand or using ALIGN Eval\nWhat if this doesn’t work?\n\nWe may need to rely more on human annotations.\n\nMistakes in LLM judges due to:\n\nNot providing critiques, or providing very terse critiques.\nNot providing enough context. Everything used to evaluate the quality of the judge should be also given to it as context.\nNot providing diverse examples."
   },
   {
     "objectID": "llm/evals_hamel.html#step-6-error-analysis",
     "href": "llm/evals_hamel.html#step-6-error-analysis",
-    "title": "LLM Evals",
+    "title": "Hamel Husain Eval Notes",
     "section": "Step 6: Error Analysis",
     "text": "Step 6: Error Analysis\n\nApply judge against real or synthetic interactions, always on unseen data.\nMeasure error rate on each segment of data, i.e., combination of feature, scenario, and persona in our example.\nLook at each type of error and classify it by hand, after looking at the whole trace (including tool calls made and what context / insight was extracted from each) for example:\n\nMissing user Education.\nAuthentication issues.\nPoor Context Handling.\nInadequate Error Messages.\n\nFix Errors again.\n\nGo back to step 3 and iterate until satisfied.\nTry to write a test case for the error.\n\nData Literacy and statistics link"
   },
   {
     "objectID": "llm/evals_hamel.html#step-7-create-more-specialized-llm-judges-if-needed",
     "href": "llm/evals_hamel.html#step-7-create-more-specialized-llm-judges-if-needed",
-    "title": "LLM Evals",
+    "title": "Hamel Husain Eval Notes",
     "section": "Step 7: Create More Specialized LLM Judges, if needed",
     "text": "Step 7: Create More Specialized LLM Judges, if needed\n\nFor example, if the judge is poor at citing sources correctly, we can create a targeted eval for that, or even use code-based assertions without judge."
   },
   {
     "objectID": "llm/evals_hamel.html#error-analysis",
     "href": "llm/evals_hamel.html#error-analysis",
-    "title": "LLM Evals",
+    "title": "Hamel Husain Eval Notes",
     "section": "Error Analysis",
     "text": "Error Analysis\nExample of success: - Team built a simple viewer to examine conversations. - Next to each conversation was a space for open-ended notes about failure modes. - After annotating dozens of conversations, clear patterns emerged. - For instance, their model was struggling with date handling failing 66% of the time. - Real case example: - See what things the users are asking for and how well the model satisfies their needs in each case. This makes building the road map without effort. - See how people assumed your product would work. - By looking at how the model responds in each case you start to be able to predict where it will fail and how to improve it via RAG, Prompt Engineering, etc. - Custom viewer that has button for categorizing failures. - Brain Trust: automate implementation of unit tests or other eval techniques to measure how the changes made help improve those failure modes. - Summary. The process of error analysis consists of: - Looking at the conversations. - Writing detail notes about how each conversation failed. - Categorizing the notes (or only the failures) - The latter can sometimes be made semi-automatic by using an LLM to classify those notes."
   },
   {
     "objectID": "llm/evals_hamel.html#custom-data-viewer",
     "href": "llm/evals_hamel.html#custom-data-viewer",
-    "title": "LLM Evals",
+    "title": "Hamel Husain Eval Notes",
     "section": "Custom Data Viewer",
     "text": "Custom Data Viewer\n\nEach use case has its specificities that are rarely covered by off-the-shelf tools.\nEven small UX decisions make the difference between the team using the tool or not.\nWhat makes a good data viewer:\n\nShow all context in one place. No need to switch.\nMake feedback trivial to capture. A simple button.\nCapture open-ended feedback.\nEnable quick filtering and sorting. Make it easy to dive into specific error types.\nHave hotkeys."
   },
   {
     "objectID": "llm/evals_hamel.html#empower-domain-experts",
     "href": "llm/evals_hamel.html#empower-domain-experts",
-    "title": "LLM Evals",
+    "title": "Hamel Husain Eval Notes",
     "section": "Empower Domain Experts",
     "text": "Empower Domain Experts\n\nGive domain expertrs tools to write and iterate on prompts directly.\nPrompt playgrounds like LangSmith and Braintrust are good for this.\nIntegrated prompt environments: admin versions of their actual user interface that expose prompt editing.\nAvoid technical jargon when talking to domain experts."
   },
   {
     "objectID": "llm/evals_hamel.html#generate-syntethic-data",
     "href": "llm/evals_hamel.html#generate-syntethic-data",
-    "title": "LLM Evals",
+    "title": "Hamel Husain Eval Notes",
     "section": "Generate syntethic data",
     "text": "Generate syntethic data\n\nChoose right dimensions to test. Example with Real Estate product:\n\nFeatures: different capabilities of the product, Examnpl\n\nfind listings matching criteria\nanalyze trends and princing\nsetting up property viewings\npost-viewing communication\n\nScenarios: different situations in which the product is used.\n\nExact match\nMultiple matches\nNo matches\nInvalid criteria\n\nPersonas: different types of users:\n\nfirst-time homebuyer\nproperty investor\nluxury home seeker\nrelocating family\n\n\nEnsure synthetic data triggers the dimensions to be tested:\n\nTest database with enough variety to cover all dimensions.\n\nThis can be anonymized production data.\n\nA way to verify that the generated queries actually trigger the intended dimensions.\n\nIt is key that synthetic data is grounded in real system constraints:\n\nreal listings, real agent schedules, restricting business rules, including local regulations, etc.\n\nIf we don’t have production data because the product is new, use LLMs to generate both test queries and test data.\n\nUse realistic attributes\n\nprices that match market conditions, valid addresses with real street names, etc.\n\n\nGuidelines for using synthetic data:\n\nDiserify dataset: cover all dimensions.\nGenerate user inputs, not outputs: realistic user queries, not LLM responses.\nIncorporate real system constraints: use real data and business rules.\nVerify dimension coverage: ensure generated queries trigger intended dimensions.\nStart simple then add complexity: begin with basic queries, then introduce edge cases."
   },
   {
     "objectID": "llm/evals_hamel.html#keep-trust-in-eval-system",
     "href": "llm/evals_hamel.html#keep-trust-in-eval-system",
-    "title": "LLM Evals",
+    "title": "Hamel Husain Eval Notes",
     "section": "Keep trust in Eval system",
-    "text": "Keep trust in Eval system\n\nCriteria drift\n\nEvaluation criteria evolve as you observe more model outputs.\n\nThe process of reviewing AI outputs helps articulate our own evaluation standards.\nWe need to treat evaluation criteria as living documents that evolve with our understanding.\nDifferent stakeholders may have different criteria and we need to reconcile them rather than imposing a single standard.\n\n\n\n\nTrustworthy evaluation systems\n\nHow:\n\nAs discussed: binary metrics + critiques, and measuring alignment with human judgements.\nAnd scaling correctly:\n\nstart with high human involvement\nstudy alignment patterns and focus manual evaluation on areas of disagreement\nuse strategic sampling:\n\nsample outputs that provide more information.\nmore weight on areas of disagreement.\n\nkeep regular calibration as you scale.\n\n\nScaling is not about reducing human effort but redirecting it towards the most impactful areas."
+    "text": "Keep trust in Eval system\nCriteria drift\n\nEvaluation criteria evolve as you observe more model outputs.\n\nThe process of reviewing AI outputs helps articulate our own evaluation standards.\nWe need to treat evaluation criteria as living documents that evolve with our understanding.\nDifferent stakeholders may have different criteria and we need to reconcile them rather than imposing a single standard.\n\n\nTrustworthy evaluation systems\n\nHow:\n\nAs discussed: binary metrics + critiques, and measuring alignment with human judgements.\nAnd scaling correctly:\n\nstart with high human involvement\nstudy alignment patterns and focus manual evaluation on areas of disagreement\nuse strategic sampling:\n\nsample outputs that provide more information.\nmore weight on areas of disagreement.\n\nkeep regular calibration as you scale.\n\n\nScaling is not about reducing human effort but redirecting it towards the most impactful areas."
   },
   {
     "objectID": "index.html",
