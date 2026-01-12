@@ -1,0 +1,8 @@
+---
+title: "Data Science Raw Notes"
+---
+
+## LLM
+
+- [Langchain courses](llm/langchain_courses.ipynb)
+- [Hamel Husain Eval](llm/evals_hamel.ipynb)
