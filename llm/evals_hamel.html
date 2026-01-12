@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>LLM Evals</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">LLM Evals</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="your-ai-product-needs-evals" class="level1">
+<h1>Your AI Product Needs Evals</h1>
+<p><a href="https://hamel.dev/blog/posts/evals/">web site</a></p>
+<section id="iterating-quickly-success" class="level2">
+<h2 class="anchored" data-anchor-id="iterating-quickly-success">Iterating Quickly == Success</h2>
+<p>You must have tools and processes for:</p>
+<ul>
+<li>Evaluating quality (Testing)</li>
+<li>Debugging (logging and inspecting data)</li>
+<li>Changing behaviour (prompt engineering, fine tuning, Writing code)</li>
+</ul>
+<p>Recommended processes:</p>
+<pre class="mermaid"><code>flowchart LR
+    A --&gt; B
+    A --&gt; C
+    B --&gt; D
+    C --&gt; D
+    D --&gt; E
+    D --&gt; F
+    E --&gt; G
+    F --&gt; G
+    D -.-&gt; D_note["Human review\nModel-based\nA/B tests"]
+
+    A["LLM\nInvocation\n(synthetic/human inputs)"]
+    B["Unit\ntests"]
+    C["Logging\nTraces"]
+    D["Eval &amp;\nCuration"]
+    E["Fine-tuning"]
+    F["Prompt Eng."]
+    G["Improve\nModel"]
+    
+
+    style D fill:#FFD966,stroke:#333,stroke-width:2px,color:#000
+    style D_note fill:none,stroke:none,color:#FFFFFF</code></pre>
+</section>
+<section id="case-study" class="level2">
+<h2 class="anchored" data-anchor-id="case-study">Case study</h2>
+<ul>
+<li>First stages of fast improvement due to prompt. engineering.</li>
+<li>Then stuck due to improvement in one place leading to failures in others.</li>
+</ul>
+</section>
+<section id="evals" class="level2">
+<h2 class="anchored" data-anchor-id="evals">Evals</h2>
+<ul>
+<li>Cost of A/B testing &gt; cost of model-based and human evals &gt; cost of unit tests</li>
+<li>Cadence: unit-tests after each code change, model-based + human evals with some cadence, A/B tests after major changes.</li>
+</ul>
+</section>
+<section id="unit-tests" class="level2">
+<h2 class="anchored" data-anchor-id="unit-tests">Unit tests</h2>
+<ul>
+<li>Assertions like in pytest</li>
+<li>In more places: data cleaning and automatic retries (using assertions to course-correct) during inference.</li>
+<li>Should be fast to run often.</li>
+<li>To come up with unit tests:
+<ul>
+<li>Think about your traces and the failure modes they incur.</li>
+<li>Ask your model to brainstorm.</li>
+</ul></li>
+<li>Step 1: write scoped tests
+<ul>
+<li>Break down the scope into features and scenarios</li>
+<li>For example, one feature of Lucy is to find real estate listings, for example: “Find listings with more than 3 bedrooms and less than $2M in San Jose, CA”</li>
+<li>The assertion verifies that the expected <strong>number of results</strong> is returned, scenarios:
+<ul>
+<li>only one listing, more than one listing, no listing.</li>
+</ul></li>
+<li>Generic tests: do not include UUID of user in response.</li>
+</ul></li>
+<li>Step 2: create test cases:
+<ul>
+<li>Inputs that trigger each of the scenarios.</li>
+<li>Use synthetic inputs based on LLM.</li>
+<li>If possible, write both instructions for obtaining the response as well as instructions for verifying the result.
+<ul>
+<li>For example “write 50 different instructions that a real estate agent can give to his assistant to create contacts on his CRM. For each of the instructions, generate a second instruction to look up the created contact”.</li>
+<li>For each of the test cases, we execute the first user input to create the contact and then execute the second to fetch the contact. If the result length is not exactly 1, the test fails.</li>
+</ul></li>
+<li>One signal the tests are good is when the model struggles to pass them.</li>
+<li>You don’t need 100% pass rate.</li>
+</ul></li>
+<li>Step 3: run and track your tests regularly.</li>
+</ul>
+</section>
+<section id="level-2-human-model-eval" class="level2">
+<h2 class="anchored" data-anchor-id="level-2-human-model-eval">Level 2: Human &amp; Model Eval</h2>
+<ul>
+<li>Logging traces
+<ul>
+<li>For example, LangSmith</li>
+</ul></li>
+<li>Looking at traces
+<ul>
+<li>Remove all friction from the process of looking at data.
+<ul>
+<li>Build your own data viewing and labelling tool =&gt; Shiny for python.</li>
+<li>Filter by scenario or feature, go to trace, check if input is human or synthetic, …</li>
+</ul></li>
+<li>Make the output of the LLM editable.</li>
+<li>Lilac:
+<ul>
+<li>Search and filter data semantically.</li>
+<li>Find a set of similar data points while debugging an issue</li>
+</ul></li>
+</ul></li>
+<li>How much data:
+<ul>
+<li>At least read traces for all test cases and all user-generated traces. Sample over time.</li>
+</ul></li>
+<li>Automated Evaluation with LLMs
+<ul>
+<li>Have humans periodically evaluate a sample of traces.
+<ul>
+<li>Track correlation between human and model evaluations.</li>
+</ul></li>
+<li>Collect “critiques” from labelers explainig why they are making a decision.
+<ul>
+<li>Use them for prompt engineering and fine tuning of the LLM evaluator.</li>
+</ul></li>
+<li>Use the most powerful model you can afford.</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="using-llm-as-a-judge-for-evaluation-a-complete-guide" class="level1">
+<h1>Using LLM-as-a-Judge For Evaluation: A Complete Guide</h1>
+<p><a href="https://hamel.dev/blog/posts/llm-judge/#the-problem-ai-teams-are-drowning-in-data">blog</a></p>
+<section id="step-1-find-the-principal-domain-expert." class="level2">
+<h2 class="anchored" data-anchor-id="step-1-find-the-principal-domain-expert.">Step 1: Find the principal domain expert.</h2>
+<ul>
+<li>Get one principal domain expert evaluate LLM output</li>
+<li>Use binary decisions.</li>
+<li>Include critique.</li>
+</ul>
+</section>
+<section id="step-2-create-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-create-dataset">Step 2: Create dataset</h2>
+<ul>
+<li>Diverse: define problem in terms of <em>dimensions</em> and have inputs for each combination.
+<ul>
+<li>Example of dimensions: features, scenarios, personas</li>
+<li>One input per each combination of feature, scenario and persona.</li>
+</ul></li>
+<li>Types:
+<ul>
+<li>logged real interactions</li>
+<li>synthetic</li>
+</ul></li>
+<li>Use real DB and APIs to get the data so it is a realistic as possible.</li>
+</ul>
+</section>
+<section id="step-3-evaluate-accuracy-on-created-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-evaluate-accuracy-on-created-dataset">Step 3: Evaluate accuracy on created dataset</h2>
+<ul>
+<li>Remove friction for domain exper to evaluate.
+<ul>
+<li>May need to get additional context: metadata about the user, state of current system (time, inventory levels …), resources to check =&gt; ability to check a database.</li>
+<li>All this into single page</li>
+<li>Build simple web app to review data =&gt; Shiny for python.</li>
+</ul></li>
+<li>How much data:
+<ul>
+<li>30 examples and keep going until no more failures. Then keep going until I don’t learn anything new.</li>
+</ul></li>
+</ul>
+</section>
+<section id="step-4-fix-errors" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-fix-errors">Step 4: Fix Errors</h2>
+<ul>
+<li>Pervasive errors? (or failures?)</li>
+</ul>
+</section>
+<section id="step-5-build-llm-as-judge" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-build-llm-as-judge">Step 5: Build LLM as judge</h2>
+<ul>
+<li><p>Spreadsheet with:</p>
+<ul>
+<li>model response</li>
+<li>jugdge critique</li>
+<li>jugdge decision</li>
+<li>Expert critique</li>
+<li>Expert decision</li>
+<li>Expert revised response (what the model should have outputted)</li>
+<li>Agreement between judge and expert (true / false)</li>
+</ul></li>
+<li><p>Sometimes we need precision / recall instead of agreement if the dataset is imbalanced (more failures than passes, or the other way)</p></li>
+<li><p>Iterate using better prompts (with expert’s critiques as new examples?) until &gt; 90% accuracy / F1 / …</p></li>
+<li><p>Adjust prompts by hand or using ALIGN Eval</p></li>
+<li><p>What if this doesn’t work?</p>
+<ul>
+<li>We may need to rely more on human annotations.</li>
+</ul></li>
+<li><p>Mistakes in LLM judges due to:</p>
+<ul>
+<li>Not providing critiques, or providing very terse critiques.</li>
+<li>Not providing enough context. Everything used to evaluate the quality of the judge should be also given to it as context.</li>
+<li>Not providing diverse examples.</li>
+</ul></li>
+</ul>
+</section>
+<section id="step-6-error-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="step-6-error-analysis">Step 6: Error Analysis</h2>
+<ul>
+<li>Apply judge against real or synthetic interactions, always on unseen data.</li>
+<li>Measure error rate on each segment of data, i.e., combination of feature, scenario, and persona in our example.</li>
+<li>Look at each type of error and classify it by hand, after looking at the whole trace (including tool calls made and what context / insight was extracted from each) for example:
+<ul>
+<li>Missing user Education.</li>
+<li>Authentication issues.</li>
+<li>Poor Context Handling.</li>
+<li>Inadequate Error Messages.</li>
+</ul></li>
+<li>Fix Errors again.
+<ul>
+<li>Go back to step 3 and iterate until satisfied.</li>
+<li>Try to write a test case for the error.</li>
+</ul></li>
+<li>Data Literacy and statistics <a href="https://jxnl.co/writing/2024/06/02/10-ways-to-be-data-illiterate-and-how-to-avoid-them/">link</a></li>
+</ul>
+</section>
+<section id="step-7-create-more-specialized-llm-judges-if-needed" class="level2">
+<h2 class="anchored" data-anchor-id="step-7-create-more-specialized-llm-judges-if-needed">Step 7: Create More Specialized LLM Judges, if needed</h2>
+<ul>
+<li>For example, if the judge is poor at citing sources correctly, we can create a targeted eval for that, or even use code-based assertions without judge.</li>
+</ul>
+</section>
+</section>
+<section id="a-field-guide-to-rapidly-improving-ai-products" class="level1">
+<h1>A Field Guide to Rapidly Improving AI Products</h1>
+<p>https://hamel.dev/blog/posts/field-guide/index.html</p>
+<section id="error-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="error-analysis">Error Analysis</h2>
+<p>Example of success: - Team built a simple viewer to examine conversations. - Next to each conversation was a space for open-ended notes about failure modes. - After annotating dozens of conversations, clear patterns emerged. - For instance, their model was struggling with date handling failing 66% of the time. - Real case example: - See what things the users are asking for and how well the model satisfies their needs in each case. This makes building the road map without effort. - See how people assumed your product would work. - By looking at how the model responds in each case you start to be able to predict where it will fail and how to improve it via RAG, Prompt Engineering, etc. - Custom viewer that has button for categorizing failures. - Brain Trust: automate implementation of unit tests or other eval techniques to measure how the changes made help improve those failure modes. - Summary. The process of error analysis consists of: - Looking at the conversations. - Writing detail notes about how each conversation failed. - Categorizing the notes (or only the failures) - The latter can sometimes be made semi-automatic by using an LLM to classify those notes.</p>
+</section>
+<section id="custom-data-viewer" class="level2">
+<h2 class="anchored" data-anchor-id="custom-data-viewer">Custom Data Viewer</h2>
+<ul>
+<li>Each use case has its specificities that are rarely covered by off-the-shelf tools.</li>
+<li>Even small UX decisions make the difference between the team using the tool or not.</li>
+<li>What makes a good data viewer:
+<ul>
+<li>Show all context in one place. No need to switch.</li>
+<li>Make feedback trivial to capture. A simple button.</li>
+<li>Capture open-ended feedback.</li>
+<li>Enable quick filtering and sorting. Make it easy to dive into specific error types.</li>
+<li>Have hotkeys.</li>
+</ul></li>
+</ul>
+</section>
+<section id="empower-domain-experts" class="level2">
+<h2 class="anchored" data-anchor-id="empower-domain-experts">Empower Domain Experts</h2>
+<ul>
+<li>Give domain expertrs tools to write and iterate on prompts directly.</li>
+<li>Prompt playgrounds like LangSmith and Braintrust are good for this.</li>
+<li>Integrated prompt environments: admin versions of their actual user interface that expose prompt editing.</li>
+<li>Avoid technical jargon when talking to domain experts.</li>
+</ul>
+</section>
+<section id="generate-syntethic-data" class="level2">
+<h2 class="anchored" data-anchor-id="generate-syntethic-data">Generate syntethic data</h2>
+<ul>
+<li>Choose right dimensions to test. Example with Real Estate product:
+<ul>
+<li>Features: different capabilities of the product, Examnpl
+<ul>
+<li>find listings matching criteria</li>
+<li>analyze trends and princing</li>
+<li>setting up property viewings</li>
+<li>post-viewing communication</li>
+</ul></li>
+<li>Scenarios: different situations in which the product is used.
+<ul>
+<li>Exact match</li>
+<li>Multiple matches</li>
+<li>No matches</li>
+<li>Invalid criteria</li>
+</ul></li>
+<li>Personas: different types of users:
+<ul>
+<li>first-time homebuyer</li>
+<li>property investor</li>
+<li>luxury home seeker</li>
+<li>relocating family</li>
+</ul></li>
+</ul></li>
+<li>Ensure synthetic data triggers the dimensions to be tested:
+<ul>
+<li>Test database with enough variety to cover all dimensions.
+<ul>
+<li>This can be anonymized production data.</li>
+</ul></li>
+<li>A way to verify that the generated queries actually trigger the intended dimensions.</li>
+</ul></li>
+<li>It is key that synthetic data is grounded in real system constraints:
+<ul>
+<li>real listings, real agent schedules, restricting business rules, including local regulations, etc.</li>
+</ul></li>
+<li>If we don’t have production data because the product is new, use LLMs to generate both test queries and test data.
+<ul>
+<li>Use realistic attributes
+<ul>
+<li>prices that match market conditions, valid addresses with real street names, etc.</li>
+</ul></li>
+</ul></li>
+<li>Guidelines for using synthetic data:
+<ul>
+<li>Diserify dataset: cover all dimensions.</li>
+<li>Generate user inputs, not outputs: realistic user queries, not LLM responses.</li>
+<li>Incorporate real system constraints: use real data and business rules.</li>
+<li>Verify dimension coverage: ensure generated queries trigger intended dimensions.</li>
+<li>Start simple then add complexity: begin with basic queries, then introduce edge cases.</li>
+</ul></li>
+</ul>
+</section>
+<section id="keep-trust-in-eval-system" class="level2">
+<h2 class="anchored" data-anchor-id="keep-trust-in-eval-system">Keep trust in Eval system</h2>
+<section id="criteria-drift" class="level3">
+<h3 class="anchored" data-anchor-id="criteria-drift">Criteria drift</h3>
+<ul>
+<li>Evaluation criteria evolve as you observe more model outputs.
+<ul>
+<li>The process of reviewing AI outputs helps articulate our own evaluation standards.</li>
+<li>We need to treat evaluation criteria as living documents that evolve with our understanding.</li>
+<li>Different stakeholders may have different criteria and we need to reconcile them rather than imposing a single standard.</li>
+</ul></li>
+</ul>
+</section>
+<section id="trustworthy-evaluation-systems" class="level3">
+<h3 class="anchored" data-anchor-id="trustworthy-evaluation-systems">Trustworthy evaluation systems</h3>
+<ul>
+<li>How:
+<ul>
+<li>As discussed: binary metrics + critiques, and measuring alignment with human judgements.</li>
+<li>And scaling correctly:
+<ul>
+<li>start with high human involvement</li>
+<li>study alignment patterns and focus manual evaluation on areas of disagreement</li>
+<li>use strategic sampling:
+<ul>
+<li>sample outputs that provide more information.</li>
+<li>more weight on areas of disagreement.</li>
+</ul></li>
+<li>keep regular calibration as you scale.</li>
+</ul></li>
+</ul></li>
+<li>Scaling is not about reducing human effort but redirecting it towards the most impactful areas.</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="links" class="level1">
+<h1>Links</h1>
+<ul>
+<li><p><a href="https://parlance-labs.com/education/#fine-tuning">fine-tuning</a></p></li>
+<li><p><a href="https://jxnl.github.io/blog/writing/2024/02/28/levels-of-complexity-rag-applications/">evaluating RAGs</a></p>
+<ul>
+<li><a href="https://jxnl.co/writing/2025/05/19/there-are-only-6-rag-evals/">6 RAG Evals</a>]</li>
+<li><a href="https://pashpashpash.substack.com/p/why-i-no-longer-recommend-rag-for">RAG is dead</a></li>
+<li><a href="https://hamel.dev/notes/llm/rag/not_dead.html">RAG is not dead</a></li>
+</ul></li>
+<li><p><a href="https://www.geteppo.com/blog">A/B testing</a></p></li>
+<li><p><a href="https://blog.langchain.dev/dosu-langsmith-no-prompt-eng/">Continual In-Context Learning</a></p></li>
+<li><p><a href="https://eugeneyan.com/writing/aligneval/">ALIGN Eval</a></p>
+<ul>
+<li><a href="https://eugeneyan.com/writing/aligneval/">blog post</a></li>
+</ul></li>
+<li><p><a href="https://platform.openai.com/docs/guides/prompt-caching">prompt caching</a></p></li>
+<li><p><a href="https://youtu.be/JoAxZsdw_3w">error analysis</a></p>
+<ul>
+<li><a href="https://hamel.dev/blog/posts/evals-faq/#q-why-is-error-analysis-so-important-in-llm-evals-and-how-is-it-performed">Hamel recap and blog collection on error analysis</a></li>
+<li><a href="https://youtu.be/qH1dZ8JLLdU">Hamel’s video walkthrough</a></li>
+</ul></li>
+<li><p><a href="https://jxnl.co/writing/2024/06/02/10-ways-to-be-data-illiterate-and-how-to-avoid-them/">data literacy</a></p></li>
+<li><p><a href="https://hamel.dev/blog/posts/llm-judge/index.html#resources">Others</a>:</p>
+<ul>
+<li><a href="https://eugeneyan.com/writing/llm-evaluators/">survey on LLM as judge approaches</a></li>
+<li><a href="https://www.databricks.com/blog/enhancing-llm-as-a-judge-with-grading-notes">similar approach</a></li>
+<li><a href="https://cookbook.openai.com/examples/custom-llm-as-a-judge">end-to-end example</a></li>
+<li><a href="https://blog.langchain.dev/dosu-langsmith-no-prompt-eng/">DOSU</a></li>
+</ul></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
