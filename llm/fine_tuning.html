@@ -139,8 +139,88 @@ Jaume Amores
 </div>
 
 </section>
-<section id="further-reading" class="slide level2">
-<h2>Further reading</h2>
+<section>
+<section id="using-langsmith-to-support-fine-tuning" class="title-slide slide level1 center">
+<h1>Using LangSmith to Support Fine-tuning</h1>
+<p><a href="https://blog.langchain.com/using-langsmith-to-support-fine-tuning-of-open-source-llms/">blog post</a></p>
+</section>
+<section id="scenarios" class="slide level2">
+<h2>Scenarios</h2>
+<ul>
+<li>Open Source LLM + Fine-tuning can outperform foundational SOTA models (e.g., ChatGPT).</li>
+</ul>
+</section>
+<section id="when-to-fine-tune" class="slide level2">
+<h2>When to fine-tune</h2>
+<ul>
+<li>Two ways of learning:
+<ul>
+<li>Weights: pre-training, fine-tuning</li>
+<li>Prompting, via RAG.</li>
+</ul></li>
+<li>Analogy:
+<ul>
+<li>Fine-tuning is like studying one week in advance.</li>
+<li>Prompting is like taking exam with open notes.</li>
+</ul></li>
+<li>Not Good for:
+<ul>
+<li>Learning new knowledge. Can increase hallucinations.</li>
+</ul></li>
+<li>Good for:
+<ul>
+<li>Specialized tasks, in similar ways to RAG.
+<ul>
+<li>With many examples</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="when-to-fine-tune-more-analogies" class="slide level2">
+<h2>When to fine-tune, more analogies</h2>
+<ul>
+<li>Zero shot learning: describe task with words.</li>
+<li>Few shot learning: give few examples of solving task in prompt (e.g., via RAG or manually)</li>
+<li>Fine tuning: allow person to practice task.
+<ul>
+<li>In applications with concrete well-defined tasks where it is possible to collect a lot of data and “practice” on it.</li>
+</ul></li>
+<li><a href="https://x.com/karpathy/status/1655994367033884672?ref=blog.langchain.com">Karpathy’s tweet</a></li>
+</ul>
+</section>
+<section id="fine-tuning-vs-others-complete-guide" class="slide level2">
+<h2>Fine-tuning vs others complete guide</h2>
+<p>Possibilities along two axis: - Complexity / Cost dimension (higher to lower): - From scratch training - Reinforcement Learning from Human Feedback - Fine Tuning, Retrieval Assisted Generation =&gt; Problems Addressed dimension: Form problems - Fine Tuning, Factual Problems - RAG - Static / Dynamic Example Selection - Manual / Automatic Prompt Tuning</p>
+<ul>
+<li>Fine tuning is good at:
+<ul>
+<li>Learning the style or form of language.</li>
+<li>Examples:
+<ul>
+<li>Pure autoregressive model on Q &amp; A, since there’s plenty of Q&amp;A data.</li>
+<li>Pure autoregressive model on instruction following, since there’s plenty of data.</li>
+<li>Imitate style, e.g., Shakespeare, since there is lot of training material. Also, legal jargon, claim responses</li>
+<li>Imitate structure / format, like resumes.</li>
+</ul></li>
+</ul></li>
+<li>It is not good at:
+<ul>
+<li>Learning new concepts that do not exist in the base knowledge of the foundational model.</li>
+<li>Example:
+<ul>
+<li>Replace Romeo with Bob in a set of texts and fine-tune. See if it forgets association of Romeo with Juliet and learns that it is Bob who was with Juliet. Fails because the <em>Romeo</em> concept is ingrained in the base knowledge.</li>
+<li>Answer questions like “who said to be or not to be” after fine-tuning on set of Shakespeare works.
+<ul>
+<li>Better use search engine (RAG) to retrieve those answers and inject them in prompt for LLM.</li>
+<li>Question: what does LLM add here, if the search engine is already finding relevant answers? Remove FP?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="https://www.anyscale.com/blog/fine-tuning-is-for-form-not-facts?ref=blog.langchain.com">Fine tuning is for form, not facts</a></li>
+</ul>
+</section></section>
+<section id="further-reading" class="title-slide slide level1 center">
+<h1>Further reading</h1>
 <ul>
 <li><a href="https://hamel.dev/blog/posts/fine_tuning_valuable.html">Is Fine-Tuning Still Valuable?</a></li>
 <li><a href="https://www.youtube.com/watch?v=cPn0nHFsvFg">When and Why to Fine Tune</a></li>
@@ -156,9 +236,14 @@ Jaume Amores
 <ul>
 <li><a href="https://platform.openai.com/docs/guides/model-optimization">Model optimization - OpenAI</a></li>
 </ul></li>
-<li><a href="https://blog.langchain.com/using-langsmith-to-support-fine-tuning-of-open-source-llms/">Using LangSmith to Support Fine-tuning</a>
+<li>[Using LangSmith to Support Fine-tuning - Colab’s notebooks]
 <ul>
-<li><a href="https://colab.research.google.com/drive/1tpywvzwOS74YndNXhI8NUaEfPeqOc7ub?usp=sharing&amp;ref=blog.langchain.com">Colab’s notebook</a></li>
+<li><a href="https://colab.research.google.com/drive/1tpywvzwOS74YndNXhI8NUaEfPeqOc7ub?usp=sharing&amp;ref=blog.langchain.com">With Llama</a></li>
+<li><a href="https://colab.research.google.com/drive/1YCyDHPSl0d_ULubCVshrP5hLqUCorr7d?usp=sharing&amp;ref=blog.langchain.com">OpenAI</a></li>
+</ul></li>
+<li><a href="https://blog.langchain.com/introducing-tuna-a-tool-for-rapidly-generating-synthetic-fine-tuning-datasets/">Tuna for synthetic dataset generation for fine-tuning</a>
+<ul>
+<li><a href="https://blog.langchain.com/fine-tuning-chatgpt-surpassing-gpt-4-summarization/">Demo</a></li>
 </ul></li>
 </ul>
 

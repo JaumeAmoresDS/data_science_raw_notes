@@ -2,42 +2,46 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/analysis/ab_testing.html</loc>
-    <lastmod>2026-01-13T06:45:20.642Z</lastmod>
+    <lastmod>2026-01-13T16:58:26.628Z</lastmod>
   </url>
   <url>
     <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/template.html</loc>
-    <lastmod>2026-01-13T06:45:20.644Z</lastmod>
-  </url>
-  <url>
-    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/index.html</loc>
-    <lastmod>2026-01-13T06:45:20.642Z</lastmod>
-  </url>
-  <url>
-    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/llm/langchain_courses.html</loc>
-    <lastmod>2026-01-13T06:45:20.643Z</lastmod>
-  </url>
-  <url>
-    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/llm/fine_tuning.html</loc>
-    <lastmod>2026-01-13T06:45:20.642Z</lastmod>
-  </url>
-  <url>
-    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/llm/evals_hamel.html</loc>
-    <lastmod>2026-01-13T06:45:20.642Z</lastmod>
-  </url>
-  <url>
-    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/llm/other_concepts.html</loc>
-    <lastmod>2026-01-13T06:45:20.643Z</lastmod>
-  </url>
-  <url>
-    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/llm/rag_parlance.html</loc>
-    <lastmod>2026-01-13T06:45:20.643Z</lastmod>
+    <lastmod>2026-01-13T16:58:26.631Z</lastmod>
   </url>
   <url>
     <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/about.html</loc>
-    <lastmod>2026-01-13T06:45:20.642Z</lastmod>
+    <lastmod>2026-01-13T16:58:26.628Z</lastmod>
+  </url>
+  <url>
+    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/llm/rag_parlance.html</loc>
+    <lastmod>2026-01-13T16:58:26.630Z</lastmod>
+  </url>
+  <url>
+    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/llm/other_concepts.html</loc>
+    <lastmod>2026-01-13T16:58:26.629Z</lastmod>
+  </url>
+  <url>
+    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/llm/evals_hamel.html</loc>
+    <lastmod>2026-01-13T16:58:26.629Z</lastmod>
+  </url>
+  <url>
+    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/llm/fine_tuning.html</loc>
+    <lastmod>2026-01-13T16:58:26.629Z</lastmod>
+  </url>
+  <url>
+    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/llm/langchain_courses.html</loc>
+    <lastmod>2026-01-13T16:58:26.629Z</lastmod>
+  </url>
+  <url>
+    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/index.html</loc>
+    <lastmod>2026-01-13T16:58:26.629Z</lastmod>
+  </url>
+  <url>
+    <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/code/llm/fine_tuning_openai.html</loc>
+    <lastmod>2026-01-13T16:58:26.629Z</lastmod>
   </url>
   <url>
     <loc>https://JaumeAmoresDS.github.io/data_science_raw_notes/analysis/error_analysis.html</loc>
-    <lastmod>2026-01-13T06:45:20.642Z</lastmod>
+    <lastmod>2026-01-13T16:58:26.629Z</lastmod>
   </url>
 </urlset>

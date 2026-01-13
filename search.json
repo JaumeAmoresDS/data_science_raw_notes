@@ -1,24 +1,255 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Data Science Raw Notes",
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
     "section": "",
-    "text": "Langchain courses\nEvaluation - Hamel Husain notes\nRAG - Parlance Education\nFine Tuning - Parlance Education\nOther Concepts"
+    "text": "About this site"
   },
   {
-    "objectID": "index.html#llm",
-    "href": "index.html#llm",
-    "title": "Data Science Raw Notes",
-    "section": "",
-    "text": "Langchain courses\nEvaluation - Hamel Husain notes\nRAG - Parlance Education\nFine Tuning - Parlance Education\nOther Concepts"
+    "objectID": "llm/rag_parlance.html#demistifying-rag",
+    "href": "llm/rag_parlance.html#demistifying-rag",
+    "title": "RAG talks in Parlance",
+    "section": "Demistifying RAG",
+    "text": "Demistifying RAG\n\nIt is basically “stuffing text into the LLM prompt”.\n\nTypical use case: Q&A or search:\n\nAsk open-ended question.\nRetrieve content related to this question\nUse this content as context by stuffing it into the LLM prompt\nResult: the LLM response will be “grounded” in this context.\nIt is not hallucination free but it might improve the accuracy of the generated answer.\n\n\nNot necessarily related with Q&A or search.\n\nExample: labeller, retrieve positive and negative examples from dataset and present them in prompt to have the LLM label remaining following those examples."
   },
   {
-    "objectID": "index.html#analysis",
-    "href": "index.html#analysis",
-    "title": "Data Science Raw Notes",
-    "section": "Analysis",
-    "text": "Analysis\n\nA/B Testing\nError Analysis"
+    "objectID": "llm/rag_parlance.html#architecture",
+    "href": "llm/rag_parlance.html#architecture",
+    "title": "RAG talks in Parlance",
+    "section": "Architecture",
+    "text": "Architecture\n\nOrchestration\nEvaluation\nPrompt\nLLM\nState (retrieval sources):\n\nFile, Search Engine, Vector Database, Database, Numpy"
+  },
+  {
+    "objectID": "llm/rag_parlance.html#evaluating-information-retrieval-systems",
+    "href": "llm/rag_parlance.html#evaluating-information-retrieval-systems",
+    "title": "RAG talks in Parlance",
+    "section": "Evaluating Information Retrieval Systems",
+    "text": "Evaluating Information Retrieval Systems\n\nQuery\nRetrieval process\nResult: ranked list of documents\nEvaluation: relevance of ranking wrt query.\n\nMetrics: binary, non-binary\nBenchmarks: TREC, MS Marco, BEIR, …\nCritical: build your own relevance dataset"
+  },
+  {
+    "objectID": "llm/rag_parlance.html#relevance-dataset",
+    "href": "llm/rag_parlance.html#relevance-dataset",
+    "title": "RAG talks in Parlance",
+    "section": "Relevance dataset",
+    "text": "Relevance dataset\n\nIf we have real queries from production, spend time labelling results of those queries.\nOtherwise, ask LLM to generate realistic synthetic queries.\nIdeally static collection: no additions while evaluating and comparing, to keep consistency.\nUsing LLM judges to evaluate result.\n\nNeed to find appropriate prompt to make it correlate with human judgement."
+  },
+  {
+    "objectID": "llm/rag_parlance.html#representational-approaches",
+    "href": "llm/rag_parlance.html#representational-approaches",
+    "title": "RAG talks in Parlance",
+    "section": "Representational approaches",
+    "text": "Representational approaches\n\nAvoid scoring all documents (e.g., if we use at web scale)\nHave indexed documents, score only subset.\nApproaches:\n\nSparse, using inverted index.\n\nTop-k retrieval algorithms: WAND, …\nSupervised (splade) or unsupervised (tf-idf)\n\nDense:\n\nVector index\nAccelerated search (approximate)\nSupervised via transf-learning (text embedding)"
+  },
+  {
+    "objectID": "llm/rag_parlance.html#dense-representations",
+    "href": "llm/rag_parlance.html#dense-representations",
+    "title": "RAG talks in Parlance",
+    "section": "Dense representations",
+    "text": "Dense representations\n\nEncoder / Transformer style:\n\nTokenize input text into discrete vocabulary.\nPretrained learned representations of each token.\nFeed into encoder. For each token get an output vector.\nPooling stage: average all vectors into a single vector representation.\n\nWeakest aspect. Diluted, low precision. Need shrinking mechanism?\n\n\nBaseline / benchmark: BM25\n\nCan avoid spectacular failures, e.g., those caused by out-of-vocabulary problems.\nBM25 can also act as a strong baseline, e.g., for long-context use case."
+  },
+  {
+    "objectID": "llm/rag_parlance.html#hybrid-approaches",
+    "href": "llm/rag_parlance.html#hybrid-approaches",
+    "title": "RAG talks in Parlance",
+    "section": "Hybrid approaches",
+    "text": "Hybrid approaches\n\nDense + Sparse representations: overcome fixed vocabulary issues."
+  },
+  {
+    "objectID": "llm/rag_parlance.html#chunking",
+    "href": "llm/rag_parlance.html#chunking",
+    "title": "RAG talks in Parlance",
+    "section": "Chunking",
+    "text": "Chunking\n\nDense representations should not use texts with more than 256 tokens for high precision search (maybe it’s ok for other applications like classification)\n\nBecause they haven’t been trained on them.\nTopic drifts with longer texts.\n\nYou need to chunk if longer than 256 tokens\n\nbut no need to do it on a per-row basis, if you have right stack.\nwe can index multiple vectors per row.\navoid repeating same metadata."
+  },
+  {
+    "objectID": "llm/rag_parlance.html#other-considerations",
+    "href": "llm/rag_parlance.html#other-considerations",
+    "title": "RAG talks in Parlance",
+    "section": "Other considerations",
+    "text": "Other considerations\n\nCombining GBDT (Gradient-Boosted Decision Trees) with neural features is quite effective.\n\nGBDT produces sparse vectors, one feature per leaf in the tree\nThe feature is 1 if the input vector ends in that leaf."
+  },
+  {
+    "objectID": "llm/rag_parlance.html#faq",
+    "href": "llm/rag_parlance.html#faq",
+    "title": "RAG talks in Parlance",
+    "section": "FAQ",
+    "text": "FAQ\n\nWhat kind of metadata is useful to consider in RAG.\n\nConsider authoritative sources for this domain (e.g., doctors in health domain), rather than just “drag up Reddit text”.\nTitle and other metadata. It depends on use case.\n\nCalibration of different indices\n\ndifferent document indices are not aligned in terms of similarity scores\nhave confidence scores for how likely is the recommendation to be good\nAnswer: it is difficult. It might be a learning task, e.g., use GBDT for combining.\n\nBut then you need to train the model with built training data.\nCan use LLM for generating this data.\n\n\nEfficacy of re-rankers.\n\nThey can help, but can make the response slower.\n\nCombining similarity with interaction data\n\nIt becomes a learning to rank problem.\n\nType of interaction is used as label.\nYou can use GBT where you can include the semantic score as well as a feature.\n\n\nJason Liu’s blog on value of generating structured summaries and reports for decision makers instead of RAG\nFuture progress\n\nUse models with larger vocabularies, beyond BERT trained on 2018 data\nNot excited about using longer contexts because they provide lower precision.\n\nQuery search expansion, query understanding\n\nBM25 + reranker\n\nUse case with lots of jargon and out-of-vocabulary words\n\nNeed to use hybrid approach (keyword search + embedding), since embedding is poor at that.\nSometimes we need to ignore the embedding altogether.\n\nColbert\n\nYes with pretraining or longer vocabularies."
+  },
+  {
+    "objectID": "llm/rag_parlance.html#further-reading",
+    "href": "llm/rag_parlance.html#further-reading",
+    "title": "RAG talks in Parlance",
+    "section": "Further reading",
+    "text": "Further reading\n\nSystematically improving RAG applications\nBeyond the basics of Retrieval for Augmenting Generation\nModern Information Retrieval Evaluation in the The RAG Era\nevaluating RAGs\n6 RAG Evals\nRAG is dead\nRAG is not dead\nLangChain’s retrieval\nOpenAI’s retrieval"
+  },
+  {
+    "objectID": "llm/other_concepts.html#further-reading",
+    "href": "llm/other_concepts.html#further-reading",
+    "title": "Other useful concepts",
+    "section": "Further reading",
+    "text": "Further reading\n\nGuardrails - LangChain\nContext engineering - LangChain\nModel Context Protocol (MCP) - LangChai\nMulti-Agent - LangChain\nContinual In-Context Learning\nprompt caching\nContext Rot: When Long Context Fails"
+  },
+  {
+    "objectID": "llm/other_concepts.html#investigate",
+    "href": "llm/other_concepts.html#investigate",
+    "title": "Other useful concepts",
+    "section": "Investigate",
+    "text": "Investigate\n\nRLHF\nAutomatic Prompt refinement\nDynamic Selection of Examples (for few-shot learning, in prompt)\n\nLangChain"
+  },
+  {
+    "objectID": "llm/evals_hamel.html#iterating-quickly-success",
+    "href": "llm/evals_hamel.html#iterating-quickly-success",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Iterating Quickly == Success",
+    "text": "Iterating Quickly == Success\nYou must have tools and processes for:\n\nEvaluating quality (Testing)\nDebugging (logging and inspecting data)\nChanging behaviour (prompt engineering, fine tuning, Writing code)\n\nRecommended processes:\nflowchart LR\n    A --&gt; B\n    A --&gt; C\n    B --&gt; D\n    C --&gt; D\n    D --&gt; E\n    D --&gt; F\n    E --&gt; G\n    F --&gt; G\n    D -.-&gt; D_note[\"Human review\\nModel-based\\nA/B tests\"]\n\n    A[\"LLM\\nInvocation\\n(synthetic/human inputs)\"]\n    B[\"Unit\\ntests\"]\n    C[\"Logging\\nTraces\"]\n    D[\"Eval &\\nCuration\"]\n    E[\"Fine-tuning\"]\n    F[\"Prompt Eng.\"]\n    G[\"Improve\\nModel\"]\n    \n\n    style D fill:#FFD966,stroke:#333,stroke-width:2px,color:#000\n    style D_note fill:none,stroke:none,color:#FFFFFF"
+  },
+  {
+    "objectID": "llm/evals_hamel.html#case-study",
+    "href": "llm/evals_hamel.html#case-study",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Case study",
+    "text": "Case study\n\nFirst stages of fast improvement due to prompt. engineering.\nThen stuck due to improvement in one place leading to failures in others."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#evals",
+    "href": "llm/evals_hamel.html#evals",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Evals",
+    "text": "Evals\n\nCost of A/B testing &gt; cost of model-based and human evals &gt; cost of unit tests\nCadence: unit-tests after each code change, model-based + human evals with some cadence, A/B tests after major changes."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#unit-tests",
+    "href": "llm/evals_hamel.html#unit-tests",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Unit tests",
+    "text": "Unit tests\n\nAssertions like in pytest\nIn more places: data cleaning and automatic retries (using assertions to course-correct) during inference.\nShould be fast to run often.\nTo come up with unit tests:\n\nThink about your traces and the failure modes they incur.\nAsk your model to brainstorm.\n\nStep 1: write scoped tests\n\nBreak down the scope into features and scenarios\nFor example, one feature of Lucy is to find real estate listings, for example: “Find listings with more than 3 bedrooms and less than $2M in San Jose, CA”\nThe assertion verifies that the expected number of results is returned, scenarios:\n\nonly one listing, more than one listing, no listing.\n\nGeneric tests: do not include UUID of user in response.\n\nStep 2: create test cases:\n\nInputs that trigger each of the scenarios.\nUse synthetic inputs based on LLM.\nIf possible, write both instructions for obtaining the response as well as instructions for verifying the result.\n\nFor example “write 50 different instructions that a real estate agent can give to his assistant to create contacts on his CRM. For each of the instructions, generate a second instruction to look up the created contact”.\nFor each of the test cases, we execute the first user input to create the contact and then execute the second to fetch the contact. If the result length is not exactly 1, the test fails.\n\nOne signal the tests are good is when the model struggles to pass them.\nYou don’t need 100% pass rate.\n\nStep 3: run and track your tests regularly."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#level-2-human-model-eval",
+    "href": "llm/evals_hamel.html#level-2-human-model-eval",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Level 2: Human & Model Eval",
+    "text": "Level 2: Human & Model Eval\n\nLogging traces\n\nFor example, LangSmith\n\nLooking at traces\n\nRemove all friction from the process of looking at data.\n\nBuild your own data viewing and labelling tool =&gt; Shiny for python.\nFilter by scenario or feature, go to trace, check if input is human or synthetic, …\n\nMake the output of the LLM editable.\nLilac:\n\nSearch and filter data semantically.\nFind a set of similar data points while debugging an issue\n\n\nHow much data:\n\nAt least read traces for all test cases and all user-generated traces. Sample over time.\n\nAutomated Evaluation with LLMs\n\nHave humans periodically evaluate a sample of traces.\n\nTrack correlation between human and model evaluations.\n\nCollect “critiques” from labelers explainig why they are making a decision.\n\nUse them for prompt engineering and fine tuning of the LLM evaluator.\n\nUse the most powerful model you can afford."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#step-1-find-the-principal-domain-expert.",
+    "href": "llm/evals_hamel.html#step-1-find-the-principal-domain-expert.",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Step 1: Find the principal domain expert.",
+    "text": "Step 1: Find the principal domain expert.\n\nGet one principal domain expert evaluate LLM output\nUse binary decisions.\nInclude critique."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#step-2-create-dataset",
+    "href": "llm/evals_hamel.html#step-2-create-dataset",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Step 2: Create dataset",
+    "text": "Step 2: Create dataset\n\nDiverse: define problem in terms of dimensions and have inputs for each combination.\n\nExample of dimensions: features, scenarios, personas\nOne input per each combination of feature, scenario and persona.\n\nTypes:\n\nlogged real interactions\nsynthetic\n\nUse real DB and APIs to get the data so it is a realistic as possible."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#step-3-evaluate-accuracy-on-created-dataset",
+    "href": "llm/evals_hamel.html#step-3-evaluate-accuracy-on-created-dataset",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Step 3: Evaluate accuracy on created dataset",
+    "text": "Step 3: Evaluate accuracy on created dataset\n\nRemove friction for domain exper to evaluate.\n\nMay need to get additional context: metadata about the user, state of current system (time, inventory levels …), resources to check =&gt; ability to check a database.\nAll this into single page\nBuild simple web app to review data =&gt; Shiny for python.\n\nHow much data:\n\n30 examples and keep going until no more failures. Then keep going until I don’t learn anything new."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#step-4-fix-errors",
+    "href": "llm/evals_hamel.html#step-4-fix-errors",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Step 4: Fix Errors",
+    "text": "Step 4: Fix Errors\n\nPervasive errors? (or failures?)"
+  },
+  {
+    "objectID": "llm/evals_hamel.html#step-5-build-llm-as-judge",
+    "href": "llm/evals_hamel.html#step-5-build-llm-as-judge",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Step 5: Build LLM as judge",
+    "text": "Step 5: Build LLM as judge\n\nSpreadsheet with:\n\nmodel response\njugdge critique\njugdge decision\nExpert critique\nExpert decision\nExpert revised response (what the model should have outputted)\nAgreement between judge and expert (true / false)\n\nSometimes we need precision / recall instead of agreement if the dataset is imbalanced (more failures than passes, or the other way)\nIterate using better prompts (with expert’s critiques as new examples?) until &gt; 90% accuracy / F1 / …\nAdjust prompts by hand or using ALIGN Eval\nWhat if this doesn’t work?\n\nWe may need to rely more on human annotations.\n\nMistakes in LLM judges due to:\n\nNot providing critiques, or providing very terse critiques.\nNot providing enough context. Everything used to evaluate the quality of the judge should be also given to it as context.\nNot providing diverse examples."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#step-6-error-analysis",
+    "href": "llm/evals_hamel.html#step-6-error-analysis",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Step 6: Error Analysis",
+    "text": "Step 6: Error Analysis\n\nApply judge against real or synthetic interactions, always on unseen data.\nMeasure error rate on each segment of data, i.e., combination of feature, scenario, and persona in our example.\nLook at each type of error and classify it by hand, after looking at the whole trace (including tool calls made and what context / insight was extracted from each) for example:\n\nMissing user Education.\nAuthentication issues.\nPoor Context Handling.\nInadequate Error Messages.\n\nFix Errors again.\n\nGo back to step 3 and iterate until satisfied.\nTry to write a test case for the error.\n\nData Literacy and statistics link"
+  },
+  {
+    "objectID": "llm/evals_hamel.html#step-7-create-more-specialized-llm-judges-if-needed",
+    "href": "llm/evals_hamel.html#step-7-create-more-specialized-llm-judges-if-needed",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Step 7: Create More Specialized LLM Judges, if needed",
+    "text": "Step 7: Create More Specialized LLM Judges, if needed\n\nFor example, if the judge is poor at citing sources correctly, we can create a targeted eval for that, or even use code-based assertions without judge."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#error-analysis",
+    "href": "llm/evals_hamel.html#error-analysis",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Error Analysis",
+    "text": "Error Analysis\nExample of success: - Team built a simple viewer to examine conversations. - Next to each conversation was a space for open-ended notes about failure modes. - After annotating dozens of conversations, clear patterns emerged. - For instance, their model was struggling with date handling failing 66% of the time. - Real case example: - See what things the users are asking for and how well the model satisfies their needs in each case. This makes building the road map without effort. - See how people assumed your product would work. - By looking at how the model responds in each case you start to be able to predict where it will fail and how to improve it via RAG, Prompt Engineering, etc. - Custom viewer that has button for categorizing failures. - Brain Trust: automate implementation of unit tests or other eval techniques to measure how the changes made help improve those failure modes. - Summary. The process of error analysis consists of: - Looking at the conversations. - Writing detail notes about how each conversation failed. - Categorizing the notes (or only the failures) - The latter can sometimes be made semi-automatic by using an LLM to classify those notes."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#custom-data-viewer",
+    "href": "llm/evals_hamel.html#custom-data-viewer",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Custom Data Viewer",
+    "text": "Custom Data Viewer\n\nEach use case has its specificities that are rarely covered by off-the-shelf tools.\nEven small UX decisions make the difference between the team using the tool or not.\nWhat makes a good data viewer:\n\nShow all context in one place. No need to switch.\nMake feedback trivial to capture. A simple button.\nCapture open-ended feedback.\nEnable quick filtering and sorting. Make it easy to dive into specific error types.\nHave hotkeys."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#empower-domain-experts",
+    "href": "llm/evals_hamel.html#empower-domain-experts",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Empower Domain Experts",
+    "text": "Empower Domain Experts\n\nGive domain expertrs tools to write and iterate on prompts directly.\nPrompt playgrounds like LangSmith and Braintrust are good for this.\nIntegrated prompt environments: admin versions of their actual user interface that expose prompt editing.\nAvoid technical jargon when talking to domain experts."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#generate-syntethic-data",
+    "href": "llm/evals_hamel.html#generate-syntethic-data",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Generate syntethic data",
+    "text": "Generate syntethic data\n\nChoose right dimensions to test. Example with Real Estate product:\n\nFeatures: different capabilities of the product, Examnpl\n\nfind listings matching criteria\nanalyze trends and princing\nsetting up property viewings\npost-viewing communication\n\nScenarios: different situations in which the product is used.\n\nExact match\nMultiple matches\nNo matches\nInvalid criteria\n\nPersonas: different types of users:\n\nfirst-time homebuyer\nproperty investor\nluxury home seeker\nrelocating family\n\n\nEnsure synthetic data triggers the dimensions to be tested:\n\nTest database with enough variety to cover all dimensions.\n\nThis can be anonymized production data.\n\nA way to verify that the generated queries actually trigger the intended dimensions.\n\nIt is key that synthetic data is grounded in real system constraints:\n\nreal listings, real agent schedules, restricting business rules, including local regulations, etc.\n\nIf we don’t have production data because the product is new, use LLMs to generate both test queries and test data.\n\nUse realistic attributes\n\nprices that match market conditions, valid addresses with real street names, etc.\n\n\nGuidelines for using synthetic data:\n\nDiserify dataset: cover all dimensions.\nGenerate user inputs, not outputs: realistic user queries, not LLM responses.\nIncorporate real system constraints: use real data and business rules.\nVerify dimension coverage: ensure generated queries trigger intended dimensions.\nStart simple then add complexity: begin with basic queries, then introduce edge cases."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#keep-trust-in-eval-system",
+    "href": "llm/evals_hamel.html#keep-trust-in-eval-system",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Keep trust in Eval system",
+    "text": "Keep trust in Eval system\nCriteria drift\n\nEvaluation criteria evolve as you observe more model outputs.\n\nThe process of reviewing AI outputs helps articulate our own evaluation standards.\nWe need to treat evaluation criteria as living documents that evolve with our understanding.\nDifferent stakeholders may have different criteria and we need to reconcile them rather than imposing a single standard.\n\n\nTrustworthy evaluation systems\n\nHow:\n\nAs discussed: binary metrics + critiques, and measuring alignment with human judgements.\nAnd scaling correctly:\n\nstart with high human involvement\nstudy alignment patterns and focus manual evaluation on areas of disagreement\nuse strategic sampling:\n\nsample outputs that provide more information.\nmore weight on areas of disagreement.\n\nkeep regular calibration as you scale.\n\n\nScaling is not about reducing human effort but redirecting it towards the most impactful areas."
+  },
+  {
+    "objectID": "llm/evals_hamel.html#plan-experiments-not-features",
+    "href": "llm/evals_hamel.html#plan-experiments-not-features",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Plan experiments not features",
+    "text": "Plan experiments not features\nTo complete reading."
+  },
+  {
+    "objectID": "llm/fine_tuning.html#scenarios",
+    "href": "llm/fine_tuning.html#scenarios",
+    "title": "Fine Tuning",
+    "section": "Scenarios",
+    "text": "Scenarios\n\nOpen Source LLM + Fine-tuning can outperform foundational SOTA models (e.g., ChatGPT)."
+  },
+  {
+    "objectID": "llm/fine_tuning.html#when-to-fine-tune",
+    "href": "llm/fine_tuning.html#when-to-fine-tune",
+    "title": "Fine Tuning",
+    "section": "When to fine-tune",
+    "text": "When to fine-tune\n\nTwo ways of learning:\n\nWeights: pre-training, fine-tuning\nPrompting, via RAG.\n\nAnalogy:\n\nFine-tuning is like studying one week in advance.\nPrompting is like taking exam with open notes.\n\nNot Good for:\n\nLearning new knowledge. Can increase hallucinations.\n\nGood for:\n\nSpecialized tasks, in similar ways to RAG.\n\nWith many examples"
+  },
+  {
+    "objectID": "llm/fine_tuning.html#when-to-fine-tune-more-analogies",
+    "href": "llm/fine_tuning.html#when-to-fine-tune-more-analogies",
+    "title": "Fine Tuning",
+    "section": "When to fine-tune, more analogies",
+    "text": "When to fine-tune, more analogies\n\nZero shot learning: describe task with words.\nFew shot learning: give few examples of solving task in prompt (e.g., via RAG or manually)\nFine tuning: allow person to practice task.\n\nIn applications with concrete well-defined tasks where it is possible to collect a lot of data and “practice” on it.\n\nKarpathy’s tweet"
+  },
+  {
+    "objectID": "llm/fine_tuning.html#fine-tuning-vs-others-complete-guide",
+    "href": "llm/fine_tuning.html#fine-tuning-vs-others-complete-guide",
+    "title": "Fine Tuning",
+    "section": "Fine-tuning vs others complete guide",
+    "text": "Fine-tuning vs others complete guide\nPossibilities along two axis: - Complexity / Cost dimension (higher to lower): - From scratch training - Reinforcement Learning from Human Feedback - Fine Tuning, Retrieval Assisted Generation =&gt; Problems Addressed dimension: Form problems - Fine Tuning, Factual Problems - RAG - Static / Dynamic Example Selection - Manual / Automatic Prompt Tuning\n\nFine tuning is good at:\n\nLearning the style or form of language.\nExamples:\n\nPure autoregressive model on Q & A, since there’s plenty of Q&A data.\nPure autoregressive model on instruction following, since there’s plenty of data.\nImitate style, e.g., Shakespeare, since there is lot of training material. Also, legal jargon, claim responses\nImitate structure / format, like resumes.\n\n\nIt is not good at:\n\nLearning new concepts that do not exist in the base knowledge of the foundational model.\nExample:\n\nReplace Romeo with Bob in a set of texts and fine-tune. See if it forgets association of Romeo with Juliet and learns that it is Bob who was with Juliet. Fails because the Romeo concept is ingrained in the base knowledge.\nAnswer questions like “who said to be or not to be” after fine-tuning on set of Shakespeare works.\n\nBetter use search engine (RAG) to retrieve those answers and inject them in prompt for LLM.\nQuestion: what does LLM add here, if the search engine is already finding relevant answers? Remove FP?\n\n\n\nFine tuning is for form, not facts"
   },
   {
     "objectID": "llm/langchain_courses.html#custom-reducers",
@@ -329,227 +560,31 @@
     "text": "Using assistants\nthread = await client.threads.create()\nasync for chunk in client.runs.stream(\n    thread[\"thread_id\"],\n    assistant_id,\n    input={\"messages\": [HumanMessage(content=\"my message\")]},\n    stream_mode=\"values\",\n):\n    if chunk.event == \"values\":\n        state = chunk.data\n        convert_to_messages(state[\"messages\"])[-1].pretty_print()\n\nNotes:\n\nwhen using graph.stream, we get an event dict where event[\"messages] is a list of Message objects (e.g., HumanMessage, AIMessage, etc.) on which we can call pretty_print, i.e., event[\"messages\"][-1].pretty_print()\nwhen using client.runs.stream, we get a chunk object, and the data is in chunk.data. Furthermore, chunk.data[\"messages\"] is a list of dicts on which cannot call pretty_print() directly, so we need to convert them first using convert_to_messages.\n\n\nfor event in graph.stream(None, to_replay.config, stream_mode=\"values\"):\n    event['messages'][-1].pretty_print()"
   },
   {
-    "objectID": "llm/fine_tuning.html#further-reading",
-    "href": "llm/fine_tuning.html#further-reading",
-    "title": "Fine Tuning",
-    "section": "Further reading",
-    "text": "Further reading\n\nIs Fine-Tuning Still Valuable?\nWhen and Why to Fine Tune\nFrom Prompt to Model: Fine-tuning when you’ve already deployed LLMs in prod\nDeploying Fine-Tuned Models\nFine Tuning OpenAI Models - Best Practices\nFine-Tuning with Axolotl\nWhy fine-tuning is dead\nFine-Tuning Llama 3 and Using It Locally: A Step-by-Step Guide\nRAG vs Fine-Tuning: A Comprehensive Tutorial with Practical Examples\nLoRA\nSupervised fine-tuning - OpenAI\n\nModel optimization - OpenAI\n\nUsing LangSmith to Support Fine-tuning\n\nColab’s notebook"
-  },
-  {
-    "objectID": "llm/evals_hamel.html#iterating-quickly-success",
-    "href": "llm/evals_hamel.html#iterating-quickly-success",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Iterating Quickly == Success",
-    "text": "Iterating Quickly == Success\nYou must have tools and processes for:\n\nEvaluating quality (Testing)\nDebugging (logging and inspecting data)\nChanging behaviour (prompt engineering, fine tuning, Writing code)\n\nRecommended processes:\nflowchart LR\n    A --&gt; B\n    A --&gt; C\n    B --&gt; D\n    C --&gt; D\n    D --&gt; E\n    D --&gt; F\n    E --&gt; G\n    F --&gt; G\n    D -.-&gt; D_note[\"Human review\\nModel-based\\nA/B tests\"]\n\n    A[\"LLM\\nInvocation\\n(synthetic/human inputs)\"]\n    B[\"Unit\\ntests\"]\n    C[\"Logging\\nTraces\"]\n    D[\"Eval &\\nCuration\"]\n    E[\"Fine-tuning\"]\n    F[\"Prompt Eng.\"]\n    G[\"Improve\\nModel\"]\n    \n\n    style D fill:#FFD966,stroke:#333,stroke-width:2px,color:#000\n    style D_note fill:none,stroke:none,color:#FFFFFF"
-  },
-  {
-    "objectID": "llm/evals_hamel.html#case-study",
-    "href": "llm/evals_hamel.html#case-study",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Case study",
-    "text": "Case study\n\nFirst stages of fast improvement due to prompt. engineering.\nThen stuck due to improvement in one place leading to failures in others."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#evals",
-    "href": "llm/evals_hamel.html#evals",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Evals",
-    "text": "Evals\n\nCost of A/B testing &gt; cost of model-based and human evals &gt; cost of unit tests\nCadence: unit-tests after each code change, model-based + human evals with some cadence, A/B tests after major changes."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#unit-tests",
-    "href": "llm/evals_hamel.html#unit-tests",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Unit tests",
-    "text": "Unit tests\n\nAssertions like in pytest\nIn more places: data cleaning and automatic retries (using assertions to course-correct) during inference.\nShould be fast to run often.\nTo come up with unit tests:\n\nThink about your traces and the failure modes they incur.\nAsk your model to brainstorm.\n\nStep 1: write scoped tests\n\nBreak down the scope into features and scenarios\nFor example, one feature of Lucy is to find real estate listings, for example: “Find listings with more than 3 bedrooms and less than $2M in San Jose, CA”\nThe assertion verifies that the expected number of results is returned, scenarios:\n\nonly one listing, more than one listing, no listing.\n\nGeneric tests: do not include UUID of user in response.\n\nStep 2: create test cases:\n\nInputs that trigger each of the scenarios.\nUse synthetic inputs based on LLM.\nIf possible, write both instructions for obtaining the response as well as instructions for verifying the result.\n\nFor example “write 50 different instructions that a real estate agent can give to his assistant to create contacts on his CRM. For each of the instructions, generate a second instruction to look up the created contact”.\nFor each of the test cases, we execute the first user input to create the contact and then execute the second to fetch the contact. If the result length is not exactly 1, the test fails.\n\nOne signal the tests are good is when the model struggles to pass them.\nYou don’t need 100% pass rate.\n\nStep 3: run and track your tests regularly."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#level-2-human-model-eval",
-    "href": "llm/evals_hamel.html#level-2-human-model-eval",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Level 2: Human & Model Eval",
-    "text": "Level 2: Human & Model Eval\n\nLogging traces\n\nFor example, LangSmith\n\nLooking at traces\n\nRemove all friction from the process of looking at data.\n\nBuild your own data viewing and labelling tool =&gt; Shiny for python.\nFilter by scenario or feature, go to trace, check if input is human or synthetic, …\n\nMake the output of the LLM editable.\nLilac:\n\nSearch and filter data semantically.\nFind a set of similar data points while debugging an issue\n\n\nHow much data:\n\nAt least read traces for all test cases and all user-generated traces. Sample over time.\n\nAutomated Evaluation with LLMs\n\nHave humans periodically evaluate a sample of traces.\n\nTrack correlation between human and model evaluations.\n\nCollect “critiques” from labelers explainig why they are making a decision.\n\nUse them for prompt engineering and fine tuning of the LLM evaluator.\n\nUse the most powerful model you can afford."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#step-1-find-the-principal-domain-expert.",
-    "href": "llm/evals_hamel.html#step-1-find-the-principal-domain-expert.",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Step 1: Find the principal domain expert.",
-    "text": "Step 1: Find the principal domain expert.\n\nGet one principal domain expert evaluate LLM output\nUse binary decisions.\nInclude critique."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#step-2-create-dataset",
-    "href": "llm/evals_hamel.html#step-2-create-dataset",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Step 2: Create dataset",
-    "text": "Step 2: Create dataset\n\nDiverse: define problem in terms of dimensions and have inputs for each combination.\n\nExample of dimensions: features, scenarios, personas\nOne input per each combination of feature, scenario and persona.\n\nTypes:\n\nlogged real interactions\nsynthetic\n\nUse real DB and APIs to get the data so it is a realistic as possible."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#step-3-evaluate-accuracy-on-created-dataset",
-    "href": "llm/evals_hamel.html#step-3-evaluate-accuracy-on-created-dataset",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Step 3: Evaluate accuracy on created dataset",
-    "text": "Step 3: Evaluate accuracy on created dataset\n\nRemove friction for domain exper to evaluate.\n\nMay need to get additional context: metadata about the user, state of current system (time, inventory levels …), resources to check =&gt; ability to check a database.\nAll this into single page\nBuild simple web app to review data =&gt; Shiny for python.\n\nHow much data:\n\n30 examples and keep going until no more failures. Then keep going until I don’t learn anything new."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#step-4-fix-errors",
-    "href": "llm/evals_hamel.html#step-4-fix-errors",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Step 4: Fix Errors",
-    "text": "Step 4: Fix Errors\n\nPervasive errors? (or failures?)"
-  },
-  {
-    "objectID": "llm/evals_hamel.html#step-5-build-llm-as-judge",
-    "href": "llm/evals_hamel.html#step-5-build-llm-as-judge",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Step 5: Build LLM as judge",
-    "text": "Step 5: Build LLM as judge\n\nSpreadsheet with:\n\nmodel response\njugdge critique\njugdge decision\nExpert critique\nExpert decision\nExpert revised response (what the model should have outputted)\nAgreement between judge and expert (true / false)\n\nSometimes we need precision / recall instead of agreement if the dataset is imbalanced (more failures than passes, or the other way)\nIterate using better prompts (with expert’s critiques as new examples?) until &gt; 90% accuracy / F1 / …\nAdjust prompts by hand or using ALIGN Eval\nWhat if this doesn’t work?\n\nWe may need to rely more on human annotations.\n\nMistakes in LLM judges due to:\n\nNot providing critiques, or providing very terse critiques.\nNot providing enough context. Everything used to evaluate the quality of the judge should be also given to it as context.\nNot providing diverse examples."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#step-6-error-analysis",
-    "href": "llm/evals_hamel.html#step-6-error-analysis",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Step 6: Error Analysis",
-    "text": "Step 6: Error Analysis\n\nApply judge against real or synthetic interactions, always on unseen data.\nMeasure error rate on each segment of data, i.e., combination of feature, scenario, and persona in our example.\nLook at each type of error and classify it by hand, after looking at the whole trace (including tool calls made and what context / insight was extracted from each) for example:\n\nMissing user Education.\nAuthentication issues.\nPoor Context Handling.\nInadequate Error Messages.\n\nFix Errors again.\n\nGo back to step 3 and iterate until satisfied.\nTry to write a test case for the error.\n\nData Literacy and statistics link"
-  },
-  {
-    "objectID": "llm/evals_hamel.html#step-7-create-more-specialized-llm-judges-if-needed",
-    "href": "llm/evals_hamel.html#step-7-create-more-specialized-llm-judges-if-needed",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Step 7: Create More Specialized LLM Judges, if needed",
-    "text": "Step 7: Create More Specialized LLM Judges, if needed\n\nFor example, if the judge is poor at citing sources correctly, we can create a targeted eval for that, or even use code-based assertions without judge."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#error-analysis",
-    "href": "llm/evals_hamel.html#error-analysis",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Error Analysis",
-    "text": "Error Analysis\nExample of success: - Team built a simple viewer to examine conversations. - Next to each conversation was a space for open-ended notes about failure modes. - After annotating dozens of conversations, clear patterns emerged. - For instance, their model was struggling with date handling failing 66% of the time. - Real case example: - See what things the users are asking for and how well the model satisfies their needs in each case. This makes building the road map without effort. - See how people assumed your product would work. - By looking at how the model responds in each case you start to be able to predict where it will fail and how to improve it via RAG, Prompt Engineering, etc. - Custom viewer that has button for categorizing failures. - Brain Trust: automate implementation of unit tests or other eval techniques to measure how the changes made help improve those failure modes. - Summary. The process of error analysis consists of: - Looking at the conversations. - Writing detail notes about how each conversation failed. - Categorizing the notes (or only the failures) - The latter can sometimes be made semi-automatic by using an LLM to classify those notes."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#custom-data-viewer",
-    "href": "llm/evals_hamel.html#custom-data-viewer",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Custom Data Viewer",
-    "text": "Custom Data Viewer\n\nEach use case has its specificities that are rarely covered by off-the-shelf tools.\nEven small UX decisions make the difference between the team using the tool or not.\nWhat makes a good data viewer:\n\nShow all context in one place. No need to switch.\nMake feedback trivial to capture. A simple button.\nCapture open-ended feedback.\nEnable quick filtering and sorting. Make it easy to dive into specific error types.\nHave hotkeys."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#empower-domain-experts",
-    "href": "llm/evals_hamel.html#empower-domain-experts",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Empower Domain Experts",
-    "text": "Empower Domain Experts\n\nGive domain expertrs tools to write and iterate on prompts directly.\nPrompt playgrounds like LangSmith and Braintrust are good for this.\nIntegrated prompt environments: admin versions of their actual user interface that expose prompt editing.\nAvoid technical jargon when talking to domain experts."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#generate-syntethic-data",
-    "href": "llm/evals_hamel.html#generate-syntethic-data",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Generate syntethic data",
-    "text": "Generate syntethic data\n\nChoose right dimensions to test. Example with Real Estate product:\n\nFeatures: different capabilities of the product, Examnpl\n\nfind listings matching criteria\nanalyze trends and princing\nsetting up property viewings\npost-viewing communication\n\nScenarios: different situations in which the product is used.\n\nExact match\nMultiple matches\nNo matches\nInvalid criteria\n\nPersonas: different types of users:\n\nfirst-time homebuyer\nproperty investor\nluxury home seeker\nrelocating family\n\n\nEnsure synthetic data triggers the dimensions to be tested:\n\nTest database with enough variety to cover all dimensions.\n\nThis can be anonymized production data.\n\nA way to verify that the generated queries actually trigger the intended dimensions.\n\nIt is key that synthetic data is grounded in real system constraints:\n\nreal listings, real agent schedules, restricting business rules, including local regulations, etc.\n\nIf we don’t have production data because the product is new, use LLMs to generate both test queries and test data.\n\nUse realistic attributes\n\nprices that match market conditions, valid addresses with real street names, etc.\n\n\nGuidelines for using synthetic data:\n\nDiserify dataset: cover all dimensions.\nGenerate user inputs, not outputs: realistic user queries, not LLM responses.\nIncorporate real system constraints: use real data and business rules.\nVerify dimension coverage: ensure generated queries trigger intended dimensions.\nStart simple then add complexity: begin with basic queries, then introduce edge cases."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#keep-trust-in-eval-system",
-    "href": "llm/evals_hamel.html#keep-trust-in-eval-system",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Keep trust in Eval system",
-    "text": "Keep trust in Eval system\nCriteria drift\n\nEvaluation criteria evolve as you observe more model outputs.\n\nThe process of reviewing AI outputs helps articulate our own evaluation standards.\nWe need to treat evaluation criteria as living documents that evolve with our understanding.\nDifferent stakeholders may have different criteria and we need to reconcile them rather than imposing a single standard.\n\n\nTrustworthy evaluation systems\n\nHow:\n\nAs discussed: binary metrics + critiques, and measuring alignment with human judgements.\nAnd scaling correctly:\n\nstart with high human involvement\nstudy alignment patterns and focus manual evaluation on areas of disagreement\nuse strategic sampling:\n\nsample outputs that provide more information.\nmore weight on areas of disagreement.\n\nkeep regular calibration as you scale.\n\n\nScaling is not about reducing human effort but redirecting it towards the most impactful areas."
-  },
-  {
-    "objectID": "llm/evals_hamel.html#plan-experiments-not-features",
-    "href": "llm/evals_hamel.html#plan-experiments-not-features",
-    "title": "Hamel Husain Eval Notes",
-    "section": "Plan experiments not features",
-    "text": "Plan experiments not features\nTo complete reading."
-  },
-  {
-    "objectID": "llm/other_concepts.html#further-reading",
-    "href": "llm/other_concepts.html#further-reading",
-    "title": "Other useful concepts",
-    "section": "Further reading",
-    "text": "Further reading\n\nGuardrails - LangChain\nContext engineering - LangChain\nModel Context Protocol (MCP) - LangChai\nMulti-Agent - LangChain\nContinual In-Context Learning\nprompt caching\nContext Rot: When Long Context Fails"
-  },
-  {
-    "objectID": "llm/rag_parlance.html#demistifying-rag",
-    "href": "llm/rag_parlance.html#demistifying-rag",
-    "title": "RAG talks in Parlance",
-    "section": "Demistifying RAG",
-    "text": "Demistifying RAG\n\nIt is basically “stuffing text into the LLM prompt”.\n\nTypical use case: Q&A or search:\n\nAsk open-ended question.\nRetrieve content related to this question\nUse this content as context by stuffing it into the LLM prompt\nResult: the LLM response will be “grounded” in this context.\nIt is not hallucination free but it might improve the accuracy of the generated answer.\n\n\nNot necessarily related with Q&A or search.\n\nExample: labeller, retrieve positive and negative examples from dataset and present them in prompt to have the LLM label remaining following those examples."
-  },
-  {
-    "objectID": "llm/rag_parlance.html#architecture",
-    "href": "llm/rag_parlance.html#architecture",
-    "title": "RAG talks in Parlance",
-    "section": "Architecture",
-    "text": "Architecture\n\nOrchestration\nEvaluation\nPrompt\nLLM\nState (retrieval sources):\n\nFile, Search Engine, Vector Database, Database, Numpy"
-  },
-  {
-    "objectID": "llm/rag_parlance.html#evaluating-information-retrieval-systems",
-    "href": "llm/rag_parlance.html#evaluating-information-retrieval-systems",
-    "title": "RAG talks in Parlance",
-    "section": "Evaluating Information Retrieval Systems",
-    "text": "Evaluating Information Retrieval Systems\n\nQuery\nRetrieval process\nResult: ranked list of documents\nEvaluation: relevance of ranking wrt query.\n\nMetrics: binary, non-binary\nBenchmarks: TREC, MS Marco, BEIR, …\nCritical: build your own relevance dataset"
-  },
-  {
-    "objectID": "llm/rag_parlance.html#relevance-dataset",
-    "href": "llm/rag_parlance.html#relevance-dataset",
-    "title": "RAG talks in Parlance",
-    "section": "Relevance dataset",
-    "text": "Relevance dataset\n\nIf we have real queries from production, spend time labelling results of those queries.\nOtherwise, ask LLM to generate realistic synthetic queries.\nIdeally static collection: no additions while evaluating and comparing, to keep consistency.\nUsing LLM judges to evaluate result.\n\nNeed to find appropriate prompt to make it correlate with human judgement."
-  },
-  {
-    "objectID": "llm/rag_parlance.html#representational-approaches",
-    "href": "llm/rag_parlance.html#representational-approaches",
-    "title": "RAG talks in Parlance",
-    "section": "Representational approaches",
-    "text": "Representational approaches\n\nAvoid scoring all documents (e.g., if we use at web scale)\nHave indexed documents, score only subset.\nApproaches:\n\nSparse, using inverted index.\n\nTop-k retrieval algorithms: WAND, …\nSupervised (splade) or unsupervised (tf-idf)\n\nDense:\n\nVector index\nAccelerated search (approximate)\nSupervised via transf-learning (text embedding)"
-  },
-  {
-    "objectID": "llm/rag_parlance.html#dense-representations",
-    "href": "llm/rag_parlance.html#dense-representations",
-    "title": "RAG talks in Parlance",
-    "section": "Dense representations",
-    "text": "Dense representations\n\nEncoder / Transformer style:\n\nTokenize input text into discrete vocabulary.\nPretrained learned representations of each token.\nFeed into encoder. For each token get an output vector.\nPooling stage: average all vectors into a single vector representation.\n\nWeakest aspect. Diluted, low precision. Need shrinking mechanism?\n\n\nBaseline / benchmark: BM25\n\nCan avoid spectacular failures, e.g., those caused by out-of-vocabulary problems.\nBM25 can also act as a strong baseline, e.g., for long-context use case."
-  },
-  {
-    "objectID": "llm/rag_parlance.html#hybrid-approaches",
-    "href": "llm/rag_parlance.html#hybrid-approaches",
-    "title": "RAG talks in Parlance",
-    "section": "Hybrid approaches",
-    "text": "Hybrid approaches\n\nDense + Sparse representations: overcome fixed vocabulary issues."
-  },
-  {
-    "objectID": "llm/rag_parlance.html#chunking",
-    "href": "llm/rag_parlance.html#chunking",
-    "title": "RAG talks in Parlance",
-    "section": "Chunking",
-    "text": "Chunking\n\nDense representations should not use texts with more than 256 tokens for high precision search (maybe it’s ok for other applications like classification)\n\nBecause they haven’t been trained on them.\nTopic drifts with longer texts.\n\nYou need to chunk if longer than 256 tokens\n\nbut no need to do it on a per-row basis, if you have right stack.\nwe can index multiple vectors per row.\navoid repeating same metadata."
-  },
-  {
-    "objectID": "llm/rag_parlance.html#other-considerations",
-    "href": "llm/rag_parlance.html#other-considerations",
-    "title": "RAG talks in Parlance",
-    "section": "Other considerations",
-    "text": "Other considerations\n\nCombining GBDT (Gradient-Boosted Decision Trees) with neural features is quite effective.\n\nGBDT produces sparse vectors, one feature per leaf in the tree\nThe feature is 1 if the input vector ends in that leaf."
-  },
-  {
-    "objectID": "llm/rag_parlance.html#faq",
-    "href": "llm/rag_parlance.html#faq",
-    "title": "RAG talks in Parlance",
-    "section": "FAQ",
-    "text": "FAQ\n\nWhat kind of metadata is useful to consider in RAG.\n\nConsider authoritative sources for this domain (e.g., doctors in health domain), rather than just “drag up Reddit text”.\nTitle and other metadata. It depends on use case.\n\nCalibration of different indices\n\ndifferent document indices are not aligned in terms of similarity scores\nhave confidence scores for how likely is the recommendation to be good\nAnswer: it is difficult. It might be a learning task, e.g., use GBDT for combining.\n\nBut then you need to train the model with built training data.\nCan use LLM for generating this data.\n\n\nEfficacy of re-rankers.\n\nThey can help, but can make the response slower.\n\nCombining similarity with interaction data\n\nIt becomes a learning to rank problem.\n\nType of interaction is used as label.\nYou can use GBT where you can include the semantic score as well as a feature.\n\n\nJason Liu’s blog on value of generating structured summaries and reports for decision makers instead of RAG\nFuture progress\n\nUse models with larger vocabularies, beyond BERT trained on 2018 data\nNot excited about using longer contexts because they provide lower precision.\n\nQuery search expansion, query understanding\n\nBM25 + reranker\n\nUse case with lots of jargon and out-of-vocabulary words\n\nNeed to use hybrid approach (keyword search + embedding), since embedding is poor at that.\nSometimes we need to ignore the embedding altogether.\n\nColbert\n\nYes with pretraining or longer vocabularies."
-  },
-  {
-    "objectID": "llm/rag_parlance.html#further-reading",
-    "href": "llm/rag_parlance.html#further-reading",
-    "title": "RAG talks in Parlance",
-    "section": "Further reading",
-    "text": "Further reading\n\nSystematically improving RAG applications\nBeyond the basics of Retrieval for Augmenting Generation\nModern Information Retrieval Evaluation in the The RAG Era\nevaluating RAGs\n6 RAG Evals\nRAG is dead\nRAG is not dead\nLangChain’s retrieval"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Data Science Raw Notes",
     "section": "",
-    "text": "About this site"
+    "text": "Langchain courses\nEvaluation - Hamel Husain notes\nRAG - Parlance Education\nFine Tuning - Parlance Education\nOther Concepts"
+  },
+  {
+    "objectID": "index.html#llm",
+    "href": "index.html#llm",
+    "title": "Data Science Raw Notes",
+    "section": "",
+    "text": "Langchain courses\nEvaluation - Hamel Husain notes\nRAG - Parlance Education\nFine Tuning - Parlance Education\nOther Concepts"
+  },
+  {
+    "objectID": "index.html#analysis",
+    "href": "index.html#analysis",
+    "title": "Data Science Raw Notes",
+    "section": "Analysis",
+    "text": "Analysis\n\nA/B Testing\nError Analysis"
+  },
+  {
+    "objectID": "code/llm/fine_tuning_openai.html",
+    "href": "code/llm/fine_tuning_openai.html",
+    "title": ".",
+    "section": "",
+    "text": "from dotenv import load_dotenv\n\n# Load environment variables from .env\nload_dotenv()\n\nTrue\n\n\n\nimport langsmith\nimport json\n\nclient = langsmith.Client()\n\ndef craft_messages(input, output) -&gt; list[dict]:\n    out = json.dumps(output[\"clusters\"])\n    return [{\"role\": \"user\", \"content\": \"Extract triplets from the following sentence:\\n\\n\" + input[\"sentence\"]},\n            {\"role\": \"assistant\", \"content\": out}]\n\n\nimport itertools\ndata = [\n    craft_messages(example.inputs, example.outputs) for example in itertools.islice(client.list_examples(dataset_name=\"Carb-IE-train\"), 50)\n    ]\n\n\n---------------------------------------------------------------------------\nLangSmithNotFoundError                    Traceback (most recent call last)\nCell In[3], line 3\n      1 import itertools\n      2 data = [\n----&gt; 3     craft_messages(example.inputs, example.outputs) for example in itertools.islice(client.list_examples(dataset_name=\"Carb-IE-train\"), 50)\n      4     ]\n\nFile ~/miniconda3/envs/lg2/lib/python3.13/site-packages/langsmith/client.py:5466, in Client.list_examples(self, dataset_id, dataset_name, example_ids, as_of, splits, inline_s3_urls, offset, limit, metadata, filter, include_attachments, **kwargs)\n   5464     params[\"dataset\"] = dataset_id\n   5465 elif dataset_name is not None:\n-&gt; 5466     dataset_id = self.read_dataset(dataset_name=dataset_name).id\n   5467     params[\"dataset\"] = dataset_id\n   5468 else:\n\nFile ~/miniconda3/envs/lg2/lib/python3.13/site-packages/langsmith/utils.py:147, in xor_args.&lt;locals&gt;.decorator.&lt;locals&gt;.wrapper(*args, **kwargs)\n    141     invalid_group_names = [\", \".join(arg_groups[i]) for i in invalid_groups]\n    142     raise ValueError(\n    143         \"Exactly one argument in each of the following\"\n    144         \" groups must be defined:\"\n    145         f\" {', '.join(invalid_group_names)}\"\n    146     )\n--&gt; 147 return func(*args, **kwargs)\n\nFile ~/miniconda3/envs/lg2/lib/python3.13/site-packages/langsmith/client.py:3948, in Client.read_dataset(self, dataset_name, dataset_id)\n   3946 if isinstance(result, list):\n   3947     if len(result) == 0:\n-&gt; 3948         raise ls_utils.LangSmithNotFoundError(\n   3949             f\"Dataset {dataset_name} not found\"\n   3950         )\n   3951     return ls_schemas.Dataset(\n   3952         **result[0],\n   3953         _host_url=self._host_url,\n   3954         _tenant_id=self._get_optional_tenant_id(),\n   3955     )\n   3956 return ls_schemas.Dataset(\n   3957     **result,\n   3958     _host_url=self._host_url,\n   3959     _tenant_id=self._get_optional_tenant_id(),\n   3960 )\n\nLangSmithNotFoundError: Dataset Carb-IE-train not found"
   }
 ]
