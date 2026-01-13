@@ -1,10 +1,24 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Data Science Raw Notes",
     "section": "",
-    "text": "About this site"
+    "text": "Langchain courses\nEvaluation - Hamel Husain notes\nRAG - Parlance Education\nFine Tuning - Parlance Education\nOther Concepts"
+  },
+  {
+    "objectID": "index.html#llm",
+    "href": "index.html#llm",
+    "title": "Data Science Raw Notes",
+    "section": "",
+    "text": "Langchain courses\nEvaluation - Hamel Husain notes\nRAG - Parlance Education\nFine Tuning - Parlance Education\nOther Concepts"
+  },
+  {
+    "objectID": "index.html#analysis",
+    "href": "index.html#analysis",
+    "title": "Data Science Raw Notes",
+    "section": "Analysis",
+    "text": "Analysis\n\nA/B Testing\nError Analysis"
   },
   {
     "objectID": "llm/langchain_courses.html#custom-reducers",
@@ -315,6 +329,13 @@
     "text": "Using assistants\nthread = await client.threads.create()\nasync for chunk in client.runs.stream(\n    thread[\"thread_id\"],\n    assistant_id,\n    input={\"messages\": [HumanMessage(content=\"my message\")]},\n    stream_mode=\"values\",\n):\n    if chunk.event == \"values\":\n        state = chunk.data\n        convert_to_messages(state[\"messages\"])[-1].pretty_print()\n\nNotes:\n\nwhen using graph.stream, we get an event dict where event[\"messages] is a list of Message objects (e.g., HumanMessage, AIMessage, etc.) on which we can call pretty_print, i.e., event[\"messages\"][-1].pretty_print()\nwhen using client.runs.stream, we get a chunk object, and the data is in chunk.data. Furthermore, chunk.data[\"messages\"] is a list of dicts on which cannot call pretty_print() directly, so we need to convert them first using convert_to_messages.\n\n\nfor event in graph.stream(None, to_replay.config, stream_mode=\"values\"):\n    event['messages'][-1].pretty_print()"
   },
   {
+    "objectID": "llm/fine_tuning.html#further-reading",
+    "href": "llm/fine_tuning.html#further-reading",
+    "title": "Fine Tuning",
+    "section": "Further reading",
+    "text": "Further reading\n\nWhy fine-tuning is dead"
+  },
+  {
     "objectID": "llm/evals_hamel.html#iterating-quickly-success",
     "href": "llm/evals_hamel.html#iterating-quickly-success",
     "title": "Hamel Husain Eval Notes",
@@ -434,17 +455,73 @@
     "text": "Keep trust in Eval system\nCriteria drift\n\nEvaluation criteria evolve as you observe more model outputs.\n\nThe process of reviewing AI outputs helps articulate our own evaluation standards.\nWe need to treat evaluation criteria as living documents that evolve with our understanding.\nDifferent stakeholders may have different criteria and we need to reconcile them rather than imposing a single standard.\n\n\nTrustworthy evaluation systems\n\nHow:\n\nAs discussed: binary metrics + critiques, and measuring alignment with human judgements.\nAnd scaling correctly:\n\nstart with high human involvement\nstudy alignment patterns and focus manual evaluation on areas of disagreement\nuse strategic sampling:\n\nsample outputs that provide more information.\nmore weight on areas of disagreement.\n\nkeep regular calibration as you scale.\n\n\nScaling is not about reducing human effort but redirecting it towards the most impactful areas."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Data Science Raw Notes",
-    "section": "",
-    "text": "Langchain courses\nHamel Husain Eval"
+    "objectID": "llm/evals_hamel.html#plan-experiments-not-features",
+    "href": "llm/evals_hamel.html#plan-experiments-not-features",
+    "title": "Hamel Husain Eval Notes",
+    "section": "Plan experiments not features",
+    "text": "Plan experiments not features\nTo complete reading."
   },
   {
-    "objectID": "index.html#llm",
-    "href": "index.html#llm",
-    "title": "Data Science Raw Notes",
+    "objectID": "llm/other_concepts.html#further-reading",
+    "href": "llm/other_concepts.html#further-reading",
+    "title": "Other useful concepts",
+    "section": "Further reading",
+    "text": "Further reading\n\nContinual In-Context Learning\nprompt caching"
+  },
+  {
+    "objectID": "llm/rag_parlance.html#demistifying-rag",
+    "href": "llm/rag_parlance.html#demistifying-rag",
+    "title": "RAG talks in Parlance",
+    "section": "Demistifying RAG",
+    "text": "Demistifying RAG\n\nIt is basically “stuffing text into the LLM prompt”.\n\nTypical use case: Q&A or search:\n\nAsk open-ended question.\nRetrieve content related to this question\nUse this content as context by stuffing it into the LLM prompt\nResult: the LLM response will be “grounded” in this context.\nIt is not hallucination free but it might improve the accuracy of the generated answer.\n\n\nNot necessarily related with Q&A or search.\n\nExample: labeller, retrieve positive and negative examples from dataset and present them in prompt to have the LLM label remaining following those examples."
+  },
+  {
+    "objectID": "llm/rag_parlance.html#architecture",
+    "href": "llm/rag_parlance.html#architecture",
+    "title": "RAG talks in Parlance",
+    "section": "Architecture",
+    "text": "Architecture\n\nOrchestration\nEvaluation\nPrompt\nLLM\nState (retrieval sources):\n\nFile, Search Engine, Vector Database, Database, Numpy"
+  },
+  {
+    "objectID": "llm/rag_parlance.html#evaluating-information-retrieval-systems",
+    "href": "llm/rag_parlance.html#evaluating-information-retrieval-systems",
+    "title": "RAG talks in Parlance",
+    "section": "Evaluating Information Retrieval Systems",
+    "text": "Evaluating Information Retrieval Systems\n\nQuery\nRetrieval process\nResult: ranked list of documents\nEvaluation: relevance of ranking wrt query.\n\nMetrics: binary, non-binary\nBenchmarks: TREC, MS Marco, BEIR, …\nCritical: build your own relevance dataset"
+  },
+  {
+    "objectID": "llm/rag_parlance.html#relevance-dataset",
+    "href": "llm/rag_parlance.html#relevance-dataset",
+    "title": "RAG talks in Parlance",
+    "section": "Relevance dataset",
+    "text": "Relevance dataset\n\nIf we have real queries from production, spend time labelling results of those queries.\nOtherwise, ask LLM to generate realistic synthetic queries.\nIdeally static collection: no additions while evaluating and comparing, to keep consistency.\nUsing LLM judges to evaluate result.\n\nNeed to find appropriate prompt to make it correlate with human judgement."
+  },
+  {
+    "objectID": "llm/rag_parlance.html#representational-approaches",
+    "href": "llm/rag_parlance.html#representational-approaches",
+    "title": "RAG talks in Parlance",
+    "section": "Representational approaches",
+    "text": "Representational approaches\n\nAvoid scoring all documents (e.g., if we use at web scale)\nHave indexed documents, score only subset.\nApproaches:\n\nSparse, using inverted index.\n\nTop-k retrieval algorithms: WAND, …\nSupervised (splade) or unsupervised (tf-idf)\n\nDense:\n\nVector index\nAccelerated search (approximate)\nSupervised via transf-learning (text embedding)"
+  },
+  {
+    "objectID": "llm/rag_parlance.html#dense-representations",
+    "href": "llm/rag_parlance.html#dense-representations",
+    "title": "RAG talks in Parlance",
+    "section": "Dense representations",
+    "text": "Dense representations\n\nEncoder / Transformer style:\n\nTokenize input text into discrete vocabulary.\nPretrained learned representations of each token.\nFeed into encoder. For each token get an output vector.\nPooling stage: average all vectors into a single vector representation.\n\nWeakest aspect. Diluted, low precision. Need shrinking mechanism?\n\n\nBaseline / benchmark: BM25"
+  },
+  {
+    "objectID": "llm/rag_parlance.html#further-reading",
+    "href": "llm/rag_parlance.html#further-reading",
+    "title": "RAG talks in Parlance",
+    "section": "Further reading",
+    "text": "Further reading\n\nWhy fine-tuning is dead\nSystematically improving RAG applications\nBeyond the basics of Retrieval for Augmenting Generation\nModern Information Retrieval Evaluation in the The RAG Era\nContext Rot: When Long Context Fails\nevaluating RAGs\n6 RAG Evals\nRAG is dead\nRAG is not dead"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
     "section": "",
-    "text": "Langchain courses\nHamel Husain Eval"
+    "text": "About this site"
   }
 ]
