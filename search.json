@@ -333,7 +333,7 @@
     "href": "llm/fine_tuning.html#further-reading",
     "title": "Fine Tuning",
     "section": "Further reading",
-    "text": "Further reading\n\nWhy fine-tuning is dead"
+    "text": "Further reading\n\nIs Fine-Tuning Still Valuable?\nWhen and Why to Fine Tune\nFrom Prompt to Model: Fine-tuning when you’ve already deployed LLMs in prod\nDeploying Fine-Tuned Models\nFine Tuning OpenAI Models - Best Practices\nFine-Tuning with Axolotl\nWhy fine-tuning is dead\nFine-Tuning Llama 3 and Using It Locally: A Step-by-Step Guide\nRAG vs Fine-Tuning: A Comprehensive Tutorial with Practical Examples\nLoRA\nSupervised fine-tuning - OpenAI\n\nModel optimization - OpenAI\n\nUsing LangSmith to Support Fine-tuning\n\nColab’s notebook"
   },
   {
     "objectID": "llm/evals_hamel.html#iterating-quickly-success",
@@ -466,7 +466,7 @@
     "href": "llm/other_concepts.html#further-reading",
     "title": "Other useful concepts",
     "section": "Further reading",
-    "text": "Further reading\n\nContinual In-Context Learning\nprompt caching"
+    "text": "Further reading\n\nGuardrails - LangChain\nContext engineering - LangChain\nModel Context Protocol (MCP) - LangChai\nMulti-Agent - LangChain\nContinual In-Context Learning\nprompt caching\nContext Rot: When Long Context Fails"
   },
   {
     "objectID": "llm/rag_parlance.html#demistifying-rag",
@@ -508,14 +508,42 @@
     "href": "llm/rag_parlance.html#dense-representations",
     "title": "RAG talks in Parlance",
     "section": "Dense representations",
-    "text": "Dense representations\n\nEncoder / Transformer style:\n\nTokenize input text into discrete vocabulary.\nPretrained learned representations of each token.\nFeed into encoder. For each token get an output vector.\nPooling stage: average all vectors into a single vector representation.\n\nWeakest aspect. Diluted, low precision. Need shrinking mechanism?\n\n\nBaseline / benchmark: BM25"
+    "text": "Dense representations\n\nEncoder / Transformer style:\n\nTokenize input text into discrete vocabulary.\nPretrained learned representations of each token.\nFeed into encoder. For each token get an output vector.\nPooling stage: average all vectors into a single vector representation.\n\nWeakest aspect. Diluted, low precision. Need shrinking mechanism?\n\n\nBaseline / benchmark: BM25\n\nCan avoid spectacular failures, e.g., those caused by out-of-vocabulary problems.\nBM25 can also act as a strong baseline, e.g., for long-context use case."
+  },
+  {
+    "objectID": "llm/rag_parlance.html#hybrid-approaches",
+    "href": "llm/rag_parlance.html#hybrid-approaches",
+    "title": "RAG talks in Parlance",
+    "section": "Hybrid approaches",
+    "text": "Hybrid approaches\n\nDense + Sparse representations: overcome fixed vocabulary issues."
+  },
+  {
+    "objectID": "llm/rag_parlance.html#chunking",
+    "href": "llm/rag_parlance.html#chunking",
+    "title": "RAG talks in Parlance",
+    "section": "Chunking",
+    "text": "Chunking\n\nDense representations should not use texts with more than 256 tokens for high precision search (maybe it’s ok for other applications like classification)\n\nBecause they haven’t been trained on them.\nTopic drifts with longer texts.\n\nYou need to chunk if longer than 256 tokens\n\nbut no need to do it on a per-row basis, if you have right stack.\nwe can index multiple vectors per row.\navoid repeating same metadata."
+  },
+  {
+    "objectID": "llm/rag_parlance.html#other-considerations",
+    "href": "llm/rag_parlance.html#other-considerations",
+    "title": "RAG talks in Parlance",
+    "section": "Other considerations",
+    "text": "Other considerations\n\nCombining GBDT (Gradient-Boosted Decision Trees) with neural features is quite effective.\n\nGBDT produces sparse vectors, one feature per leaf in the tree\nThe feature is 1 if the input vector ends in that leaf."
+  },
+  {
+    "objectID": "llm/rag_parlance.html#faq",
+    "href": "llm/rag_parlance.html#faq",
+    "title": "RAG talks in Parlance",
+    "section": "FAQ",
+    "text": "FAQ\n\nWhat kind of metadata is useful to consider in RAG.\n\nConsider authoritative sources for this domain (e.g., doctors in health domain), rather than just “drag up Reddit text”.\nTitle and other metadata. It depends on use case.\n\nCalibration of different indices\n\ndifferent document indices are not aligned in terms of similarity scores\nhave confidence scores for how likely is the recommendation to be good\nAnswer: it is difficult. It might be a learning task, e.g., use GBDT for combining.\n\nBut then you need to train the model with built training data.\nCan use LLM for generating this data.\n\n\nEfficacy of re-rankers.\n\nThey can help, but can make the response slower.\n\nCombining similarity with interaction data\n\nIt becomes a learning to rank problem.\n\nType of interaction is used as label.\nYou can use GBT where you can include the semantic score as well as a feature.\n\n\nJason Liu’s blog on value of generating structured summaries and reports for decision makers instead of RAG\nFuture progress\n\nUse models with larger vocabularies, beyond BERT trained on 2018 data\nNot excited about using longer contexts because they provide lower precision.\n\nQuery search expansion, query understanding\n\nBM25 + reranker\n\nUse case with lots of jargon and out-of-vocabulary words\n\nNeed to use hybrid approach (keyword search + embedding), since embedding is poor at that.\nSometimes we need to ignore the embedding altogether.\n\nColbert\n\nYes with pretraining or longer vocabularies."
   },
   {
     "objectID": "llm/rag_parlance.html#further-reading",
     "href": "llm/rag_parlance.html#further-reading",
     "title": "RAG talks in Parlance",
     "section": "Further reading",
-    "text": "Further reading\n\nWhy fine-tuning is dead\nSystematically improving RAG applications\nBeyond the basics of Retrieval for Augmenting Generation\nModern Information Retrieval Evaluation in the The RAG Era\nContext Rot: When Long Context Fails\nevaluating RAGs\n6 RAG Evals\nRAG is dead\nRAG is not dead"
+    "text": "Further reading\n\nSystematically improving RAG applications\nBeyond the basics of Retrieval for Augmenting Generation\nModern Information Retrieval Evaluation in the The RAG Era\nevaluating RAGs\n6 RAG Evals\nRAG is dead\nRAG is not dead\nLangChain’s retrieval"
   },
   {
     "objectID": "about.html",

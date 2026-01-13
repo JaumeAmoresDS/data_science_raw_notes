@@ -237,21 +237,107 @@ Jaume Amores
 <li>Weakest aspect. Diluted, low precision. Need shrinking mechanism?</li>
 </ul></li>
 </ul></li>
-<li>Baseline / benchmark: BM25</li>
+<li>Baseline / benchmark: BM25
+<ul>
+<li>Can avoid spectacular failures, e.g., those caused by out-of-vocabulary problems.</li>
+<li>BM25 can also act as a strong baseline, e.g., for long-context use case.</li>
+</ul></li>
+</ul>
+</section>
+<section id="hybrid-approaches" class="slide level2">
+<h2>Hybrid approaches</h2>
+<ul>
+<li>Dense + Sparse representations: overcome fixed vocabulary issues.</li>
+</ul>
+</section>
+<section id="chunking" class="slide level2">
+<h2>Chunking</h2>
+<ul>
+<li>Dense representations should not use texts with more than 256 tokens for high precision search (maybe it’s ok for other applications like classification)
+<ul>
+<li>Because they haven’t been trained on them.</li>
+<li>Topic drifts with longer texts.</li>
+</ul></li>
+<li>You need to chunk if longer than 256 tokens
+<ul>
+<li>but no need to do it on a per-row basis, if you have right stack.</li>
+<li>we can index multiple vectors per row.</li>
+<li>avoid repeating same metadata.</li>
+</ul></li>
+</ul>
+</section>
+<section id="other-considerations" class="slide level2">
+<h2>Other considerations</h2>
+<ul>
+<li>Combining GBDT (Gradient-Boosted Decision Trees) with neural features is quite effective.
+<ul>
+<li>GBDT produces sparse vectors, one feature per leaf in the tree</li>
+<li>The feature is 1 if the input vector ends in that leaf.</li>
+</ul></li>
+</ul>
+</section>
+<section id="faq" class="slide level2">
+<h2>FAQ</h2>
+<ul>
+<li>What kind of metadata is useful to consider in RAG.
+<ul>
+<li>Consider authoritative sources for this domain (e.g., doctors in health domain), rather than just “drag up Reddit text”.</li>
+<li>Title and other metadata. It depends on use case.</li>
+</ul></li>
+<li>Calibration of different indices
+<ul>
+<li>different document indices are not aligned in terms of similarity scores</li>
+<li>have confidence scores for how likely is the recommendation to be good</li>
+<li>Answer: it is difficult. It might be a learning task, e.g., use GBDT for combining.
+<ul>
+<li>But then you need to train the model with built training data.</li>
+<li>Can use LLM for generating this data.</li>
+</ul></li>
+</ul></li>
+<li>Efficacy of re-rankers.
+<ul>
+<li>They can help, but can make the response slower.</li>
+</ul></li>
+<li>Combining similarity with interaction data
+<ul>
+<li>It becomes a learning to rank problem.
+<ul>
+<li>Type of interaction is used as label.</li>
+<li>You can use GBT where you can include the semantic score as well as a feature.</li>
+</ul></li>
+</ul></li>
+<li>Jason Liu’s blog on value of generating structured summaries and reports for decision makers instead of RAG</li>
+<li>Future progress
+<ul>
+<li>Use models with larger vocabularies, beyond BERT trained on 2018 data</li>
+<li>Not excited about using longer contexts because they provide lower precision.</li>
+</ul></li>
+<li>Query search expansion, query understanding
+<ul>
+<li>BM25 + reranker</li>
+</ul></li>
+<li>Use case with lots of jargon and out-of-vocabulary words
+<ul>
+<li>Need to use hybrid approach (keyword search + embedding), since embedding is poor at that.</li>
+<li>Sometimes we need to ignore the embedding altogether.</li>
+</ul></li>
+<li>Colbert
+<ul>
+<li>Yes with pretraining or longer vocabularies.</li>
+</ul></li>
 </ul>
 </section>
 <section id="further-reading" class="slide level2">
 <h2>Further reading</h2>
 <ul>
-<li><a href="https://www.youtube.com/watch?v=h1c_jmk97Ss">Why fine-tuning is dead</a></li>
 <li><a href="https://www.youtube.com/watch?v=RrDBV6odPKo">Systematically improving RAG applications</a></li>
 <li><a href="https://www.youtube.com/watch?v=0nA5QG3087g">Beyond the basics of Retrieval for Augmenting Generation</a></li>
 <li><a href="https://www.youtube.com/watch?v=Trps2swgeOg">Modern Information Retrieval Evaluation in the The RAG Era</a></li>
-<li><a href="https://www.youtube.com/watch?v=3s_N60u0jEY">Context Rot: When Long Context Fails</a></li>
 <li><a href="https://jxnl.github.io/blog/writing/2024/02/28/levels-of-complexity-rag-applications/">evaluating RAGs</a></li>
 <li><a href="https://jxnl.co/writing/2025/05/19/there-are-only-6-rag-evals/">6 RAG Evals</a></li>
 <li><a href="https://pashpashpash.substack.com/p/why-i-no-longer-recommend-rag-for">RAG is dead</a></li>
 <li><a href="https://hamel.dev/notes/llm/rag/not_dead.html">RAG is not dead</a></li>
+<li><a href="https://docs.langchain.com/oss/python/langchain/retrieval">LangChain’s retrieval</a></li>
 </ul>
 
 
