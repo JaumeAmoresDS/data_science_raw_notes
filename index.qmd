@@ -5,4 +5,12 @@ title: "Data Science Raw Notes"
 ## LLM
 
 - [Langchain courses](llm/langchain_courses.ipynb)
-- [Hamel Husain Eval](llm/evals_hamel.ipynb)
+- [Evaluation - Hamel Husain notes](llm/evals_hamel.ipynb)
+- [RAG - Parlance Education](llm/rag_parlance.ipynb)
+- [Fine Tuning - Parlance Education](llm/fine_tuning.ipynb)
+- [Other Concepts](llm/other_concepts.ipynb)
+
+## Analysis
+
+- [A/B Testing](analysis/ab_testing.ipynb)
+- [Error Analysis](analysis/error_analysis.ipynb)
