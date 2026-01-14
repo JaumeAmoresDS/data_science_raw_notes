@@ -81,14 +81,28 @@
     "href": "llm/rag_parlance.html#further-reading",
     "title": "RAG talks in Parlance",
     "section": "Further reading",
-    "text": "Further reading\n\nSystematically improving RAG applications\nBeyond the basics of Retrieval for Augmenting Generation\nModern Information Retrieval Evaluation in the The RAG Era\nevaluating RAGs\n6 RAG Evals\nRAG is dead\nRAG is not dead\nLangChain’s retrieval\nOpenAI’s retrieval"
+    "text": "Further reading\n\nSystematically improving RAG applications\nBeyond the basics of Retrieval for Augmenting Generation\nModern Information Retrieval Evaluation in the The RAG Era\nevaluating RAGs\n6 RAG Evals\nRAG is dead\nRAG is not dead\nLangChain’s retrieval\nOpenAI’s retrieval\nRAG Theoretical concepts\nBuilding and Evaluating Advanced RAG Applications - DeepLearning.AI course"
   },
   {
     "objectID": "llm/other_concepts.html#further-reading",
     "href": "llm/other_concepts.html#further-reading",
     "title": "Other useful concepts",
     "section": "Further reading",
-    "text": "Further reading\n\nGuardrails - LangChain\nContext engineering - LangChain\nModel Context Protocol (MCP) - LangChai\nMulti-Agent - LangChain\nContinual In-Context Learning\nprompt caching\nContext Rot: When Long Context Fails"
+    "text": "Further reading\nGuardrails\n\nGuardrails - LangChain\nGuardrails - DeepLearning.AI course\nEssential Guide to LLM Guardrails: Llama Guard, NeMo - Medium post\nHow to implement LLM guardrails - OpenAI cookbook\n\nContext engineering\n\nContext engineering - LangChain\nContext Rot: When Long Context Fails\nContinual In-Context Learning\n\nMCP\n\nModel Context Protocol (MCP) - LangChai\n\nMultiAgent\n\nMulti-Agent - LangChain\n\nPrompt caching & prompt engineering\n\nprompt caching\nPrompt Engineering - Parlance Education\nPrompt Engineering - DeepLearning.AI course\nBuilding resilient prompts using an evaluation flywheel - OpenAI cookbook\nPrompt baking\n\nFact-checker\n\nBuild your own content fact-checker with OpenAI gpt-oss-120B, Cerebras, and Parallel - OpenAI cookbook\n\nInterpretability\n\nInterpretability"
+  },
+  {
+    "objectID": "llm/other_concepts.html#full-courses",
+    "href": "llm/other_concepts.html#full-courses",
+    "title": "Other useful concepts",
+    "section": "Full courses",
+    "text": "Full courses\n\nLLM Course - Maxime Labonne"
+  },
+  {
+    "objectID": "llm/other_concepts.html#other-material",
+    "href": "llm/other_concepts.html#other-material",
+    "title": "Other useful concepts",
+    "section": "Other material",
+    "text": "Other material\n\nOpenAI cookbooks"
   },
   {
     "objectID": "llm/other_concepts.html#investigate",
@@ -250,6 +264,83 @@
     "title": "Fine Tuning",
     "section": "Fine-tuning vs others complete guide",
     "text": "Fine-tuning vs others complete guide\nPossibilities along two axis: - Complexity / Cost dimension (higher to lower): - From scratch training - Reinforcement Learning from Human Feedback - Fine Tuning, Retrieval Assisted Generation =&gt; Problems Addressed dimension: Form problems - Fine Tuning, Factual Problems - RAG - Static / Dynamic Example Selection - Manual / Automatic Prompt Tuning\n\nFine tuning is good at:\n\nLearning the style or form of language.\nExamples:\n\nPure autoregressive model on Q & A, since there’s plenty of Q&A data.\nPure autoregressive model on instruction following, since there’s plenty of data.\nImitate style, e.g., Shakespeare, since there is lot of training material. Also, legal jargon, claim responses\nImitate structure / format, like resumes.\n\n\nIt is not good at:\n\nLearning new concepts that do not exist in the base knowledge of the foundational model.\nExample:\n\nReplace Romeo with Bob in a set of texts and fine-tune. See if it forgets association of Romeo with Juliet and learns that it is Bob who was with Juliet. Fails because the Romeo concept is ingrained in the base knowledge.\nAnswer questions like “who said to be or not to be” after fine-tuning on set of Shakespeare works.\n\nBetter use search engine (RAG) to retrieve those answers and inject them in prompt for LLM.\nQuestion: what does LLM add here, if the search engine is already finding relevant answers? Remove FP?\n\n\n\nFine tuning is for form, not facts"
+  },
+  {
+    "objectID": "llm/fine_tuning.html#fine-tuning---openai-example",
+    "href": "llm/fine_tuning.html#fine-tuning---openai-example",
+    "title": "Fine Tuning",
+    "section": "Fine-tuning - OpenAI example",
+    "text": "Fine-tuning - OpenAI example\ncolab\n\nTransform message format from LangSmith to OpenAI: python     [example.inputs, example.outputs for example in client.list_examples (dataset_name=name_dataset)]     example.inputs[\"sentence\"] # string     example.outputs[\"cluster\"] # dictionary: text_dict = json.dumps(example.outputs[\"cluster\"])     open_ai_format = [         {\"role\": \"user\", \"content\": \"...\" + sentence},         {\"role\": \"assistant\", \"content\": text_dict}     ]     data = [open_ai_format(in,out) for ...]\nWrite into binary file:\n\nbinary_file = BytesIO()\nfor m in data:\n    binary_file.write (json.dumps({\"messages\": m}) + \"\\n\")\ntraining_file=openai.File.create (file=binary_file, purpose=\"fine-tune\")\n\nTrain: python     job = openai.FineTuningJob.create (training_file=training_file.id, model=\"gpt-3.5-turbo\")     while True:         ftj = openai.FineTuningJob.retrieve (job.id)         if ftj.fine_tuned_model is None:             time.sleep(10)         else:             break\nFine-Tuning chain: ```python prompt = prompts.ChatPromptTemplate.from_messages( [ (“human”, “extract triplets from {sentence}”) ] ) llm = chat_models.ChatOpenAI(model=ftj.fine_tuned_model, temperature=0) fine_tuned_chain = prompt | llm\n# later we’ll do: results = await client.arun_on_dataset ( validation_dataset_name, # here is where the examples with format example.inputs[“sentence”] are taken from, and this sentence field is used by the prompt template to get triplets fine_tuned_chain, evaluation=config, # we will build a config object from an evaluation chain below ) ```\nEvaluation chain:\n\neval_prompt for model: you are an evaluator…\nreasoning capability ontop of evaluation score: commit_grade function, defined through a dictionary schema:\ntransforming obtained reasoning text into structured dict through normalize_grade function\n\n    eval_chain = (\n        eval_prompt # this is where we obtain a score, by asking it to the following model in the chain\n        | ChatOpenAI (model=\"gpt-4\", temperature=0).bind (functions=[commit_grade_schema]) # this is where we obtain a reasoning in addition to a score\n        | normalize_grade # this is where we get a structured output\n    )\nEvaluator class: ```python class EvaluateTriplets (StringEvaluator): … def _evaluate_strings ( self, *, prediction, # … string fields used below in input dict **kwargs, ): callbacks = kwargs.get(“callbacks”) return eval_chain.invoke ( {“prediction”: prediction, “reference”: reference, “input”: input}, {“callbacks”: callbacks} )\n  config = smith.RunEvalConfig (custom_evaluators=[EvaluateTriplets()])\n```\nComparison vs few-shot examples.\n\nDifferences:\n\nprompt: in addition to current sentence to be transformed into triplet, it includes few examples of inputs and desired outputs, using partials\nmodel: pre-trained (not fine-tuned) chat gpt model\n\n\n\nfor i in example:\n    messages.extend([\n        (\"human\", \"... {input_%d}\"%i),\n        (\"ai\", \"{output_%d}\"%i),\n    ])\n    partial[\"input_%d\" %i] = first_5[i].inputs[\"sentence\"]\n    partial[\"output_%d\" %i] = json.dumps(first_5[i].outputs[\"clusters\"])\nmessages.append((\"human\", \"...{sentence}\"))\nprompts.ChatPromptTemplate.from_messages (\n    messages\n).partial (\n    **partials\n)"
+  },
+  {
+    "objectID": "llm/fine_tuning.html#quantization-lora-and-qlora",
+    "href": "llm/fine_tuning.html#quantization-lora-and-qlora",
+    "title": "Fine Tuning",
+    "section": "Quantization, LoRA and qLoRA",
+    "text": "Quantization, LoRA and qLoRA\n\nModel quantization: fit model (e.g., 7B Llama) in memory.\nLoRA: efficiently fine-tune model by reducing number of parameters to be trained\nqLoRA: same, but deals with quantized models."
+  },
+  {
+    "objectID": "llm/fine_tuning.html#when-to-fine-tune-1",
+    "href": "llm/fine_tuning.html#when-to-fine-tune-1",
+    "title": "Fine Tuning",
+    "section": "When to fine-tune",
+    "text": "When to fine-tune\n\nGood for:\n\nFollow given format or tone.\nProcessing the input following specific, complex instructions.\nImprove latency (shorter prompt to process, since we don’t need to include multiple examples)\nReducing token usage (again, shorter prompt)\n\nNot good for:\n\nTeaching new knowledge.\nPerforming multiple, unrelated tasks:\n\nDo prompt-engineering or use multiple FT models.\n\nIncluding up-to-date content in responses\n\nToo much latency.\nUse RAG instead."
+  },
+  {
+    "objectID": "llm/fine_tuning.html#fine-tuning-vs-other-optimization-techniques",
+    "href": "llm/fine_tuning.html#fine-tuning-vs-other-optimization-techniques",
+    "title": "Fine Tuning",
+    "section": "Fine-tuning vs other optimization techniques",
+    "text": "Fine-tuning vs other optimization techniques\nOpenAI blog post\n\nContext optimization (what the model needs to know): move towards prompt / RAG\nLLM optimization (how the model needs to act): move towards fine-tuning.\n\nExample: say “I don’t know” more often when uncertain.\n\nWe can use both RAG and fine-tuning."
+  },
+  {
+    "objectID": "llm/fine_tuning.html#preparing-the-dataset",
+    "href": "llm/fine_tuning.html#preparing-the-dataset",
+    "title": "Fine Tuning",
+    "section": "Preparing the dataset",
+    "text": "Preparing the dataset\n\nTake the set of instructions and prompts that you found work best for the model prior to fine-tuning, and include them in every training example.\nTake at least 50-100 examples."
+  },
+  {
+    "objectID": "llm/fine_tuning.html#best-practices",
+    "href": "llm/fine_tuning.html#best-practices",
+    "title": "Fine Tuning",
+    "section": "Best Practices",
+    "text": "Best Practices\nCurate examples carefully\n\nBetter spend time on few examples of higher quality.\nConsider prompt baking: using basic prompt to generate initial examples.\nFailure Examples or cases with issues.\nConsider Balance and diversity of data.\nMulti-turn conversations: take representative examples.\nMake sure messages contain all information needed in the response."
+  },
+  {
+    "objectID": "llm/fine_tuning.html#section",
+    "href": "llm/fine_tuning.html#section",
+    "title": "Fine Tuning",
+    "section": "",
+    "text": "Iterate on hyper-parameters\n\nStart with defaults.\nIf not converging, increase the learning rate multiplier.\nIf doesn’t seem to learn, increase epochs.\nIf becomes less diverse than expected, decrease epochs by 1-2."
+  },
+  {
+    "objectID": "llm/fine_tuning.html#section-1",
+    "href": "llm/fine_tuning.html#section-1",
+    "title": "Fine Tuning",
+    "section": "",
+    "text": "Establish a baseline\n\nUse zero shot or few shot learning as baseline."
+  },
+  {
+    "objectID": "llm/fine_tuning.html#section-2",
+    "href": "llm/fine_tuning.html#section-2",
+    "title": "Fine Tuning",
+    "section": "",
+    "text": "Automate your feedback pipeline\n\nIntroduce automated evaluations for:\n\npotential problem cases\nclean up data and use as new training\n\nConsider G-Eval approach (LLM as judge with GPT4) for automated testing with scorecard."
+  },
+  {
+    "objectID": "llm/fine_tuning.html#section-3",
+    "href": "llm/fine_tuning.html#section-3",
+    "title": "Fine Tuning",
+    "section": "",
+    "text": "Optimize for latency and token efficiency\n\nGPT3.5 fine-tuned for matching accuracy of GPT4 at lower cost / latency.\nReducing instructions with fine-tuned model."
+  },
+  {
+    "objectID": "llm/fine_tuning.html#other-uses-for-fine-tuning",
+    "href": "llm/fine_tuning.html#other-uses-for-fine-tuning",
+    "title": "Fine Tuning",
+    "section": "Other uses for fine-tuning",
+    "text": "Other uses for fine-tuning\n\nimproved function calling or output parsing\nCaution: if the number of possible functions is too large it might be better to include the desired ones in the prompt."
   },
   {
     "objectID": "llm/langchain_courses.html#custom-reducers",

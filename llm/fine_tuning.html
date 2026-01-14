@@ -28,6 +28,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-534cd8e3a96973385dffff3f4709048d.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -218,6 +284,173 @@ Jaume Amores
 </ul></li>
 <li><a href="https://www.anyscale.com/blog/fine-tuning-is-for-form-not-facts?ref=blog.langchain.com">Fine tuning is for form, not facts</a></li>
 </ul>
+</section>
+<section id="fine-tuning---openai-example" class="slide level2">
+<h2>Fine-tuning - OpenAI example</h2>
+<p><a href="https://colab.research.google.com/drive/1YCyDHPSl0d_ULubCVshrP5hLqUCorr7d?usp=sharing&amp;ref=blog.langchain.com#scrollTo=A-8dt5qqtpgM">colab</a></p>
+<ul>
+<li>Transform message format from LangSmith to OpenAI: <code>python     [example.inputs, example.outputs for example in client.list_examples (dataset_name=name_dataset)]     example.inputs["sentence"] # string     example.outputs["cluster"] # dictionary: text_dict = json.dumps(example.outputs["cluster"])     open_ai_format = [         {"role": "user", "content": "..." + sentence},         {"role": "assistant", "content": text_dict}     ]     data = [open_ai_format(in,out) for ...]</code></li>
+<li>Write into binary file:</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a>binary_file <span class="op">=</span> BytesIO()</span>
+<span id="cb1-2"><a></a><span class="cf">for</span> m <span class="kw">in</span> data:</span>
+<span id="cb1-3"><a></a>    binary_file.write (json.dumps({<span class="st">"messages"</span>: m}) <span class="op">+</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb1-4"><a></a>training_file<span class="op">=</span>openai.File.create (<span class="bu">file</span><span class="op">=</span>binary_file, purpose<span class="op">=</span><span class="st">"fine-tune"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><p>Train: <code>python     job = openai.FineTuningJob.create (training_file=training_file.id, model="gpt-3.5-turbo")     while True:         ftj = openai.FineTuningJob.retrieve (job.id)         if ftj.fine_tuned_model is None:             time.sleep(10)         else:             break</code></p></li>
+<li><p>Fine-Tuning chain: ```python prompt = prompts.ChatPromptTemplate.from_messages( [ (“human”, “extract triplets from {sentence}”) ] ) llm = chat_models.ChatOpenAI(model=ftj.fine_tuned_model, temperature=0) fine_tuned_chain = prompt | llm</p>
+<p># later we’ll do: results = await client.arun_on_dataset ( validation_dataset_name, # here is where the examples with format example.inputs[“sentence”] are taken from, and this sentence field is used by the prompt template to get triplets fine_tuned_chain, evaluation=config, # we will build a config object from an evaluation chain below ) ```</p></li>
+<li><p>Evaluation chain:</p>
+<ul>
+<li><code>eval_prompt</code> for model: you are an evaluator…</li>
+<li>reasoning capability ontop of evaluation score: <code>commit_grade</code> function, defined through a dictionary schema:</li>
+<li>transforming obtained reasoning text into structured dict through <code>normalize_grade</code> function</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a></a>    eval_chain <span class="op">=</span> (</span>
+<span id="cb2-2"><a></a>        eval_prompt <span class="co"># this is where we obtain a score, by asking it to the following model in the chain</span></span>
+<span id="cb2-3"><a></a>        <span class="op">|</span> ChatOpenAI (model<span class="op">=</span><span class="st">"gpt-4"</span>, temperature<span class="op">=</span><span class="dv">0</span>).bind (functions<span class="op">=</span>[commit_grade_schema]) <span class="co"># this is where we obtain a reasoning in addition to a score</span></span>
+<span id="cb2-4"><a></a>        <span class="op">|</span> normalize_grade <span class="co"># this is where we get a structured output</span></span>
+<span id="cb2-5"><a></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Evaluator class: ```python class EvaluateTriplets (StringEvaluator): … def _evaluate_strings ( self, *, prediction, # … string fields used below in input dict **kwargs, ): callbacks = kwargs.get(“callbacks”) return eval_chain.invoke ( {“prediction”: prediction, “reference”: reference, “input”: input}, {“callbacks”: callbacks} )</p>
+<pre><code>  config = smith.RunEvalConfig (custom_evaluators=[EvaluateTriplets()])</code></pre>
+<p>```</p></li>
+<li><p>Comparison vs few-shot examples.</p>
+<ul>
+<li>Differences:
+<ul>
+<li>prompt: in addition to current sentence to be transformed into triplet, it includes few examples of inputs and desired outputs, using <code>partials</code></li>
+<li>model: pre-trained (not fine-tuned) chat gpt model</li>
+</ul></li>
+</ul></li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a></a><span class="cf">for</span> i <span class="kw">in</span> example:</span>
+<span id="cb4-2"><a></a>    messages.extend([</span>
+<span id="cb4-3"><a></a>        (<span class="st">"human"</span>, <span class="st">"... {input_</span><span class="sc">%d</span><span class="st">}"</span><span class="op">%</span>i),</span>
+<span id="cb4-4"><a></a>        (<span class="st">"ai"</span>, <span class="st">"{output_</span><span class="sc">%d</span><span class="st">}"</span><span class="op">%</span>i),</span>
+<span id="cb4-5"><a></a>    ])</span>
+<span id="cb4-6"><a></a>    partial[<span class="st">"input_</span><span class="sc">%d</span><span class="st">"</span> <span class="op">%</span>i] <span class="op">=</span> first_5[i].inputs[<span class="st">"sentence"</span>]</span>
+<span id="cb4-7"><a></a>    partial[<span class="st">"output_</span><span class="sc">%d</span><span class="st">"</span> <span class="op">%</span>i] <span class="op">=</span> json.dumps(first_5[i].outputs[<span class="st">"clusters"</span>])</span>
+<span id="cb4-8"><a></a>messages.append((<span class="st">"human"</span>, <span class="st">"...</span><span class="sc">{sentence}</span><span class="st">"</span>))</span>
+<span id="cb4-9"><a></a>prompts.ChatPromptTemplate.from_messages (</span>
+<span id="cb4-10"><a></a>    messages</span>
+<span id="cb4-11"><a></a>).partial (</span>
+<span id="cb4-12"><a></a>    <span class="op">**</span>partials</span>
+<span id="cb4-13"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="quantization-lora-and-qlora" class="slide level2">
+<h2>Quantization, LoRA and qLoRA</h2>
+<ul>
+<li>Model quantization: fit model (e.g., 7B Llama) in memory.</li>
+<li>LoRA: efficiently fine-tune model by reducing number of parameters to be trained</li>
+<li>qLoRA: same, but deals with quantized models.</li>
+</ul>
+</section></section>
+<section>
+<section id="fine-tuning-openai-models---best-practices" class="title-slide slide level1 center">
+<h1>Fine Tuning OpenAI Models - Best Practices</h1>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=Q0GSZD0Na1s">Video</a></li>
+</ul>
+</section>
+<section id="when-to-fine-tune-1" class="slide level2">
+<h2>When to fine-tune</h2>
+<ul>
+<li>Good for:
+<ul>
+<li>Follow given format or tone.</li>
+<li>Processing the input following specific, complex instructions.</li>
+<li>Improve latency (shorter prompt to process, since we don’t need to include multiple examples)</li>
+<li>Reducing token usage (again, shorter prompt)</li>
+</ul></li>
+<li>Not good for:
+<ul>
+<li>Teaching new knowledge.</li>
+<li>Performing multiple, unrelated tasks:
+<ul>
+<li>Do prompt-engineering or use multiple FT models.</li>
+</ul></li>
+<li>Including up-to-date content in responses
+<ul>
+<li>Too much latency.</li>
+<li>Use RAG instead.</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="fine-tuning-vs-other-optimization-techniques" class="slide level2">
+<h2>Fine-tuning vs other optimization techniques</h2>
+<p><a href="https://platform.openai.com/docs/guides/optimizing-llm-accuracy">OpenAI blog post</a></p>
+<ul>
+<li>Context optimization (what the model needs to know): move towards prompt / RAG</li>
+<li>LLM optimization (how the model needs to act): move towards fine-tuning.
+<ul>
+<li>Example: say “I don’t know” more often when uncertain.</li>
+</ul></li>
+<li>We can use both RAG and fine-tuning.</li>
+</ul>
+</section>
+<section id="preparing-the-dataset" class="slide level2">
+<h2>Preparing the dataset</h2>
+<ul>
+<li>Take the set of instructions and prompts that you found work best for the model prior to fine-tuning, and include them in every training example.</li>
+<li>Take at least 50-100 examples.</li>
+</ul>
+</section>
+<section id="best-practices" class="slide level2">
+<h2>Best Practices</h2>
+<h3 id="curate-examples-carefully">Curate examples carefully</h3>
+<ul>
+<li>Better spend time on few examples of higher quality.</li>
+<li>Consider prompt baking: using basic prompt to generate initial examples.</li>
+<li>Failure Examples or cases with issues.</li>
+<li>Consider Balance and diversity of data.</li>
+<li>Multi-turn conversations: take representative examples.</li>
+<li>Make sure messages contain all information needed in the response.</li>
+</ul>
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
+<h3 id="iterate-on-hyper-parameters">Iterate on hyper-parameters</h3>
+<ul>
+<li>Start with defaults.</li>
+<li>If not converging, increase the learning rate multiplier.</li>
+<li>If doesn’t seem to learn, increase epochs.</li>
+<li>If becomes less diverse than expected, decrease epochs by 1-2.</li>
+</ul>
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<h3 id="establish-a-baseline">Establish a baseline</h3>
+<ul>
+<li>Use zero shot or few shot learning as baseline.</li>
+</ul>
+</section>
+<section id="section-2" class="slide level2">
+<h2></h2>
+<h3 id="automate-your-feedback-pipeline">Automate your feedback pipeline</h3>
+<ul>
+<li>Introduce automated evaluations for:
+<ul>
+<li>potential problem cases</li>
+<li>clean up data and use as new training</li>
+</ul></li>
+<li>Consider G-Eval approach (LLM as judge with GPT4) for automated testing with scorecard.</li>
+</ul>
+</section>
+<section id="section-3" class="slide level2">
+<h2></h2>
+<h3 id="optimize-for-latency-and-token-efficiency">Optimize for latency and token efficiency</h3>
+<ul>
+<li>GPT3.5 fine-tuned for matching accuracy of GPT4 at lower cost / latency.</li>
+<li>Reducing instructions with fine-tuned model.</li>
+</ul>
+</section>
+<section id="other-uses-for-fine-tuning" class="slide level2">
+<h2>Other uses for fine-tuning</h2>
+<ul>
+<li>improved function calling or output parsing</li>
+<li>Caution: if the number of possible functions is too large it might be better to include the desired ones in the prompt.</li>
+</ul>
 </section></section>
 <section id="further-reading" class="title-slide slide level1 center">
 <h1>Further reading</h1>
@@ -226,7 +459,6 @@ Jaume Amores
 <li><a href="https://www.youtube.com/watch?v=cPn0nHFsvFg">When and Why to Fine Tune</a></li>
 <li><a href="https://www.youtube.com/watch?v=4EPZZkVrXC4">From Prompt to Model: Fine-tuning when you’ve already deployed LLMs in prod</a></li>
 <li><a href="https://www.youtube.com/watch?v=GzEcyBykkdo">Deploying Fine-Tuned Models</a></li>
-<li><a href="https://www.youtube.com/watch?v=Q0GSZD0Na1s">Fine Tuning OpenAI Models - Best Practices</a></li>
 <li><a href="https://www.youtube.com/watch?v=mmsa4wDsiy0">Fine-Tuning with Axolotl</a></li>
 <li><a href="https://www.youtube.com/watch?v=h1c_jmk97Ss">Why fine-tuning is dead</a></li>
 <li><a href="https://www.datacamp.com/tutorial/llama3-fine-tuning-locally">Fine-Tuning Llama 3 and Using It Locally: A Step-by-Step Guide</a></li>
@@ -245,6 +477,9 @@ Jaume Amores
 <ul>
 <li><a href="https://blog.langchain.com/fine-tuning-chatgpt-surpassing-gpt-4-summarization/">Demo</a></li>
 </ul></li>
+<li><a href="https://arxiv.org/abs/2305.11206?ref=blog.langchain.com">LIMA: curating small training datasets</a></li>
+<li><a href="https://cookbook.openai.com/examples/fine_tuning_direct_preference_optimization_guide">Fine-Tuning Techniques - Choosing Between SFT, DPO, and RFT (With a Guide to DPO)</a></li>
+<li><a href="https://parlance-labs.com/education/fine_tuning/daniel.html">Curating data for fine-tuning</a></li>
 </ul>
 
 
