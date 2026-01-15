@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.8.26">
 
   <meta name="author" content="Jaume Amores">
-  <title>. – Fine Tuning</title>
+  <title>. – Prompt Engineering</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -194,7 +194,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Fine Tuning</h1>
+  <h1 class="title">Prompt Engineering</h1>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -206,285 +206,158 @@ Jaume Amores
 
 </section>
 <section>
-<section id="using-langsmith-to-support-fine-tuning" class="title-slide slide level1 center">
-<h1>Using LangSmith to Support Fine-tuning</h1>
-<p><a href="https://blog.langchain.com/using-langsmith-to-support-fine-tuning-of-open-source-llms/">blog post</a></p>
+<section id="prompt-engineering---parlance-education" class="title-slide slide level1 center">
+<h1>Prompt Engineering - Parlance Education</h1>
+<p><a href="https://parlance-labs.com/education/prompt_eng/berryman.html">link</a></p>
 </section>
-<section id="scenarios" class="slide level2">
-<h2>Scenarios</h2>
+<section id="few-shot-prompting" class="slide level2">
+<h2>Few shot prompting</h2>
 <ul>
-<li>Open Source LLM + Fine-tuning can outperform foundational SOTA models (e.g., ChatGPT).</li>
-</ul>
-</section>
-<section id="when-to-fine-tune" class="slide level2">
-<h2>When to fine-tune</h2>
+<li>Basic intuition: establish a pattern
 <ul>
-<li>Two ways of learning:
-<ul>
-<li>Weights: pre-training, fine-tuning</li>
-<li>Prompting, via RAG.</li>
-</ul></li>
-<li>Analogy:
-<ul>
-<li>Fine-tuning is like studying one week in advance.</li>
-<li>Prompting is like taking exam with open notes.</li>
-</ul></li>
-<li>Not Good for:
-<ul>
-<li>Learning new knowledge. Can increase hallucinations.</li>
-</ul></li>
-<li>Good for:
-<ul>
-<li>Specialized tasks, in similar ways to RAG.
-<ul>
-<li>With many examples</li>
-</ul></li>
+<li>Establish predicted ouput from multiple example patterns (predict words ahead)</li>
 </ul></li>
 </ul>
 </section>
-<section id="when-to-fine-tune-more-analogies" class="slide level2">
-<h2>When to fine-tune, more analogies</h2>
+<section id="chain-of-thought-reasoning" class="slide level2">
+<h2>Chain of thought reasoning</h2>
 <ul>
-<li>Zero shot learning: describe task with words.</li>
-<li>Few shot learning: give few examples of solving task in prompt (e.g., via RAG or manually)</li>
-<li>Fine tuning: allow person to practice task.
+<li>In the examples provided, we include the AI response to each answer be a reasoning text. This will teach the model to use this form of reasoning for answering the final question.</li>
+<li>Advantages:
 <ul>
-<li>In applications with concrete well-defined tasks where it is possible to collect a lot of data and “practice” on it.</li>
-</ul></li>
-<li><a href="https://x.com/karpathy/status/1655994367033884672?ref=blog.langchain.com">Karpathy’s tweet</a></li>
-</ul>
-</section>
-<section id="fine-tuning-vs-others-complete-guide" class="slide level2">
-<h2>Fine-tuning vs others complete guide</h2>
-<p>Possibilities along two axis: - Complexity / Cost dimension (higher to lower): - From scratch training - Reinforcement Learning from Human Feedback - Fine Tuning, Retrieval Assisted Generation =&gt; Problems Addressed dimension: Form problems - Fine Tuning, Factual Problems - RAG - Static / Dynamic Example Selection - Manual / Automatic Prompt Tuning</p>
-<ul>
-<li>Fine tuning is good at:
-<ul>
-<li>Learning the style or form of language.</li>
-<li>Examples:
-<ul>
-<li>Pure autoregressive model on Q &amp; A, since there’s plenty of Q&amp;A data.</li>
-<li>Pure autoregressive model on instruction following, since there’s plenty of data.</li>
-<li>Imitate style, e.g., Shakespeare, since there is lot of training material. Also, legal jargon, claim responses</li>
-<li>Imitate structure / format, like resumes.</li>
-</ul></li>
-</ul></li>
-<li>It is not good at:
-<ul>
-<li>Learning new concepts that do not exist in the base knowledge of the foundational model.</li>
-<li>Example:
-<ul>
-<li>Replace Romeo with Bob in a set of texts and fine-tune. See if it forgets association of Romeo with Juliet and learns that it is Bob who was with Juliet. Fails because the <em>Romeo</em> concept is ingrained in the base knowledge.</li>
-<li>Answer questions like “who said to be or not to be” after fine-tuning on set of Shakespeare works.
-<ul>
-<li>Better use search engine (RAG) to retrieve those answers and inject them in prompt for LLM.</li>
-<li>Question: what does LLM add here, if the search engine is already finding relevant answers? Remove FP?</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li><a href="https://www.anyscale.com/blog/fine-tuning-is-for-form-not-facts?ref=blog.langchain.com">Fine tuning is for form, not facts</a></li>
-</ul>
-</section>
-<section id="fine-tuning---openai-example" class="slide level2">
-<h2>Fine-tuning - OpenAI example</h2>
-<p><a href="https://colab.research.google.com/drive/1YCyDHPSl0d_ULubCVshrP5hLqUCorr7d?usp=sharing&amp;ref=blog.langchain.com#scrollTo=A-8dt5qqtpgM">colab</a></p>
-<ul>
-<li>Transform message format from LangSmith to OpenAI: <code>python     [example.inputs, example.outputs for example in client.list_examples (dataset_name=name_dataset)]     example.inputs["sentence"] # string     example.outputs["cluster"] # dictionary: text_dict = json.dumps(example.outputs["cluster"])     open_ai_format = [         {"role": "user", "content": "..." + sentence},         {"role": "assistant", "content": text_dict}     ]     data = [open_ai_format(in,out) for ...]</code></li>
-<li>Write into binary file:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a>binary_file <span class="op">=</span> BytesIO()</span>
-<span id="cb1-2"><a></a><span class="cf">for</span> m <span class="kw">in</span> data:</span>
-<span id="cb1-3"><a></a>    binary_file.write (json.dumps({<span class="st">"messages"</span>: m}) <span class="op">+</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
-<span id="cb1-4"><a></a>training_file<span class="op">=</span>openai.File.create (<span class="bu">file</span><span class="op">=</span>binary_file, purpose<span class="op">=</span><span class="st">"fine-tune"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li><p>Train: <code>python     job = openai.FineTuningJob.create (training_file=training_file.id, model="gpt-3.5-turbo")     while True:         ftj = openai.FineTuningJob.retrieve (job.id)         if ftj.fine_tuned_model is None:             time.sleep(10)         else:             break</code></p></li>
-<li><p>Fine-Tuning chain: ```python prompt = prompts.ChatPromptTemplate.from_messages( [ (“human”, “extract triplets from {sentence}”) ] ) llm = chat_models.ChatOpenAI(model=ftj.fine_tuned_model, temperature=0) fine_tuned_chain = prompt | llm</p>
-<p># later we’ll do: results = await client.arun_on_dataset ( validation_dataset_name, # here is where the examples with format example.inputs[“sentence”] are taken from, and this sentence field is used by the prompt template to get triplets fine_tuned_chain, evaluation=config, # we will build a config object from an evaluation chain below ) ```</p></li>
-<li><p>Evaluation chain:</p>
-<ul>
-<li><code>eval_prompt</code> for model: you are an evaluator…</li>
-<li>reasoning capability ontop of evaluation score: <code>commit_grade</code> function, defined through a dictionary schema:</li>
-<li>transforming obtained reasoning text into structured dict through <code>normalize_grade</code> function</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a></a>    eval_chain <span class="op">=</span> (</span>
-<span id="cb2-2"><a></a>        eval_prompt <span class="co"># this is where we obtain a score, by asking it to the following model in the chain</span></span>
-<span id="cb2-3"><a></a>        <span class="op">|</span> ChatOpenAI (model<span class="op">=</span><span class="st">"gpt-4"</span>, temperature<span class="op">=</span><span class="dv">0</span>).bind (functions<span class="op">=</span>[commit_grade_schema]) <span class="co"># this is where we obtain a reasoning in addition to a score</span></span>
-<span id="cb2-4"><a></a>        <span class="op">|</span> normalize_grade <span class="co"># this is where we get a structured output</span></span>
-<span id="cb2-5"><a></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
-<li><p>Evaluator class: ```python class EvaluateTriplets (StringEvaluator): … def _evaluate_strings ( self, *, prediction, # … string fields used below in input dict **kwargs, ): callbacks = kwargs.get(“callbacks”) return eval_chain.invoke ( {“prediction”: prediction, “reference”: reference, “input”: input}, {“callbacks”: callbacks} )</p>
-<pre><code>  config = smith.RunEvalConfig (custom_evaluators=[EvaluateTriplets()])</code></pre>
-<p>```</p></li>
-<li><p>Comparison vs few-shot examples.</p>
-<ul>
-<li>Differences:
-<ul>
-<li>prompt: in addition to current sentence to be transformed into triplet, it includes few examples of inputs and desired outputs, using <code>partials</code></li>
-<li>model: pre-trained (not fine-tuned) chat gpt model</li>
-</ul></li>
-</ul></li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a></a><span class="cf">for</span> i <span class="kw">in</span> example:</span>
-<span id="cb4-2"><a></a>    messages.extend([</span>
-<span id="cb4-3"><a></a>        (<span class="st">"human"</span>, <span class="st">"... {input_</span><span class="sc">%d</span><span class="st">}"</span><span class="op">%</span>i),</span>
-<span id="cb4-4"><a></a>        (<span class="st">"ai"</span>, <span class="st">"{output_</span><span class="sc">%d</span><span class="st">}"</span><span class="op">%</span>i),</span>
-<span id="cb4-5"><a></a>    ])</span>
-<span id="cb4-6"><a></a>    partial[<span class="st">"input_</span><span class="sc">%d</span><span class="st">"</span> <span class="op">%</span>i] <span class="op">=</span> first_5[i].inputs[<span class="st">"sentence"</span>]</span>
-<span id="cb4-7"><a></a>    partial[<span class="st">"output_</span><span class="sc">%d</span><span class="st">"</span> <span class="op">%</span>i] <span class="op">=</span> json.dumps(first_5[i].outputs[<span class="st">"clusters"</span>])</span>
-<span id="cb4-8"><a></a>messages.append((<span class="st">"human"</span>, <span class="st">"...</span><span class="sc">{sentence}</span><span class="st">"</span>))</span>
-<span id="cb4-9"><a></a>prompts.ChatPromptTemplate.from_messages (</span>
-<span id="cb4-10"><a></a>    messages</span>
-<span id="cb4-11"><a></a>).partial (</span>
-<span id="cb4-12"><a></a>    <span class="op">**</span>partials</span>
-<span id="cb4-13"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="quantization-lora-and-qlora" class="slide level2">
-<h2>Quantization, LoRA and qLoRA</h2>
-<ul>
-<li>Model quantization: fit model (e.g., 7B Llama) in memory.</li>
-<li>LoRA: efficiently fine-tune model by reducing number of parameters to be trained</li>
-<li>qLoRA: same, but deals with quantized models.</li>
-</ul>
-</section></section>
-<section>
-<section id="fine-tuning-openai-models---best-practices" class="title-slide slide level1 center">
-<h1>Fine Tuning OpenAI Models - Best Practices</h1>
-<ul>
-<li><a href="https://www.youtube.com/watch?v=Q0GSZD0Na1s">Video</a></li>
-</ul>
-</section>
-<section id="when-to-fine-tune-1" class="slide level2">
-<h2>When to fine-tune</h2>
-<ul>
-<li>Good for:
-<ul>
-<li>Follow given format or tone.</li>
-<li>Processing the input following specific, complex instructions.</li>
-<li>Improve latency (shorter prompt to process, since we don’t need to include multiple examples)</li>
-<li>Reducing token usage (again, shorter prompt)</li>
-</ul></li>
-<li>Not good for:
-<ul>
-<li>Teaching new knowledge.</li>
-<li>Performing multiple, unrelated tasks:
-<ul>
-<li>Do prompt-engineering or use multiple FT models.</li>
-</ul></li>
-<li>Including up-to-date content in responses
-<ul>
-<li>Too much latency.</li>
-<li>Use RAG instead.</li>
-</ul></li>
+<li>there is no leaking into the answer</li>
+<li>we don’t need many examples, just an explanation of the pattern to be followed (i.e., in this case, let’s “think step by step” and an example of doing so)</li>
 </ul></li>
 </ul>
 </section>
-<section id="fine-tuning-vs-other-optimization-techniques" class="slide level2">
-<h2>Fine-tuning vs other optimization techniques</h2>
-<p><a href="https://platform.openai.com/docs/guides/optimizing-llm-accuracy">OpenAI blog post</a></p>
+<section id="document-mimicry" class="slide level2">
+<h2>Document mimicry</h2>
 <ul>
-<li>Context optimization (what the model needs to know): move towards prompt / RAG</li>
-<li>LLM optimization (how the model needs to act): move towards fine-tuning.
+<li>Give context by writing a transcript-style document where the question is embedded, so that the model can predict what the continuation will be.</li>
+<li>It tells a story to condition a particular response
 <ul>
-<li>Example: say “I don’t know” more often when uncertain.</li>
+<li>in a similar way that many transcripts have an introductory lead that explains what the transcript is about</li>
 </ul></li>
-<li>We can use both RAG and fine-tuning.</li>
-</ul>
-</section>
-<section id="preparing-the-dataset" class="slide level2">
-<h2>Preparing the dataset</h2>
+<li>Use motifs that are common online (since the model has been trained on those)
 <ul>
-<li>Take the set of instructions and prompts that you found work best for the model prior to fine-tuning, and include them in every training example.</li>
-<li>Take at least 50-100 examples.</li>
-</ul>
-</section>
-<section id="best-practices" class="slide level2">
-<h2>Best Practices</h2>
-<h3 id="curate-examples-carefully">Curate examples carefully</h3>
-<ul>
-<li>Better spend time on few examples of higher quality.</li>
-<li>Consider prompt baking: using basic prompt to generate initial examples.</li>
-<li>Failure Examples or cases with issues.</li>
-<li>Consider Balance and diversity of data.</li>
-<li>Multi-turn conversations: take representative examples.</li>
-<li>Make sure messages contain all information needed in the response.</li>
-</ul>
-</section>
-<section id="section" class="slide level2">
-<h2></h2>
-<h3 id="iterate-on-hyper-parameters">Iterate on hyper-parameters</h3>
-<ul>
-<li>Start with defaults.</li>
-<li>If not converging, increase the learning rate multiplier.</li>
-<li>If doesn’t seem to learn, increase epochs.</li>
-<li>If becomes less diverse than expected, decrease epochs by 1-2.</li>
-</ul>
-</section>
-<section id="section-1" class="slide level2">
-<h2></h2>
-<h3 id="establish-a-baseline">Establish a baseline</h3>
-<ul>
-<li>Use zero shot or few shot learning as baseline.</li>
-</ul>
-</section>
-<section id="section-2" class="slide level2">
-<h2></h2>
-<h3 id="automate-your-feedback-pipeline">Automate your feedback pipeline</h3>
-<ul>
-<li>Introduce automated evaluations for:
-<ul>
-<li>potential problem cases</li>
-<li>clean up data and use as new training</li>
+<li>Example: markdown to establish structure</li>
 </ul></li>
-<li>Consider G-Eval approach (LLM as judge with GPT4) for automated testing with scorecard.</li>
 </ul>
 </section>
-<section id="section-3" class="slide level2">
-<h2></h2>
-<h3 id="optimize-for-latency-and-token-efficiency">Optimize for latency and token efficiency</h3>
+<section id="llms-are-dumb-mechanical-humans" class="slide level2">
+<h2>LLMs are dumb mechanical humans</h2>
 <ul>
-<li>GPT3.5 fine-tuned for matching accuracy of GPT4 at lower cost / latency.</li>
-<li>Reducing instructions with fine-tuned model.</li>
+<li>Understand better when you use familiar language and constructs.</li>
+<li>Get distracted. Don’t fill the prompt with lots of “just in case” information.
+<ul>
+<li>Filling prompt with information that <em>might</em> be useful to the model is a mistake.</li>
+<li>Examples where intermediate context gets so long that the model forgets the original request and continues filling that intermediate context in its response.</li>
+</ul></li>
+<li>They aren’t psychic. If the information is not in the training set or in the prompt, they don’t know it.</li>
+<li>If you look at the prompt and can’t make sense of it, a LLM is hopeless.</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource mermaid number-lines code-with-copy"><code class="sourceCode"><span id="cb1-1"><a></a>flowchart LR</span>
+<span id="cb1-2"><a></a>    %% ========= STYLES =========</span>
+<span id="cb1-3"><a></a>    classDef userNode fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D47A1;</span>
+<span id="cb1-4"><a></a>    classDef appNode  fill:#FFF9C4,stroke:#F9A825,stroke-width:2px,color:#3E2723;</span>
+<span id="cb1-5"><a></a>    classDef llmNode  fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B5E20;</span>
+<span id="cb1-6"><a></a></span>
+<span id="cb1-7"><a></a>    %% ========= NODES =========</span>
+<span id="cb1-8"><a></a>    USER["👤 User"]</span>
+<span id="cb1-9"><a></a>    APP("Application&lt;br/&gt;&lt;br/&gt;⬆ transform user problem&lt;br/&gt;into model domain&lt;br/&gt;&lt;br/&gt;⬇ transform completion&lt;br/&gt;into solution/update&lt;br/&gt;for user")</span>
+<span id="cb1-10"><a></a>    LLM["🧠 LLM"]</span>
+<span id="cb1-11"><a></a></span>
+<span id="cb1-12"><a></a>    %% ========= FLOW =========</span>
+<span id="cb1-13"><a></a>    USER -- "user problem" --&gt; APP</span>
+<span id="cb1-14"><a></a>    APP  -- "prompt"       --&gt; LLM</span>
+<span id="cb1-15"><a></a>    LLM  -- "completion"   --&gt; APP</span>
+<span id="cb1-16"><a></a>    APP  -- "solution"     --&gt; USER</span>
+<span id="cb1-17"><a></a></span>
+<span id="cb1-18"><a></a>    %% ========= CLASS ASSIGNMENTS =========</span>
+<span id="cb1-19"><a></a>    class USER userNode;</span>
+<span id="cb1-20"><a></a>    class APP appNode;</span>
+<span id="cb1-21"><a></a>    class LLM llmNode;</span>
+<span id="cb1-22"><a></a></span>
+<span id="cb1-23"><a></a>    %% Dashed links for a sense of motion</span>
+<span id="cb1-24"><a></a>    linkStyle 0,1,2,3 stroke-width:2px,stroke-dasharray:5 5;</span>
+<span id="cb1-25"><a></a></span>
+<span id="cb1-26"><a></a>    %% style D fill:#FFD966,stroke:#333,stroke-width:2px,color:#000</span>
+<span id="cb1-27"><a></a>    %% style D_note fill:none,stroke:none,color:#FFFFFF</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="creating-the-prompt" class="slide level2">
+<h2>Creating the prompt</h2>
+<p>Steps: - Collect context - Useful information that is not in training already. - Ranking context according to its importance - Because we won’t be able to fit it all. - Trimming the context: - Shrinking down what you can and throwing away the rest. - Assembling the result into a document that looks like something in the training set. - Document mimicry.</p>
+</section>
+<section id="chat-models" class="slide level2">
+<h2>Chat models</h2>
+<ul>
+<li>Have improved on the above.
+<ul>
+<li>Especial syntax behind the scenes (no need of markdown)</li>
+<li>fine tuned for system messages</li>
+<li>stops correctly</li>
+</ul></li>
+<li>Security backed in:
+<ul>
+<li>no bad words or instructions</li>
+<li>almost no hallucinations of false information</li>
+<li>no prompt injection</li>
+</ul></li>
 </ul>
 </section>
-<section id="other-uses-for-fine-tuning" class="slide level2">
-<h2>Other uses for fine-tuning</h2>
+<section id="tool-usage" class="slide level2">
+<h2>Tool usage</h2>
+
+<img data-src="attachment:image.png" class="r-stretch quarto-figure-center"><p class="caption">image.png</p></section>
+<section id="qa" class="slide level2">
+<h2>Q&amp;A</h2>
 <ul>
-<li>improved function calling or output parsing</li>
-<li>Caution: if the number of possible functions is too large it might be better to include the desired ones in the prompt.</li>
+<li>How many examples for few-shot learning
+<ul>
+<li>Use log-probs, see if they get high as we add examples and stop adding when it saturates.</li>
+</ul></li>
+<li>Where to put those examples
+<ul>
+<li>As system messages makes them high priority but sometimes we want to put them at the bottom close to the end.
+<ul>
+<li>In this case, we may want to add another <em>fake</em> system message after the user one, but the model could get confused in this case. We need to try and evaluate.</li>
+</ul></li>
+</ul></li>
+<li>Other hyper-parameters:
+<ul>
+<li>When doing evals, use number of completions higher than one to get many possible outputs for the same case so we get a better picture of the type of response we can get. This needs to be done with temperature higher than 0 (but lower than 1).</li>
+</ul></li>
+<li>Getting structure in the message:
+<ul>
+<li>My note: LangChain tackles this at the moment. However, the recommendation from this talk is to not ask to provide an overly complicated structure such as copying and pasting an entire API into the prompt.</li>
+<li>Same about passing very complicated objects (such as nested dictionaries of nested dictionaries and so on) to function tools.</li>
+</ul></li>
+<li>If you have sloppy code the model will probably produce similar style of sloppy (following bad practices) code.</li>
+<li>DSP may do a good job of figuring out what are the best examples in few shot learning.</li>
+<li>Worth learning about “<em>react</em>” and “<em>reflect</em>” as potential techniques aside from chain of thought and few shot.
+<ul>
+<li>The former is the pattern supported in LangChain.</li>
+<li>The latter is to ask “are you sure this is the right answer” so that the model does everything in its hands to check the correctness and injects any errors / issues about this answer back to the prompt asking to learn from those mistakes and provide a more accurate answer. It does so several times in a loop and gets a final solution that tends to be much better.</li>
+</ul></li>
 </ul>
-</section></section>
-<section id="further-reading" class="title-slide slide level1 center">
-<h1>Further reading</h1>
+</section>
+<section id="further-reading" class="slide level2">
+<h2>Further reading</h2>
 <ul>
-<li><a href="https://parlance-labs.com/education/#fine-tuning">Fine-tuning - Parlance</a></li>
-<li><a href="https://hamel.dev/blog/posts/fine_tuning_valuable.html">Is Fine-Tuning Still Valuable?</a></li>
-<li><a href="https://www.youtube.com/watch?v=cPn0nHFsvFg">When and Why to Fine Tune</a></li>
-<li><a href="https://www.youtube.com/watch?v=4EPZZkVrXC4">From Prompt to Model: Fine-tuning when you’ve already deployed LLMs in prod</a></li>
-<li><a href="https://www.youtube.com/watch?v=GzEcyBykkdo">Deploying Fine-Tuned Models</a></li>
-<li><a href="https://www.youtube.com/watch?v=mmsa4wDsiy0">Fine-Tuning with Axolotl</a></li>
-<li><a href="https://www.youtube.com/watch?v=h1c_jmk97Ss">Why fine-tuning is dead</a></li>
-<li><a href="https://www.datacamp.com/tutorial/llama3-fine-tuning-locally">Fine-Tuning Llama 3 and Using It Locally: A Step-by-Step Guide</a></li>
-<li><a href="https://www.datacamp.com/tutorial/rag-vs-fine-tuning?utm_cid=19589720821&amp;utm_aid=157098104375&amp;utm_campaign=230119_1-ps-other~dsa-tofu~all_2-b2c_3-emea_4-prc_5-na_6-na_7-le_8-pdsh-go_9-nb-e_10-na_11-na&amp;utm_loc=9212664-&amp;utm_mtd=-c&amp;utm_kw=&amp;utm_source=google&amp;utm_medium=paid_search&amp;utm_content=ps-other~emea-en~dsa~tofu~tutorial~artificial-intelligence&amp;gad_source=1&amp;gad_campaignid=19589720821&amp;gbraid=0AAAAADQ9WsFIxTj2FMxHfYtkNv25bmuXQ&amp;gclid=Cj0KCQiA9t3KBhCQARIsAJOcR7wj9NfQPsOqKHX3h1x-Tiff_LxQP22G2oVC6YC5A8lgWagBU5tdXlEaAkmlEALw_wcB">RAG vs Fine-Tuning: A Comprehensive Tutorial with Practical Examples</a></li>
-<li><a href="https://huggingface.co/docs/peft/main/en/conceptual_guides/lora">LoRA</a></li>
-<li><a href="https://platform.openai.com/docs/guides/supervised-fine-tuning">Supervised fine-tuning - OpenAI</a>
+<li><a href="https://platform.openai.com/docs/guides/prompt-engineering">Prompt Engineering guide - OpenAI</a></li>
+<li><a href="https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide">Prompting GPT-5 - OpenAI</a></li>
+<li><a href="https://cookbook.openai.com/articles/related_resources">Other prompting resources recommended by OpenAI</a></li>
+<li><a href="https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/">Prompt Engineering - DeepLearning.AI course</a></li>
+<li><a href="https://platform.openai.com/docs/guides/prompt-caching">Prompt Caching - OpenAI</a>
 <ul>
-<li><a href="https://platform.openai.com/docs/guides/model-optimization">Model optimization - OpenAI</a></li>
+<li><a href="https://docs.langchain.com/oss/python/integrations/chat/openai#prompt-caching">LangChain prompt caching wrapper</a></li>
 </ul></li>
-<li>[Using LangSmith to Support Fine-tuning - Colab’s notebooks]
-<ul>
-<li><a href="https://colab.research.google.com/drive/1tpywvzwOS74YndNXhI8NUaEfPeqOc7ub?usp=sharing&amp;ref=blog.langchain.com">With Llama</a></li>
-<li><a href="https://colab.research.google.com/drive/1YCyDHPSl0d_ULubCVshrP5hLqUCorr7d?usp=sharing&amp;ref=blog.langchain.com">OpenAI</a></li>
-</ul></li>
-<li><a href="https://blog.langchain.com/introducing-tuna-a-tool-for-rapidly-generating-synthetic-fine-tuning-datasets/">Tuna for synthetic dataset generation for fine-tuning</a>
-<ul>
-<li><a href="https://blog.langchain.com/fine-tuning-chatgpt-surpassing-gpt-4-summarization/">Demo</a></li>
-</ul></li>
-<li><a href="https://arxiv.org/abs/2305.11206?ref=blog.langchain.com">LIMA: curating small training datasets</a></li>
-<li><a href="https://cookbook.openai.com/examples/fine_tuning_direct_preference_optimization_guide">Fine-Tuning Techniques - Choosing Between SFT, DPO, and RFT (With a Guide to DPO)</a></li>
-<li><a href="https://parlance-labs.com/education/fine_tuning/daniel.html">Curating data for fine-tuning</a></li>
+<li><a href="https://cookbook.openai.com/examples/evaluation/building_resilient_prompts_using_an_evaluation_flywheel">Building resilient prompts using an evaluation flywheel - OpenAI cookbook</a></li>
+<li><a href="https://medium.com/@linz07m/prompt-baking-making-prompts-permanent-in-language-models-662a96092e90">Prompt baking</a></li>
 </ul>
 
 
-</section>
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">

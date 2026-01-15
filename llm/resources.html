@@ -9,8 +9,7 @@
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.26">
 
-  <meta name="author" content="Jaume Amores">
-  <title>. – RAG talks in Parlance</title>
+  <title>. – Other useful concepts</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -128,225 +127,89 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">RAG talks in Parlance</h1>
+  <h1 class="title">Other useful concepts</h1>
 
 <div class="quarto-title-authors">
-<div class="quarto-title-author">
-<div class="quarto-title-author-name">
-Jaume Amores 
-</div>
-</div>
 </div>
 
-</section>
-<section>
-<section id="back-to-basics-for-rag" class="title-slide slide level1 center">
-<h1>Back to Basics for RAG</h1>
-<p><a href="https://parlance-labs.com/education/rag/jo.html">video</a></p>
-</section>
-<section id="demistifying-rag" class="slide level2">
-<h2>Demistifying RAG</h2>
-<ul>
-<li>It is basically “stuffing text into the LLM prompt”.
-<ul>
-<li>Typical use case: Q&amp;A or search:
-<ul>
-<li>Ask open-ended question.</li>
-<li>Retrieve content related to this question</li>
-<li>Use this content as context by stuffing it into the LLM prompt</li>
-<li>Result: the LLM response will be “grounded” in this context.</li>
-<li>It is not hallucination free but it might improve the accuracy of the generated answer.</li>
-</ul></li>
-</ul></li>
-<li>Not necessarily related with Q&amp;A or search.
-<ul>
-<li>Example: labeller, retrieve positive and negative examples from dataset and present them in prompt to have the LLM label remaining following those examples.</li>
-</ul></li>
-</ul>
-</section>
-<section id="architecture" class="slide level2">
-<h2>Architecture</h2>
-<ul>
-<li>Orchestration</li>
-<li>Evaluation</li>
-<li>Prompt</li>
-<li>LLM</li>
-<li>State (retrieval sources):
-<ul>
-<li>File, Search Engine, Vector Database, Database, Numpy</li>
-</ul></li>
-</ul>
-</section>
-<section id="evaluating-information-retrieval-systems" class="slide level2">
-<h2>Evaluating Information Retrieval Systems</h2>
-<ul>
-<li>Query</li>
-<li>Retrieval process</li>
-<li>Result: ranked list of documents</li>
-<li>Evaluation: relevance of ranking wrt query.
-<ul>
-<li>Metrics: binary, non-binary</li>
-<li>Benchmarks: TREC, MS Marco, BEIR, …</li>
-<li>Critical: build your own relevance dataset</li>
-</ul></li>
-</ul>
-</section>
-<section id="relevance-dataset" class="slide level2">
-<h2>Relevance dataset</h2>
-<ul>
-<li>If we have real queries from production, spend time labelling results of those queries.</li>
-<li>Otherwise, ask LLM to generate realistic synthetic queries.</li>
-<li>Ideally static collection: no additions while evaluating and comparing, to keep consistency.</li>
-<li>Using LLM judges to evaluate result.
-<ul>
-<li>Need to find appropriate prompt to make it correlate with human judgement.</li>
-</ul></li>
-</ul>
-</section>
-<section id="representational-approaches" class="slide level2">
-<h2>Representational approaches</h2>
-<ul>
-<li>Avoid scoring all documents (e.g., if we use at web scale)</li>
-<li>Have indexed documents, score only subset.</li>
-<li>Approaches:
-<ul>
-<li>Sparse, using inverted index.
-<ul>
-<li>Top-k retrieval algorithms: WAND, …</li>
-<li>Supervised (splade) or unsupervised (tf-idf)</li>
-</ul></li>
-<li>Dense:
-<ul>
-<li>Vector index</li>
-<li>Accelerated search (approximate)</li>
-<li>Supervised via transf-learning (text embedding)</li>
-</ul></li>
-</ul></li>
-</ul>
-</section>
-<section id="dense-representations" class="slide level2">
-<h2>Dense representations</h2>
-<ul>
-<li>Encoder / Transformer style:
-<ul>
-<li>Tokenize input text into discrete vocabulary.</li>
-<li>Pretrained learned representations of each token.</li>
-<li>Feed into encoder. For each token get an output vector.</li>
-<li>Pooling stage: average all vectors into a single vector representation.
-<ul>
-<li>Weakest aspect. Diluted, low precision. Need shrinking mechanism?</li>
-</ul></li>
-</ul></li>
-<li>Baseline / benchmark: BM25
-<ul>
-<li>Can avoid spectacular failures, e.g., those caused by out-of-vocabulary problems.</li>
-<li>BM25 can also act as a strong baseline, e.g., for long-context use case.</li>
-</ul></li>
-</ul>
-</section>
-<section id="hybrid-approaches" class="slide level2">
-<h2>Hybrid approaches</h2>
-<ul>
-<li>Dense + Sparse representations: overcome fixed vocabulary issues.</li>
-</ul>
-</section>
-<section id="chunking" class="slide level2">
-<h2>Chunking</h2>
-<ul>
-<li>Dense representations should not use texts with more than 256 tokens for high precision search (maybe it’s ok for other applications like classification)
-<ul>
-<li>Because they haven’t been trained on them.</li>
-<li>Topic drifts with longer texts.</li>
-</ul></li>
-<li>You need to chunk if longer than 256 tokens
-<ul>
-<li>but no need to do it on a per-row basis, if you have right stack.</li>
-<li>we can index multiple vectors per row.</li>
-<li>avoid repeating same metadata.</li>
-</ul></li>
-</ul>
-</section>
-<section id="other-considerations" class="slide level2">
-<h2>Other considerations</h2>
-<ul>
-<li>Combining GBDT (Gradient-Boosted Decision Trees) with neural features is quite effective.
-<ul>
-<li>GBDT produces sparse vectors, one feature per leaf in the tree</li>
-<li>The feature is 1 if the input vector ends in that leaf.</li>
-</ul></li>
-</ul>
-</section>
-<section id="faq" class="slide level2">
-<h2>FAQ</h2>
-<ul>
-<li>What kind of metadata is useful to consider in RAG.
-<ul>
-<li>Consider authoritative sources for this domain (e.g., doctors in health domain), rather than just “drag up Reddit text”.</li>
-<li>Title and other metadata. It depends on use case.</li>
-</ul></li>
-<li>Calibration of different indices
-<ul>
-<li>different document indices are not aligned in terms of similarity scores</li>
-<li>have confidence scores for how likely is the recommendation to be good</li>
-<li>Answer: it is difficult. It might be a learning task, e.g., use GBDT for combining.
-<ul>
-<li>But then you need to train the model with built training data.</li>
-<li>Can use LLM for generating this data.</li>
-</ul></li>
-</ul></li>
-<li>Efficacy of re-rankers.
-<ul>
-<li>They can help, but can make the response slower.</li>
-</ul></li>
-<li>Combining similarity with interaction data
-<ul>
-<li>It becomes a learning to rank problem.
-<ul>
-<li>Type of interaction is used as label.</li>
-<li>You can use GBT where you can include the semantic score as well as a feature.</li>
-</ul></li>
-</ul></li>
-<li>Jason Liu’s blog on value of generating structured summaries and reports for decision makers instead of RAG</li>
-<li>Future progress
-<ul>
-<li>Use models with larger vocabularies, beyond BERT trained on 2018 data</li>
-<li>Not excited about using longer contexts because they provide lower precision.</li>
-</ul></li>
-<li>Query search expansion, query understanding
-<ul>
-<li>BM25 + reranker</li>
-</ul></li>
-<li>Use case with lots of jargon and out-of-vocabulary words
-<ul>
-<li>Need to use hybrid approach (keyword search + embedding), since embedding is poor at that.</li>
-<li>Sometimes we need to ignore the embedding altogether.</li>
-</ul></li>
-<li>Colbert
-<ul>
-<li>Yes with pretraining or longer vocabularies.</li>
-</ul></li>
-</ul>
 </section>
 <section id="further-reading" class="slide level2">
 <h2>Further reading</h2>
+<h3 id="mcp">MCP</h3>
 <ul>
-<li><a href="https://www.youtube.com/watch?v=RrDBV6odPKo">Systematically improving RAG applications</a></li>
-<li><a href="https://www.youtube.com/watch?v=0nA5QG3087g">Beyond the basics of Retrieval for Augmenting Generation</a></li>
-<li><a href="https://www.youtube.com/watch?v=Trps2swgeOg">Modern Information Retrieval Evaluation in the The RAG Era</a></li>
-<li><a href="https://jxnl.github.io/blog/writing/2024/02/28/levels-of-complexity-rag-applications/">evaluating RAGs</a></li>
-<li><a href="https://jxnl.co/writing/2025/05/19/there-are-only-6-rag-evals/">6 RAG Evals</a></li>
-<li><a href="https://pashpashpash.substack.com/p/why-i-no-longer-recommend-rag-for">RAG is dead</a></li>
-<li><a href="https://hamel.dev/notes/llm/rag/not_dead.html">RAG is not dead</a></li>
-<li><a href="https://docs.langchain.com/oss/python/langchain/retrieval">LangChain’s retrieval</a></li>
-<li><a href="https://github.com/openai/openai-cookbook/blob/main/examples/Question_answering_using_embeddings.ipynb?ref=blog.langchain.com">OpenAI’s retrieval</a></li>
-<li><a href="https://www.youtube.com/watch?v=rhZgXNdhWDY">RAG Theoretical concepts</a></li>
-<li><a href="https://www.deeplearning.ai/short-courses/building-evaluating-advanced-rag/">Building and Evaluating Advanced RAG Applications - DeepLearning.AI course</a></li>
-<li><a href="https://www.youtube.com/watch?v=hf9B3knU9vc">The Map Is Not The Territory – Multimodal Retrieval - Hamel Husain</a></li>
-<li><a href="https://www.youtube.com/watch?v=Evlk9J-B_uc">I don’t use RAG, I just retrieve documents - Hamel Husain</a></li>
+<li><a href="https://docs.langchain.com/oss/python/langchain/mcp">Model Context Protocol (MCP) - LangChai</a></li>
 </ul>
+<h3 id="multiagent">MultiAgent</h3>
+<ul>
+<li><a href="https://docs.langchain.com/oss/python/langchain/multi-agent/index">Multi-Agent - LangChain</a></li>
+</ul>
+<h3 id="fact-checker">Fact-checker</h3>
+<ul>
+<li><a href="https://github.com/openai/openai-cookbook/blob/main/articles/gpt-oss/build-your-own-fact-checker-cerebras.ipynb">Build your own content fact-checker with OpenAI gpt-oss-120B, Cerebras, and Parallel - OpenAI cookbook</a></li>
+</ul>
+<h3 id="interpretability">Interpretability</h3>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=lg1-M8hEX50">Interpretability</a></li>
+</ul>
+</section>
+<section id="building-llm-applications" class="slide level2">
+<h2>Building LLM applications</h2>
+<ul>
+<li><a href="https://www.sh-reya.com/blog/phd-year-one/">What We’ve Learned From A Year of Building with LLMs</a></li>
+<li><a href="https://www.sh-reya.com/blog/ai-engineering-short/">Short Musings on AI Engineering and “Failed AI Projects”</a></li>
+</ul>
+</section>
+<section id="full-courses" class="slide level2">
+<h2>Full courses</h2>
+<ul>
+<li><a href="https://github.com/mlabonne/llm-course">LLM Course - Maxime Labonne</a></li>
+</ul>
+</section>
+<section id="other-material" class="slide level2">
+<h2>Other material</h2>
+<ul>
+<li><a href="https://cookbook.openai.com/">OpenAI cookbooks</a></li>
+</ul>
+</section>
+<section id="investigate" class="slide level2">
+<h2>Investigate</h2>
+<ul>
+<li>RLHF</li>
+<li>Automatic Prompt refinement</li>
+<li>Dynamic Selection of Examples (for few-shot learning, in prompt)
+<ul>
+<li><a href="https://docs.langchain.com/langsmith/index-datasets-for-dynamic-few-shot-example-selection">LangChain</a></li>
+</ul></li>
+</ul>
+</section>
+<section>
+<section id="requested" class="title-slide slide level1 center">
+<h1>Requested</h1>
+<ul>
+<li>LLM-Oriented System Design:
+<ul>
+<li>Designing multi-step, tool-using agents (LangChain, Autogen).</li>
+<li>prompt engineering,</li>
+<li>context management,</li>
+<li>Advanced reasoning patterns like Chain-of-Thought</li>
+<li>multi-agent communication.</li>
+</ul></li>
+<li>Tool Integration &amp; APIs: Integrating agents with external tools, databases, and APIs (OpenAI, Anthropic) in secure execution environments.</li>
+<li>Retrieval-Augmented Generation (RAG): Building and optimizing RAG pipelines with vector databases, advanced chunking, and hybrid search.</li>
+<li>Evaluation &amp; Observability: Implementing LLM evaluation frameworks and monitoring for latency, accuracy, and tool usage.</li>
+<li>Safety &amp; Reliability: Defending against prompt injection and implementing guardrails (Rebuff, Guardrails AI) and fallback strategies.</li>
+<li>Performance Optimization: Managing LLM token budgets and latency through smart model routing and caching (Redis).</li>
+<li>Planning &amp; Reasoning: Designing agents with long-term memory and complex planning capabilities (ReAct, Tree-of-Thought).</li>
+<li>Programming &amp; Tooling: Expert in Python, FastAPI, and LLM SDKs; experience with cloud deployment (AWS/GCP/Azure) and CI/CD for AI applications.</li>
+</ul>
+</section>
+<section id="exercises" class="slide level2">
+<h2>Exercises</h2>
+<p>Simulate this app:</p>
 
 
-</section></section>
+
+<img data-src="resources_files/figure-revealjs/fd358762-1-image.png" class="r-stretch quarto-figure-center"><p class="caption">image.png</p></section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">

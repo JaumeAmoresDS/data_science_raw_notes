@@ -9,7 +9,8 @@
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.26">
 
-  <title>. – Other useful concepts</title>
+  <meta name="author" content="Jaume Amores">
+  <title>. – Guardrails</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -127,77 +128,54 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Other useful concepts</h1>
+  <h1 class="title">Guardrails</h1>
 
 <div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Jaume Amores 
+</div>
+</div>
 </div>
 
 </section>
+<section>
+<section id="guardrails---langchain" class="title-slide slide level1 center">
+<h1>Guardrails - LangChain</h1>
+<p><a href="https://docs.langchain.com/oss/python/langchain/guardrails">link</a></p>
+</section>
+<section id="when" class="slide level2">
+<h2>When</h2>
+<ul>
+<li>Removing violations of rules / regulation</li>
+<li>Protecting from harmful actions</li>
+</ul>
+</section>
+<section id="how" class="slide level2">
+<h2>How</h2>
+<ul>
+<li>using middleware: before agent, before / after model, around function calls</li>
+<li>types: deterministic (rules, functions…), model-based</li>
+<li>custom guardrails or builtin guardrails for common use cases.</li>
+</ul>
+</section>
+<section id="builtin-guardrails" class="slide level2">
+<h2>Builtin guardrails</h2>
+<ul>
+<li>PII detection (e.g., email, credit card, …)</li>
+<li></li>
+</ul>
+</section>
 <section id="further-reading" class="slide level2">
 <h2>Further reading</h2>
-<h3 id="guardrails">Guardrails</h3>
 <ul>
-<li><a href="https://docs.langchain.com/oss/python/langchain/guardrails">Guardrails - LangChain</a></li>
 <li><a href="https://www.deeplearning.ai/short-courses/safe-and-reliable-ai-via-guardrails/">Guardrails - DeepLearning.AI course</a></li>
 <li><a href="llm_guardrails.pdf">Essential Guide to LLM Guardrails: Llama Guard, NeMo - Medium post</a></li>
 <li><a href="https://cookbook.openai.com/examples/how_to_use_guardrails">How to implement LLM guardrails - OpenAI cookbook</a></li>
 </ul>
-<h3 id="context-engineering">Context engineering</h3>
-<ul>
-<li><a href="https://docs.langchain.com/oss/python/langchain/context-engineering">Context engineering - LangChain</a></li>
-<li><a href="https://www.youtube.com/watch?v=3s_N60u0jEY">Context Rot: When Long Context Fails</a></li>
-<li><a href="https://blog.langchain.dev/dosu-langsmith-no-prompt-eng/">Continual In-Context Learning</a></li>
-</ul>
-<h3 id="mcp">MCP</h3>
-<ul>
-<li><a href="https://docs.langchain.com/oss/python/langchain/mcp">Model Context Protocol (MCP) - LangChai</a></li>
-</ul>
-<h3 id="multiagent">MultiAgent</h3>
-<ul>
-<li><a href="https://docs.langchain.com/oss/python/langchain/multi-agent/index">Multi-Agent - LangChain</a></li>
-</ul>
-<h3 id="prompt-caching-prompt-engineering">Prompt caching &amp; prompt engineering</h3>
-<ul>
-<li><a href="https://platform.openai.com/docs/guides/prompt-caching">prompt caching</a></li>
-<li><a href="https://parlance-labs.com/education/prompt_eng/berryman.html">Prompt Engineering - Parlance Education</a></li>
-<li><a href="https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/">Prompt Engineering - DeepLearning.AI course</a></li>
-<li><a href="https://cookbook.openai.com/examples/evaluation/building_resilient_prompts_using_an_evaluation_flywheel">Building resilient prompts using an evaluation flywheel - OpenAI cookbook</a></li>
-<li><a href="https://medium.com/@linz07m/prompt-baking-making-prompts-permanent-in-language-models-662a96092e90">Prompt baking</a></li>
-</ul>
-<h3 id="fact-checker">Fact-checker</h3>
-<ul>
-<li><a href="https://github.com/openai/openai-cookbook/blob/main/articles/gpt-oss/build-your-own-fact-checker-cerebras.ipynb">Build your own content fact-checker with OpenAI gpt-oss-120B, Cerebras, and Parallel - OpenAI cookbook</a></li>
-</ul>
-<h3 id="interpretability">Interpretability</h3>
-<ul>
-<li><a href="https://www.youtube.com/watch?v=lg1-M8hEX50">Interpretability</a></li>
-</ul>
-</section>
-<section id="full-courses" class="slide level2">
-<h2>Full courses</h2>
-<ul>
-<li><a href="https://github.com/mlabonne/llm-course">LLM Course - Maxime Labonne</a></li>
-</ul>
-</section>
-<section id="other-material" class="slide level2">
-<h2>Other material</h2>
-<ul>
-<li><a href="https://cookbook.openai.com/">OpenAI cookbooks</a></li>
-</ul>
-</section>
-<section id="investigate" class="slide level2">
-<h2>Investigate</h2>
-<ul>
-<li>RLHF</li>
-<li>Automatic Prompt refinement</li>
-<li>Dynamic Selection of Examples (for few-shot learning, in prompt)
-<ul>
-<li><a href="https://docs.langchain.com/langsmith/index-datasets-for-dynamic-few-shot-example-selection">LangChain</a></li>
-</ul></li>
-</ul>
 
 
-</section>
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
