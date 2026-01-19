@@ -637,6 +637,132 @@
     "text": "Plan experiments not features\nTo complete reading."
   },
   {
+    "objectID": "llm/mcp.html#client-side",
+    "href": "llm/mcp.html#client-side",
+    "title": "Model Context Protocol - LangChain",
+    "section": "Client side",
+    "text": "Client side\nclient = MultiServerMCPClient (\n    {\n        \"math\": {\n            \"transport\": \"stdio\",\n            \"command\": \"python\",\n            \"args\": \n                [\"/path/to/script.py\"],\n        },\n        \"weather\": {\n            \"transport\": \"http\",\n            \"url\": \"http://localhost:8000/mcp\n        }\n    }\n)\n\ntools = client.get_tools ()\n\nagent = create_agent (\n    model=\"...\",\n    tools,\n    ...\n)\n\nresult1 = await agent.ainvoke (\n    {\"messages\": [{\"role\": \"user\", \"content\":\"What is the result of 2*3\"}]}\n)\n\nresult2 = await agent.ainvoke (\n    \"What is the wheather in CA\"\n)"
+  },
+  {
+    "objectID": "llm/mcp.html#server-side-custom-servers",
+    "href": "llm/mcp.html#server-side-custom-servers",
+    "title": "Model Context Protocol - LangChain",
+    "section": "Server side (custom servers)",
+    "text": "Server side (custom servers)\nTest the above client code by launching local custom servers through the FastMCP library\n\nmcp = FastMCP(\"Math\")\n\n@mcp.tool\nasync def plus (a: int, b: int):\n    return a+b\n\nif __name__ == \"__main__\":\n    mcp.run(transport=\"stdio\")\n\nmcp = FastMCP(\"Weather\")\n\n@mcp.tool\nasync def get_weather (city: str):\n    return \"sunny\"\n\nif __name__ == \"__main__\":\n    mcp.run(transport=\"http\", \n        # url=\"localhost\",\n        # port=8000\n    )"
+  },
+  {
+    "objectID": "llm/mcp.html#stateless-vs-statefull",
+    "href": "llm/mcp.html#stateless-vs-statefull",
+    "title": "Model Context Protocol - LangChain",
+    "section": "Stateless vs Statefull",
+    "text": "Stateless vs Statefull\n\nBy default it is stateless: new server started at each call."
+  },
+  {
+    "objectID": "llm/mcp.html#http",
+    "href": "llm/mcp.html#http",
+    "title": "Model Context Protocol - LangChain",
+    "section": "HTTP",
+    "text": "HTTP\nYou can: - Indicate headers - Authenticate"
+  },
+  {
+    "objectID": "llm/mcp.html#stdio",
+    "href": "llm/mcp.html#stdio",
+    "title": "Model Context Protocol - LangChain",
+    "section": "stdio",
+    "text": "stdio\nYou can:\n\ncommunicate via strings as in command line input / output"
+  },
+  {
+    "objectID": "llm/mcp.html#statefull",
+    "href": "llm/mcp.html#statefull",
+    "title": "Model Context Protocol - LangChain",
+    "section": "Statefull",
+    "text": "Statefull\n\nUse statefull with sessions\nFor example if the server maintains context across tool invocations\n\nasync with client.session ():\n    tools = await load_mcp_tools ()\n    agent = create_agent (\n        model=\"...\",\n        tools,\n    )"
+  },
+  {
+    "objectID": "llm/mcp.html#stateful-functionalities",
+    "href": "llm/mcp.html#stateful-functionalities",
+    "title": "Model Context Protocol - LangChain",
+    "section": "stateful functionalities:",
+    "text": "stateful functionalities:\nWe can: - Get the tools - Get structured content: - using the artifact field of ToolMessage - using interceptors e.g., to automatically append the structured content to tool result:\nasync def my_interceptor (request: MCPToolCallRequest, handler):\n    result = await handler (request)\n    # result.structuredContent: dict\n\nclient = MultiServerMCPClient ({...}, tool_interceptors=[my_interceptor])"
+  },
+  {
+    "objectID": "llm/mcp.html#get-multimedia-content",
+    "href": "llm/mcp.html#get-multimedia-content",
+    "title": "Model Context Protocol - LangChain",
+    "section": "Get multimedia content",
+    "text": "Get multimedia content\nresponse = await agent.ainvoke...\nresponse[\"messages\"]\nfor message in response[\"messages\"]:\n    for block in message.content_blocks:\n        if block[\"type\"] == ... # \"text\", \"image\", ...\n            block.get(...)"
+  },
+  {
+    "objectID": "llm/mcp.html#get-resources",
+    "href": "llm/mcp.html#get-resources",
+    "title": "Model Context Protocol - LangChain",
+    "section": "Get resources",
+    "text": "Get resources\nblobs = await client.get_resources(\"server_name\", uris=...)\nfor blob in blobs:\n    ..."
+  },
+  {
+    "objectID": "llm/mcp.html#get-prompts",
+    "href": "llm/mcp.html#get-prompts",
+    "title": "Model Context Protocol - LangChain",
+    "section": "get prompts",
+    "text": "get prompts\nmessages = await client.get_prompt (...)"
+  },
+  {
+    "objectID": "llm/mcp.html#interceptors-accessing-runtime-context",
+    "href": "llm/mcp.html#interceptors-accessing-runtime-context",
+    "title": "Model Context Protocol - LangChain",
+    "section": "interceptors: accessing runtime context",
+    "text": "interceptors: accessing runtime context\n\nAccess user details (ID, api keys, …)\n\n\nclass ContextSchema:\n    my_field: ...\n\nasync def my_interceptor (request: MCPToolCallRequest, handler):\n    result = await handler (request)    \n    # request.runtime.context.my_field\n    modified_request = request.override (\n        args = {\n            **request.args,\n            {\"my_field\": my_field}\n        }\n    )\n    return await handler (modified_request)\n\nclient = MultiServerMCPClient ({...}, tool_interceptors=[my_interceptor])\n\ntools = client.get_tools (...)\n\nagent = create_agent (\n    model=\"\",\n    tools,\n    context_scheme=ContextSchema,\n)\n\nresult = await agent.ainvoke (\n    \"...\",\n    context={\"my_field\": my_value},\n)"
+  },
+  {
+    "objectID": "llm/mcp.html#store-and-state",
+    "href": "llm/mcp.html#store-and-state",
+    "title": "Model Context Protocol - LangChain",
+    "section": "Store and State",
+    "text": "Store and State\n\nSimilar to the above, see context engineering notes"
+  },
+  {
+    "objectID": "llm/mcp.html#tool-call-id",
+    "href": "llm/mcp.html#tool-call-id",
+    "title": "Model Context Protocol - LangChain",
+    "section": "Tool Call ID",
+    "text": "Tool Call ID\nAllows to track tool executions, return properly formatted responses, etc.\n...\ntool_call_id = request.runtime.tool_call_id\nif there_is_issue(request.name):\n    return ToolMessage (\n        content=\"There is X issue (e.g., rate limit exceeded)\",\n        tool_call_id=tool_call_id,\n    )\n\nresult = await handler(request)\nlog_tool_execution (tool_call_id, request.name, success=True)\n..."
+  },
+  {
+    "objectID": "llm/mcp.html#state-updates-and-commands",
+    "href": "llm/mcp.html#state-updates-and-commands",
+    "title": "Model Context Protocol - LangChain",
+    "section": "State updates and commands",
+    "text": "State updates and commands\nInterceptors can return Command objects to change the state or the flow of the execution.\nasync def my_interceptor (\n    ...\n) -&gt; Command:\n    result = await handler(request)\n    if condition:\n        return Command (\n            update={\n                \"messages\": [result] if isinstance (result, ToolMessage) else [],\n                \"task_status\": \"completed\",\n            },\n            goto = \"my_next_step\" # can be \"__end__\"\n        )\n    return result"
+  },
+  {
+    "objectID": "llm/mcp.html#custom-interceptors",
+    "href": "llm/mcp.html#custom-interceptors",
+    "title": "Model Context Protocol - LangChain",
+    "section": "Custom interceptors",
+    "text": "Custom interceptors\nYou can: - Modify the request before calling the tool - use request.override(...) before result = handler(request) - For instance, change args or header, see above - Perform the action after calling the tool, e.g., manage exceptions\ntry:\n    result = await handler(request)\nexcept Exception as e:\n    print (request.name)\n    ..."
+  },
+  {
+    "objectID": "llm/mcp.html#compose-interceptors",
+    "href": "llm/mcp.html#compose-interceptors",
+    "title": "Model Context Protocol - LangChain",
+    "section": "Compose interceptors",
+    "text": "Compose interceptors\nasync def outer (...):\n    print (\"outer before\")\n    result = await handler (request)\n    print (\"outer after\")\n    return result\n\nasync def inner (...):\n    print (\"inner before\")\n    result = await handler (request)\n    print (\"inner after\")\n    return result\n\nOnion structure:\n\n\nclient = MultiServerMCPClient (\n    {...},\n    tool_interceptors = [outer, inner]\n)\n# Execution: outer before -&gt; inner before -&gt; tool -&gt; inner after -&gt; outer after"
+  },
+  {
+    "objectID": "llm/mcp.html#callbacks",
+    "href": "llm/mcp.html#callbacks",
+    "title": "Model Context Protocol - LangChain",
+    "section": "Callbacks",
+    "text": "Callbacks\nasync def my_built_in_callback (\n    callback_specific_1,\n    ...\n    context: CallbackContext,\n):\n    # context.my_built_in_callback_specific_field\n\nclient = MultiServerMCPClient (\n    {...},\n    callbacks=Callbacks (my_built_in_callback=my_built_in_callback)\n)\nwhere my_callback can be one of the built-in callbacks: - on_progress - on_logging_message - …"
+  },
+  {
+    "objectID": "llm/mcp.html#elicitation",
+    "href": "llm/mcp.html#elicitation",
+    "title": "Model Context Protocol - LangChain",
+    "section": "Elicitation",
+    "text": "Elicitation\nAllows to interactively obtain information from user from tool\n\nUse ctx.elicit() in server’s tool implementation, using schema\n\nclass MySchema\n...\n@mcp.tool ()\nasync def my_tool (name, ctx: Context):\n    result = await ctx.elicit (\n        message=\"...\",\n        schema=MySchema\n    )\n    if result.action==\"accept\" and result.data:\n        # result.data.my_field_1, ...\n    # result.action can also be \"decline\" or \"cancel\"\n\nUse on_elicitation callback in client code:\n\nasync def on_elicitation (\n    ... # see documentation\n):\n    return ElicitResult (\n        action=\"accept\",\n        content={\"my_field_1\": my_value_1, ...}\n    )\n    ..."
+  },
+  {
     "objectID": "llm/resources.html#further-reading",
     "href": "llm/resources.html#further-reading",
     "title": "Other useful concepts",
@@ -707,11 +833,277 @@
     "text": "Further reading\n\nGuardrails - DeepLearning.AI course\nEssential Guide to LLM Guardrails: Llama Guard, NeMo - Medium post\nHow to implement LLM guardrails - OpenAI cookbook"
   },
   {
+    "objectID": "llm/context_engineering.html#types-of-context",
+    "href": "llm/context_engineering.html#types-of-context",
+    "title": "Context engineering",
+    "section": "Types of context",
+    "text": "Types of context\nCategorized in two dimensions:\n\nMutability:\n\nStatic: doesn’t change along single run\n\nExamples: user metadata (e.g., profile), database connection details, tools.\n\nDynamic: it changes\n\nExamples: conversation history, intermediate results, tool results\n\n\nLifetime:\n\nSingle run: lost after run.\nMultiple runs: persists across sessions / conversations"
+  },
+  {
+    "objectID": "llm/context_engineering.html#context-management-in-langgraph",
+    "href": "llm/context_engineering.html#context-management-in-langgraph",
+    "title": "Context engineering",
+    "section": "Context management in LangGraph",
+    "text": "Context management in LangGraph\n\n\n\n\n\n\n\n\n\n\nContext type\nDescription\nMutability\nLifetime\nAccess method\n\n\n\n\nStatic runtime context\nUser metadata, database connections, tools\nStatic\nSingle run\ncontext argument to invoke / stream\n\n\nDynamic runtime context (state)\nConversation history, intermediate results\nDynamic\nSingle run\nLangGraph state object\n\n\nDynamic cross-conversation context (store)\nPersistent data across sessions\nDynamic\nMultiple runs\nLangGraph store"
+  },
+  {
+    "objectID": "llm/context_engineering.html#static-context",
+    "href": "llm/context_engineering.html#static-context",
+    "title": "Context engineering",
+    "section": "Static context",
+    "text": "Static context\n\nAccessed through the runtime.context property.\nSet when invoking, context_schema=MyContextSchemaClass\nCan be accessed in:\n\nFunction with @dynamic_prompt decorator.\n\nThis function is provided:\n\nIn graph.invoke, through the context argument, as context={\"my_property\": \"my_value\", ...}\nIn agent.invoke, through the middleware argument when invoking graph, as middleware=[function].\n\n\nNode, via especial argument.\nTool, via especial argument."
+  },
+  {
+    "objectID": "llm/context_engineering.html#using-generic-graph",
+    "href": "llm/context_engineering.html#using-generic-graph",
+    "title": "Context engineering",
+    "section": "Using generic graph",
+    "text": "Using generic graph\nfrom dataclasses import dataclass\n\n@dataclass\nclass ContextSchema:\n    user_name: str\n\ngraph.invoke (\n    {\"messages\": [{\"role\": \"user\", \"content\": \"Hi!\"}]},\n    context={\"user_name\": \"Jaume\"},\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#using-agent",
+    "href": "llm/context_engineering.html#using-agent",
+    "title": "Context engineering",
+    "section": "Using agent",
+    "text": "Using agent\nfrom langchain.agents import create_agent\nfrom langchain.agents.middleware import dynamic_prompt, ModelRequest\n\n@dynamic_prompt\ndef personalized_prompt (request: ModelRequest) -&gt; str:\n    user_name = request.runtime.context.user_name\n    return f\"You are a helpful assistant. Address user as {user_name}.\"\n\nagent = create_agent (\n    model=\"gpt...\",\n    tools=[get_weather],\n    middleware=[personalize_prompt],\n    context_schema=ContextSchema\n)\n\nagent.invoke (\n    {\"messages\": [{\"role\": \"user\", \"content\": \"Hi!\"}]},\n    context=ContextSchema(\"Jaume\")\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#using-node",
+    "href": "llm/context_engineering.html#using-node",
+    "title": "Context engineering",
+    "section": "Using node",
+    "text": "Using node\nfrom langgraph.runtime import Runtime\n\ndef node (state: State, runtime: Runtime[ContextSchema]):\n    user_name = runtime.context.user_name\n    ..."
+  },
+  {
+    "objectID": "llm/context_engineering.html#using-tool",
+    "href": "llm/context_engineering.html#using-tool",
+    "title": "Context engineering",
+    "section": "Using tool",
+    "text": "Using tool\nfrom langchain.tools import ToolRuntime\n\ndef my_tool (runtime: ToolRuntime[ContextSchema]):\n    user_name = runtime.context.user_name"
+  },
+  {
+    "objectID": "llm/context_engineering.html#dynamic-context",
+    "href": "llm/context_engineering.html#dynamic-context",
+    "title": "Context engineering",
+    "section": "Dynamic context",
+    "text": "Dynamic context\n\nAccessed through:\n\nIn agent: request.state.get, in function with @dynamic_prompt decorator.\n\nPass state_schema=MyStateSchema to invoke call.\nAgain, pass middleware=[decorated_function] in invoke call.\n\nIn node, through the state argument."
+  },
+  {
+    "objectID": "llm/context_engineering.html#dynamic-context-in-agent",
+    "href": "llm/context_engineering.html#dynamic-context-in-agent",
+    "title": "Context engineering",
+    "section": "Dynamic context in agent",
+    "text": "Dynamic context in agent\nfrom langchain.agents import create_agent\nfrom langchain.agents.middleware import dynamic_prompt, ModelRequest\nfrom langchain.agents import AgentState\n\nclass StateSchema (AgentState):\n    extra_field: int\n\n@dynamic_prompt\ndef personalized_prompt (request: ModelRequest) -&gt; str:\n    extra_field = request.state.get (\"extra_field\", 0)\n    extra_field += 1\n    # request.state[\"extra_field\"] = extra_field ## Is this correct?\n    ...\n\nagent = create_agent (\n    model=\"...\",\n    tools=[...],\n    middleware=[personalized_prompt],\n    state_schema=StateSchema,\n)\n\nagent.invoke (\n    {\n        \"messages\": \"hi\",\n        \"extra_field\": 1\n    }\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#dynamic-context-node",
+    "href": "llm/context_engineering.html#dynamic-context-node",
+    "title": "Context engineering",
+    "section": "Dynamic context, node",
+    "text": "Dynamic context, node\n\nfrom typing import TypedDict\nfrom langchain.messages import AnyMessage\n\nclass CustomState (TypedDict):\n    messages: list[AnyMessage]\n    extra_field: int\n\ndef node (state: CustomState):\n    extra_field = state[\"extra_field\"]\n    return {\"extra_field\": extra_field + 1}"
+  },
+  {
+    "objectID": "llm/context_engineering.html#dynamic-cross-conversation-context",
+    "href": "llm/context_engineering.html#dynamic-cross-conversation-context",
+    "title": "Context engineering",
+    "section": "Dynamic cross-conversation context",
+    "text": "Dynamic cross-conversation context\nBased on store object, see long-term memory"
+  },
+  {
+    "objectID": "llm/context_engineering.html#overview-context-engineering",
+    "href": "llm/context_engineering.html#overview-context-engineering",
+    "title": "Context engineering",
+    "section": "Overview: Context engineering",
+    "text": "Overview: Context engineering\nProviding the right information and tools in the right format to have the LLM accomplish its task."
+  },
+  {
+    "objectID": "llm/context_engineering.html#overview-the-agent-loop",
+    "href": "llm/context_engineering.html#overview-the-agent-loop",
+    "title": "Context engineering",
+    "section": "Overview: the agent loop",
+    "text": "Overview: the agent loop\nflowchart\n    Request --&gt; Model \n    Model   -- \"Action\"      --&gt; Tools\n    Tools   -- \"Observations\" --&gt; Model\n    Model   --&gt; Result\n\n    linkStyle 1,2 stroke-width:2px,stroke-dasharray:5 5;\n\n    style Model fill:#FFD966,stroke:#333,stroke-width:2px,color:#000\n    style Tools fill:#FFD966,stroke:#333,stroke-width:2px,color:#000\n    style Request fill:none,stroke:#333,stroke-width:2px,color:#FFFFFF\n    style Result fill:none,stroke:#333,stroke-width:2px,color:#FFFFFF\n\nModel: receives prompt and list of tools to be used. It either returns a response or requests the tools to perform actions.\nTools execution: runs the actions and returns resulting observations to model."
+  },
+  {
+    "objectID": "llm/context_engineering.html#what-you-can-control",
+    "href": "llm/context_engineering.html#what-you-can-control",
+    "title": "Context engineering",
+    "section": "What you can control",
+    "text": "What you can control\n\n\n\n\n\n\n\n\nContext Type\nWhat you control\nTransient or Persistent\n\n\n\n\nModel Context\nWhat goes into model calls (instructions, tools, message history, response format)\nTransient\n\n\nTools Context\nWhat tools can access and produce (reads/writes to state, store, and runtime context)\nPersistent\n\n\nLife-cycle Context\nWhat happens between model and tool calls (summarization, guardrails, logging, etc.)\nPersistent"
+  },
+  {
+    "objectID": "llm/context_engineering.html#data-sources",
+    "href": "llm/context_engineering.html#data-sources",
+    "title": "Context engineering",
+    "section": "Data Sources",
+    "text": "Data Sources\n\n\n\n\n\n\n\n\n\nData Source\nAlso Known As\nScope\nExamples\n\n\n\n\nRuntime Context\nStatic Configuration\nSingle conversation\nUser ID, database connection, API keys, environment settings\n\n\nState\nShort-term memory\nSingle conversation\nHistory of messages, tool results, uploaded files, authentication status\n\n\nStore\nLong-term memory\nCross conversation\nUser preferences, extracted insights, memories, historical data"
+  },
+  {
+    "objectID": "llm/context_engineering.html#how-it-works",
+    "href": "llm/context_engineering.html#how-it-works",
+    "title": "Context engineering",
+    "section": "How it works",
+    "text": "How it works\nmiddleware. It allows to: - hook into any step of the lifecycle - update context - jump to a different step in the lifecycle"
+  },
+  {
+    "objectID": "llm/context_engineering.html#system-prompt-state",
+    "href": "llm/context_engineering.html#system-prompt-state",
+    "title": "Context engineering",
+    "section": "System prompt: state",
+    "text": "System prompt: state\nExample: - Depending on history length, we make the response concise or not\nfrom langchain.agents.middleware import ModelRequest, dynamic_prompt\n\n@dynamic_prompt\ndef f (request: ModelRequest) -&gt; str:\n    if len(request.messages) &gt; 10:\n        m = \"Be concise\"\n    ...\n    return m\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f]\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#system-prompt-store",
+    "href": "llm/context_engineering.html#system-prompt-store",
+    "title": "Context engineering",
+    "section": "System prompt: store",
+    "text": "System prompt: store\nExample: - Depending on user preferences, use one communication style or another\nfrom langchain.agents.middleware import ModelRequest, dynamic_prompt\nfrom dataclasses import dataclass\n\n@dataclass\nclass ContextSchema:\n    user_id: str\n\n@dynamic_prompt\ndef f (request: ModelRequest) -&gt; str:\n    user_id = request.runtime.context.user_id\n    store = request.runtime.store\n    ...\n    return m\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f],\n    context_scheme=ContextScheme,\n    store=InMemoryStore()\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#system-prompt-runtime-context",
+    "href": "llm/context_engineering.html#system-prompt-runtime-context",
+    "title": "Context engineering",
+    "section": "System prompt: runtime context",
+    "text": "System prompt: runtime context\nExample: - Depending on user priviligies, we request the model to only use read tools or read/write\nfrom langchain.agents.middleware import ModelRequest, dynamic_prompt\n\n@dataclass\nclass ContextSchema:\n    role: str = Field (description=\"user role: admin, user, guest\")\n\n@dynamic_prompt\ndef f (request: ModelRequest) -&gt; str:\n    if request.runtime.context.role == \"user\":\n        m = \"Use only read tools\"\n    ...\n    return m\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f],\n    context_scheme=ContextSchema,\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#messages-state",
+    "href": "llm/context_engineering.html#messages-state",
+    "title": "Context engineering",
+    "section": "Messages: state",
+    "text": "Messages: state\nExample: - Inject uploaded file context from State when relevant to query.\nfrom langchain.agents.middleware import ModelRequest, ModelResponse, wrap_model_call\n\n@wrap_model_call\ndef f (\n    request: ModelRequest, \n    handler: Callable[[ModelRequest], ModelResponse]\n) -&gt; ModelResponse:\n    if request.state.get(\"uploaded_files\"):\n        file_context = integrate (request.state.get(\"uploaded_files\"))\n        messages = [\n            *request.messages,\n            {\"role\": \"user\", \"content\": file_context}\n        ]\n    request = request.override (messages=messages)\n    ...\n    return handler(request)\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f]\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#messages-store",
+    "href": "llm/context_engineering.html#messages-store",
+    "title": "Context engineering",
+    "section": "Messages: store",
+    "text": "Messages: store\nExample: - Retrieve user’s email writing style from store to guide the model.\nfrom langchain.agents.middleware import ModelRequest, ModelResponse, wrap_model_call\nfrom dataclasses import dataclass\n\n@dataclass\nclass ContextSchema:\n    user_id: str\n\n@wrap_model_call\ndef f (\n    request: ModelRequest, \n    handler: Callable[[ModelRequest], ModelResponse]\n) -&gt; ModelResponse:\n    user_id = request.runtime.context.user_id\n    store = request.runtime.store\n    ...\n    new_instructions = integrate (guiding_style)\n    messages = [\n        *request.messages,\n        {\"role\": \"user\", \"content\": new_instructions}\n    ]\n    request = request.override (messages=messages)\n\n    return handler(request)\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f],\n    context_scheme=ContextScheme,\n    store=InMemoryStore()\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#messages-runtime-context",
+    "href": "llm/context_engineering.html#messages-runtime-context",
+    "title": "Context engineering",
+    "section": "Messages: runtime context",
+    "text": "Messages: runtime context\nExample: - Depending on user profile details, we request the model certain compliance rules\nfrom langchain.agents.middleware import ModelRequest, ModelResponse, wrap_model_call\nfrom dataclasses import dataclass\n\n@dataclass\nclass ContextSchema:\n    user_id: str\n\n@wrap_model_call\ndef f (\n    request: ModelRequest, \n    handler: Callable[[ModelRequest], ModelResponse]\n) -&gt; ModelResponse:\n    profile_details_1 = request.runtime.context.profile_details_1\n    ...\n    new_instructions = get_rules (profile_details_1, ...)\n    messages = [\n        *request.messages,\n        {\"role\": \"user\", \"content\": new_instructions}\n    ]\n    request = request.override (messages=messages)\n\n    return handler(request)\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f],\n    context_scheme=ContextScheme,\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#tools-annotation",
+    "href": "llm/context_engineering.html#tools-annotation",
+    "title": "Context engineering",
+    "section": "Tools: annotation",
+    "text": "Tools: annotation\n@tool\ndef my_tool (\n    param1: param_type,\n    ...\n) -&gt; return_type:\n    \"\"\"\n        This tool does X and Y based on param1.... Use this tool in this and that situation.\n\n        Args:\n            param1: description: value_1, value_2, value_3\n    \"\"\""
+  },
+  {
+    "objectID": "llm/context_engineering.html#tools-state",
+    "href": "llm/context_engineering.html#tools-state",
+    "title": "Context engineering",
+    "section": "Tools: state",
+    "text": "Tools: state\nExample: - Depending on messages or authentication status, restrict usage of tools\nfrom langchain.agents.middleware import ModelRequest, ModelResponse, wrap_model_call\n\n@wrap_model_call\ndef f (\n    request: ModelRequest, \n    handler: Callable[[ModelRequest], ModelResponse]\n) -&gt; ModelResponse:\n    if request.state.get(\"authentication\")==\"Bad\":\n        tools_to_use = restrict_tools (request.tools, startswith=\"public\")\n        \n    request = request.override (tools=tools_to_use)\n    ...\n    return handler(request)\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f]\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#tools-store",
+    "href": "llm/context_engineering.html#tools-store",
+    "title": "Context engineering",
+    "section": "Tools: store",
+    "text": "Tools: store\nExample: - Depending on user preferences, use certain tools\nfrom langchain.agents.middleware import ModelRequest, ModelResponse, wrap_model_call\n\n@dataclass\nclass ContextSchema:\n    user_id: str\n\n@wrap_model_call\ndef f (\n    request: ModelRequest, \n    handler: Callable[[ModelRequest], ModelResponse]\n) -&gt; ModelResponse:\n    preferences = get_preferences (request.runtime.context.user_id, request.runtime.store)\n    tools_to_use = restrict_tools (request.tools, preferences)\n    request = request.override (tools=tools_to_use)\n    ...\n    return handler(request)\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f],\n    context_scheme=ContextSchema,\n    store=InMemoryStore()\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#tools-runtime-context",
+    "href": "llm/context_engineering.html#tools-runtime-context",
+    "title": "Context engineering",
+    "section": "Tools: runtime context",
+    "text": "Tools: runtime context\nExample: - Depending on user details, use certain tools\nfrom langchain.agents.middleware import ModelRequest, ModelResponse, wrap_model_call\n\n@dataclass\nclass ContextSchema:\n    user_id: str\n\n@wrap_model_call\ndef f (\n    request: ModelRequest, \n    handler: Callable[[ModelRequest], ModelResponse]\n) -&gt; ModelResponse:\n    details = get_details (request.runtime.context.user_details)\n    tools_to_use = restrict_tools (request.tools, details)\n    request = request.override (tools=tools_to_use)\n    ...\n    return handler(request)\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f],\n    context_scheme=ContextSchema,\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#model-state",
+    "href": "llm/context_engineering.html#model-state",
+    "title": "Context engineering",
+    "section": "Model: state",
+    "text": "Model: state\nExample: - Depending on history length, we use a faster or slower model\nfrom langchain.agents.middleware import ModelRequest, ModelResponse, wrap_model_call\nfrom langchain.chat_models import init_chat_model\n\nmodels = {\n    \"fast\": init_chat_model (\"gpt...\"),\n    \"slow\": init_chat_model (\"gpt...\")\n}\n\n@wrap_model_call\ndef f (\n    request: ModelRequest, \n    handler: Callable[[ModelRequest], ModelResponse]\n) -&gt; ModelResponse:\n    \n    model = select_model (\n        request.state.get(\"field\"), \n        request.messages, \n        models\n    )\n    request = request.override (model=model)\n    \n    return handler(request)\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f]\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#model-store",
+    "href": "llm/context_engineering.html#model-store",
+    "title": "Context engineering",
+    "section": "Model: store",
+    "text": "Model: store\nExample: - Depending on user preferences, use cheaper or more expensive model\nfrom langchain.agents.middleware import ModelRequest, ModelResponse, wrap_model_call\nfrom langchain.chat_models import init_chat_model\n\nmodels = {\n    \"fast\": init_chat_model (\"gpt...\"),\n    \"slow\": init_chat_model (\"gpt...\")\n}\n\n@dataclass\nclass ContextSchema:\n    user_id: str\n\n@wrap_model_call\ndef f (\n    request: ModelRequest, \n    handler: Callable[[ModelRequest], ModelResponse]\n) -&gt; ModelResponse:\n    preferences = get_preferences (request.runtime.context.user_id, request.runtime.store)\n    model = select_model (preferences, models)\n    request = request.override (model=model)\n\n    return handler(request)\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f],\n    context_scheme=ContextSchema,\n    store=InMemoryStore()\n)\n\n## Model: runtime context\n\nExample: \n- Depending on user and environment details, use certain models\n\n```python\nfrom langchain.agents.middleware import ModelRequest, ModelResponse, wrap_model_call\nfrom langchain.chat_models import init_chat_model\n\nmodels = {\n    \"fast\": init_chat_model (\"gpt...\"),\n    \"slow\": init_chat_model (\"gpt...\")\n}\n\n@wrap_model_call\ndef f (\n    request: ModelRequest, \n    handler: Callable[[ModelRequest], ModelResponse]\n) -&gt; ModelResponse:\n    details = get_details (request.runtime.context.user_details)\n    model = select_model (preferences, models)\n    request = request.override (model=model)\n    return handler(request)\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f],\n    context_scheme=ContextSchema,\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#response-format-state",
+    "href": "llm/context_engineering.html#response-format-state",
+    "title": "Context engineering",
+    "section": "Response format: state",
+    "text": "Response format: state\nExample: - Depending on history length and other field values of current state, we use more or less detailed format\nfrom langchain.agents.middleware import ModelRequest, ModelResponse, wrap_model_call\nfrom pydantic import BaseModel\n\nclass DetailedFormat (BaseModel):\n    \"\"\"Structured information to be used for this and other purpose\"\"\"\n    field_1: str = Field (description=\"...\")\n    more_details: str = Field (description=\"...\")\n\nclass ShortFormat (BaseModel):\n    field_1: str = Field (description=\"...\")\n\nformats = {\n    \"detailed\": DetailedFormat,\n    \"short\": ShortFormat\n}\n\n@wrap_model_call\ndef f (\n    request: ModelRequest, \n    handler: Callable[[ModelRequest], ModelResponse]\n) -&gt; ModelResponse:\n    \n    format = select_format (\n        request.state.get(\"field\"), \n        request.messages, \n        formats\n    )\n    request = request.override (response_format=format)\n    \n    return handler(request)\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f]\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#response-format-store",
+    "href": "llm/context_engineering.html#response-format-store",
+    "title": "Context engineering",
+    "section": "Response format: store",
+    "text": "Response format: store\nExample: - Depending on user preferences, we use more or less detailed format\nfrom langchain.agents.middleware import ModelRequest, ModelResponse, wrap_model_call\nfrom pydantic import BaseModel\n\nclass DetailedFormat (BaseModel):\n    \"\"\"Structured information to be used for this and other purpose\"\"\"\n    field_1: str = Field (description=\"...\")\n    more_details: str = Field (description=\"...\")\n\nclass ShortFormat (BaseModel):\n    field_1: str = Field (description=\"...\")\n\nformats = {\n    \"detailed\": DetailedFormat,\n    \"short\": ShortFormat\n}\n\n@dataclass\nclass ContextSchema:\n    user_id: str\n\n\n@wrap_model_call\ndef f (\n    request: ModelRequest, \n    handler: Callable[[ModelRequest], ModelResponse]\n) -&gt; ModelResponse:\n    preferences = get_preferences (request.runtime.context.user_id, request.runtime.store)\n    format = select_format (\n        preferences\n        formats\n    )\n    request = request.override (response_format=format)\n\n    return handler(request)\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f],\n    context_scheme=ContextSchema,\n    store=InMemoryStore()\n)\n\n## Response format: runtime context\n\nExample: \n- Depending on user and environment details, we use more or less detailed format\n\n```python\nfrom langchain.agents.middleware import ModelRequest, ModelResponse, wrap_model_call\nfrom pydantic import BaseModel\n\nclass DetailedFormat (BaseModel):\n    \"\"\"Structured information to be used for this and other purpose\"\"\"\n    field_1: str = Field (description=\"...\")\n    more_details: str = Field (description=\"...\")\n\nclass ShortFormat (BaseModel):\n    field_1: str = Field (description=\"...\")\n\nformats = {\n    \"detailed\": DetailedFormat,\n    \"short\": ShortFormat\n}\n\n@dataclass\nclass ContextSchema:\n    user_details: str\n\n@wrap_model_call\ndef f (\n    request: ModelRequest, \n    handler: Callable[[ModelRequest], ModelResponse]\n) -&gt; ModelResponse:\n    \n    details = get_details (request.runtime.context.user_details)\n    format = select_format (\n        details\n        formats\n    )\n    request = request.override (response_format=format)\n    return handler(request)\n\ncreate_agent (\n    model=...,\n    tools=[...],\n    middleware=[f],\n    context_scheme=ContextSchema,\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#tool-context",
+    "href": "llm/context_engineering.html#tool-context",
+    "title": "Context engineering",
+    "section": "Tool Context",
+    "text": "Tool Context"
+  },
+  {
+    "objectID": "llm/context_engineering.html#tool-context-state",
+    "href": "llm/context_engineering.html#tool-context-state",
+    "title": "Context engineering",
+    "section": "Tool Context: state",
+    "text": "Tool Context: state\nExample: - Depending on history length and other field values of current state, the tool performs one action or another\nfrom langchain.tools import tool, ToolRuntime\n\n@tool\ndef my_tool (\n    runtime: ToolRuntime\n):\n    result = obtain_result (\n        runtime.state.get(\"field_1\"),\n        # request.messages ? \n    )\n    return result\n\ncreate_agent (\n    model=...,\n    tools=[my_tool],\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#tool-context-store",
+    "href": "llm/context_engineering.html#tool-context-store",
+    "title": "Context engineering",
+    "section": "Tool Context: store",
+    "text": "Tool Context: store\nExample: - Depending on user preferences, the tool performs one action or another\nfrom langchain.tools import tool, ToolRuntime\n\n@dataclass\nclass ContextSchema:\n    user_id: str\n\n@tool\ndef my_tool (\n    runtime: ToolRuntime[ContextSchema]\n):\n    preferences = get_preferences (runtime.context.user_id, runtime.store)\n    result = obtain_result (preferences)\n    return result\n\ncreate_agent (\n    model=...,\n    tools=[my_tool],\n    context_scheme=ContextSchema,\n    store=InMemoryStore()\n)\n\n## Tool context: runtime context\n\nExample: \n- Depending on user and environment details, the tool performs one action or another\n\n```python\nfrom langchain.tools import tool, ToolRuntime\n\n@dataclass\nclass ContextSchema:\n    user_id: str\n\n@tool\ndef my_tool (\n    runtime: ToolRuntime[ContextSchema]\n):\n    details = get_details (runtime.context.user_details)\n    result = obtain_result (details)\n    return result\n\nagent = create_agent (\n    model=...,\n    tools=[my_tool],\n    context_scheme=ContextSchema\n)\n\nagent.invoke (\n    {\"messages\": [{\"role\": \"user\", \"content\": \"my message\"}]},\n    context=ContextSchema(\n        \"user_id\": ...\n    )\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#tool-context-state-write",
+    "href": "llm/context_engineering.html#tool-context-state-write",
+    "title": "Context engineering",
+    "section": "Tool Context: state (write)",
+    "text": "Tool Context: state (write)\nExample: - Depending on history length and other field values of current state, the tool changes the state in certain way\nfrom langchain.tools import tool, ToolRuntime\nfrom langchain.types import Command\n\n@tool\ndef my_tool (\n    runtime: ToolRuntime\n) -&gt; Command:\n    my_update = obtain_result (\n        runtime.state.get(\"field_1\"),\n        # request.messages ? \n    )\n    return Command (\n        update={\"my_field\": my_update}\n    )\n\ncreate_agent (\n    model=...,\n    tools=[my_tool],\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#lifecycle-context-hooks",
+    "href": "llm/context_engineering.html#lifecycle-context-hooks",
+    "title": "Context engineering",
+    "section": "Lifecycle context: hooks",
+    "text": "Lifecycle context: hooks\nflowchart\n    Request --&gt; before_agent\n    before_agent --&gt; before_model\n    before_model --&gt; Model\n    Model[\"wrap_model_call&lt;br/&gt;Model\"] --&gt; after_model\n    after_model -.-&gt; Tool\n    after_model -.-&gt; after_agent\n    Tool[\"wrap_tool_call&lt;br/&gt;Tool\"] --&gt; before_model\n    after_agent --&gt; Response"
+  },
+  {
+    "objectID": "llm/context_engineering.html#lifcycle-context-actions",
+    "href": "llm/context_engineering.html#lifcycle-context-actions",
+    "title": "Context engineering",
+    "section": "Lifcycle context: actions",
+    "text": "Lifcycle context: actions\n\nControl what happens between the core agent steps\n\nGood for: intercepting data flow to implement cross-cutting concerns like summarization, guardrails, and logging.\n\nUpdate context\n\nModify state and store to persist changes, update conversation history, or save insights\nJump in the lifecycle - Move to different steps in the agent cycle based on context (e.g., skip tool execution if a condition is met, repeat model call with modified context)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#built-in-middleware",
+    "href": "llm/context_engineering.html#built-in-middleware",
+    "title": "Context engineering",
+    "section": "Built-in middleware",
+    "text": "Built-in middleware\nSummarization:\nfrom langchain.agents import create_agent\nfrom langchain.agents.middleware import SummarizationMiddleware\n\nagent = create_agent(\n    model=\"gpt-4o\",\n    tools=[...],\n    middleware=[\n        SummarizationMiddleware(\n            model=\"gpt-4o-mini\",\n            trigger={\"tokens\": 4000},\n            keep={\"messages\": 20},\n        ),\n    ],\n)"
+  },
+  {
+    "objectID": "llm/context_engineering.html#best-practices",
+    "href": "llm/context_engineering.html#best-practices",
+    "title": "Context engineering",
+    "section": "Best Practices",
+    "text": "Best Practices\n\nStart simple - Begin with static prompts and tools, add dynamics only when needed\nTest incrementally - Add one context engineering feature at a time\nMonitor performance - Track model calls, token usage, and latency\nUse built-in middleware - Leverage SummarizationMiddleware, LLMToolSelectorMiddleware, etc.\nDocument your context strategy - Make it clear what context is being passed and why\nUnderstand transient vs persistent: Model context changes are transient (per-call), while life-cycle context changes persist to state"
+  },
+  {
     "objectID": "llm/context_engineering.html#further-reading",
     "href": "llm/context_engineering.html#further-reading",
     "title": "Context engineering",
     "section": "Further reading",
-    "text": "Further reading\n\nContext Rot: When Long Context Fails\nContinual In-Context Learning"
+    "text": "Further reading\n\nContext Rot: When Long Context Fails\nContinual In-Context Learning\nPrompt Engineering vs Context Engineering | MIM Technovate\nPrompt Engineering vs Context Engineering | IBM Technology\nContext is all you need | Prompt Engineering"
   },
   {
     "objectID": "llm/rag_parlance.html#demistifying-rag",

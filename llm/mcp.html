@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.8.27">
 
   <meta name="author" content="Jaume Amores">
-  <title>. – Fine Tuning</title>
+  <title>. – Model Context Protocol - LangChain</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -194,7 +194,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Fine Tuning</h1>
+  <h1 class="title">Model Context Protocol - LangChain</h1>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -206,285 +206,282 @@ Jaume Amores
 
 </section>
 <section>
-<section id="using-langsmith-to-support-fine-tuning" class="title-slide slide level1 center">
-<h1>Using LangSmith to Support Fine-tuning</h1>
-<p><a href="https://blog.langchain.com/using-langsmith-to-support-fine-tuning-of-open-source-llms/">blog post</a></p>
+<section id="overview" class="title-slide slide level1 center">
+<h1>Overview</h1>
+
 </section>
-<section id="scenarios" class="slide level2">
-<h2>Scenarios</h2>
-<ul>
-<li>Open Source LLM + Fine-tuning can outperform foundational SOTA models (e.g., ChatGPT).</li>
-</ul>
+<section id="client-side" class="slide level2">
+<h2>Client side</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a>client <span class="op">=</span> MultiServerMCPClient (</span>
+<span id="cb1-2"><a></a>    {</span>
+<span id="cb1-3"><a></a>        <span class="st">"math"</span>: {</span>
+<span id="cb1-4"><a></a>            <span class="st">"transport"</span>: <span class="st">"stdio"</span>,</span>
+<span id="cb1-5"><a></a>            <span class="st">"command"</span>: <span class="st">"python"</span>,</span>
+<span id="cb1-6"><a></a>            <span class="st">"args"</span>: </span>
+<span id="cb1-7"><a></a>                [<span class="st">"/path/to/script.py"</span>],</span>
+<span id="cb1-8"><a></a>        },</span>
+<span id="cb1-9"><a></a>        <span class="st">"weather"</span>: {</span>
+<span id="cb1-10"><a></a>            <span class="st">"transport"</span>: <span class="st">"http"</span>,</span>
+<span id="cb1-11"><a></a>            <span class="st">"url"</span>: <span class="st">"http://localhost:8000/mcp</span></span>
+<span id="cb1-12"><a></a><span class="er">        }</span></span>
+<span id="cb1-13"><a></a>    }</span>
+<span id="cb1-14"><a></a>)</span>
+<span id="cb1-15"><a></a></span>
+<span id="cb1-16"><a></a>tools <span class="op">=</span> client.get_tools ()</span>
+<span id="cb1-17"><a></a></span>
+<span id="cb1-18"><a></a>agent <span class="op">=</span> create_agent (</span>
+<span id="cb1-19"><a></a>    model<span class="op">=</span><span class="st">"..."</span>,</span>
+<span id="cb1-20"><a></a>    tools,</span>
+<span id="cb1-21"><a></a>    ...</span>
+<span id="cb1-22"><a></a>)</span>
+<span id="cb1-23"><a></a></span>
+<span id="cb1-24"><a></a>result1 <span class="op">=</span> <span class="cf">await</span> agent.ainvoke (</span>
+<span id="cb1-25"><a></a>    {<span class="st">"messages"</span>: [{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>:<span class="st">"What is the result of 2*3"</span>}]}</span>
+<span id="cb1-26"><a></a>)</span>
+<span id="cb1-27"><a></a></span>
+<span id="cb1-28"><a></a>result2 <span class="op">=</span> <span class="cf">await</span> agent.ainvoke (</span>
+<span id="cb1-29"><a></a>    <span class="st">"What is the wheather in CA"</span></span>
+<span id="cb1-30"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="when-to-fine-tune" class="slide level2">
-<h2>When to fine-tune</h2>
-<ul>
-<li>Two ways of learning:
-<ul>
-<li>Weights: pre-training, fine-tuning</li>
-<li>Prompting, via RAG.</li>
-</ul></li>
-<li>Analogy:
-<ul>
-<li>Fine-tuning is like studying one week in advance.</li>
-<li>Prompting is like taking exam with open notes.</li>
-</ul></li>
-<li>Not Good for:
-<ul>
-<li>Learning new knowledge. Can increase hallucinations.</li>
-</ul></li>
-<li>Good for:
-<ul>
-<li>Specialized tasks, in similar ways to RAG.
-<ul>
-<li>With many examples</li>
-</ul></li>
-</ul></li>
-</ul>
-</section>
-<section id="when-to-fine-tune-more-analogies" class="slide level2">
-<h2>When to fine-tune, more analogies</h2>
-<ul>
-<li>Zero shot learning: describe task with words.</li>
-<li>Few shot learning: give few examples of solving task in prompt (e.g., via RAG or manually)</li>
-<li>Fine tuning: allow person to practice task.
-<ul>
-<li>In applications with concrete well-defined tasks where it is possible to collect a lot of data and “practice” on it.</li>
-</ul></li>
-<li><a href="https://x.com/karpathy/status/1655994367033884672?ref=blog.langchain.com">Karpathy’s tweet</a></li>
-</ul>
-</section>
-<section id="fine-tuning-vs-others-complete-guide" class="slide level2">
-<h2>Fine-tuning vs others complete guide</h2>
-<p>Possibilities along two axis: - Complexity / Cost dimension (higher to lower): - From scratch training - Reinforcement Learning from Human Feedback - Fine Tuning, Retrieval Assisted Generation =&gt; Problems Addressed dimension: Form problems - Fine Tuning, Factual Problems - RAG - Static / Dynamic Example Selection - Manual / Automatic Prompt Tuning</p>
-<ul>
-<li>Fine tuning is good at:
-<ul>
-<li>Learning the style or form of language.</li>
-<li>Examples:
-<ul>
-<li>Pure autoregressive model on Q &amp; A, since there’s plenty of Q&amp;A data.</li>
-<li>Pure autoregressive model on instruction following, since there’s plenty of data.</li>
-<li>Imitate style, e.g., Shakespeare, since there is lot of training material. Also, legal jargon, claim responses</li>
-<li>Imitate structure / format, like resumes.</li>
-</ul></li>
-</ul></li>
-<li>It is not good at:
-<ul>
-<li>Learning new concepts that do not exist in the base knowledge of the foundational model.</li>
-<li>Example:
-<ul>
-<li>Replace Romeo with Bob in a set of texts and fine-tune. See if it forgets association of Romeo with Juliet and learns that it is Bob who was with Juliet. Fails because the <em>Romeo</em> concept is ingrained in the base knowledge.</li>
-<li>Answer questions like “who said to be or not to be” after fine-tuning on set of Shakespeare works.
-<ul>
-<li>Better use search engine (RAG) to retrieve those answers and inject them in prompt for LLM.</li>
-<li>Question: what does LLM add here, if the search engine is already finding relevant answers? Remove FP?</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li><a href="https://www.anyscale.com/blog/fine-tuning-is-for-form-not-facts?ref=blog.langchain.com">Fine tuning is for form, not facts</a></li>
-</ul>
-</section>
-<section id="fine-tuning---openai-example" class="slide level2">
-<h2>Fine-tuning - OpenAI example</h2>
-<p><a href="https://colab.research.google.com/drive/1YCyDHPSl0d_ULubCVshrP5hLqUCorr7d?usp=sharing&amp;ref=blog.langchain.com#scrollTo=A-8dt5qqtpgM">colab</a></p>
-<ul>
-<li>Transform message format from LangSmith to OpenAI: <code>python     [example.inputs, example.outputs for example in client.list_examples (dataset_name=name_dataset)]     example.inputs["sentence"] # string     example.outputs["cluster"] # dictionary: text_dict = json.dumps(example.outputs["cluster"])     open_ai_format = [         {"role": "user", "content": "..." + sentence},         {"role": "assistant", "content": text_dict}     ]     data = [open_ai_format(in,out) for ...]</code></li>
-<li>Write into binary file:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a>binary_file <span class="op">=</span> BytesIO()</span>
-<span id="cb1-2"><a></a><span class="cf">for</span> m <span class="kw">in</span> data:</span>
-<span id="cb1-3"><a></a>    binary_file.write (json.dumps({<span class="st">"messages"</span>: m}) <span class="op">+</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
-<span id="cb1-4"><a></a>training_file<span class="op">=</span>openai.File.create (<span class="bu">file</span><span class="op">=</span>binary_file, purpose<span class="op">=</span><span class="st">"fine-tune"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li><p>Train: <code>python     job = openai.FineTuningJob.create (training_file=training_file.id, model="gpt-3.5-turbo")     while True:         ftj = openai.FineTuningJob.retrieve (job.id)         if ftj.fine_tuned_model is None:             time.sleep(10)         else:             break</code></p></li>
-<li><p>Fine-Tuning chain: ```python prompt = prompts.ChatPromptTemplate.from_messages( [ (“human”, “extract triplets from {sentence}”) ] ) llm = chat_models.ChatOpenAI(model=ftj.fine_tuned_model, temperature=0) fine_tuned_chain = prompt | llm</p>
-<p># later we’ll do: results = await client.arun_on_dataset ( validation_dataset_name, # here is where the examples with format example.inputs[“sentence”] are taken from, and this sentence field is used by the prompt template to get triplets fine_tuned_chain, evaluation=config, # we will build a config object from an evaluation chain below ) ```</p></li>
-<li><p>Evaluation chain:</p>
-<ul>
-<li><code>eval_prompt</code> for model: you are an evaluator…</li>
-<li>reasoning capability ontop of evaluation score: <code>commit_grade</code> function, defined through a dictionary schema:</li>
-<li>transforming obtained reasoning text into structured dict through <code>normalize_grade</code> function</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a></a>    eval_chain <span class="op">=</span> (</span>
-<span id="cb2-2"><a></a>        eval_prompt <span class="co"># this is where we obtain a score, by asking it to the following model in the chain</span></span>
-<span id="cb2-3"><a></a>        <span class="op">|</span> ChatOpenAI (model<span class="op">=</span><span class="st">"gpt-4"</span>, temperature<span class="op">=</span><span class="dv">0</span>).bind (functions<span class="op">=</span>[commit_grade_schema]) <span class="co"># this is where we obtain a reasoning in addition to a score</span></span>
-<span id="cb2-4"><a></a>        <span class="op">|</span> normalize_grade <span class="co"># this is where we get a structured output</span></span>
-<span id="cb2-5"><a></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
-<li><p>Evaluator class: ```python class EvaluateTriplets (StringEvaluator): … def _evaluate_strings ( self, *, prediction, # … string fields used below in input dict **kwargs, ): callbacks = kwargs.get(“callbacks”) return eval_chain.invoke ( {“prediction”: prediction, “reference”: reference, “input”: input}, {“callbacks”: callbacks} )</p>
-<pre><code>  config = smith.RunEvalConfig (custom_evaluators=[EvaluateTriplets()])</code></pre>
-<p>```</p></li>
-<li><p>Comparison vs few-shot examples.</p>
-<ul>
-<li>Differences:
-<ul>
-<li>prompt: in addition to current sentence to be transformed into triplet, it includes few examples of inputs and desired outputs, using <code>partials</code></li>
-<li>model: pre-trained (not fine-tuned) chat gpt model</li>
-</ul></li>
-</ul></li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a></a><span class="cf">for</span> i <span class="kw">in</span> example:</span>
-<span id="cb4-2"><a></a>    messages.extend([</span>
-<span id="cb4-3"><a></a>        (<span class="st">"human"</span>, <span class="st">"... {input_</span><span class="sc">%d</span><span class="st">}"</span><span class="op">%</span>i),</span>
-<span id="cb4-4"><a></a>        (<span class="st">"ai"</span>, <span class="st">"{output_</span><span class="sc">%d</span><span class="st">}"</span><span class="op">%</span>i),</span>
-<span id="cb4-5"><a></a>    ])</span>
-<span id="cb4-6"><a></a>    partial[<span class="st">"input_</span><span class="sc">%d</span><span class="st">"</span> <span class="op">%</span>i] <span class="op">=</span> first_5[i].inputs[<span class="st">"sentence"</span>]</span>
-<span id="cb4-7"><a></a>    partial[<span class="st">"output_</span><span class="sc">%d</span><span class="st">"</span> <span class="op">%</span>i] <span class="op">=</span> json.dumps(first_5[i].outputs[<span class="st">"clusters"</span>])</span>
-<span id="cb4-8"><a></a>messages.append((<span class="st">"human"</span>, <span class="st">"...</span><span class="sc">{sentence}</span><span class="st">"</span>))</span>
-<span id="cb4-9"><a></a>prompts.ChatPromptTemplate.from_messages (</span>
-<span id="cb4-10"><a></a>    messages</span>
-<span id="cb4-11"><a></a>).partial (</span>
-<span id="cb4-12"><a></a>    <span class="op">**</span>partials</span>
-<span id="cb4-13"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="quantization-lora-and-qlora" class="slide level2">
-<h2>Quantization, LoRA and qLoRA</h2>
-<ul>
-<li>Model quantization: fit model (e.g., 7B Llama) in memory.</li>
-<li>LoRA: efficiently fine-tune model by reducing number of parameters to be trained</li>
-<li>qLoRA: same, but deals with quantized models.</li>
-</ul>
+<section id="server-side-custom-servers" class="slide level2">
+<h2>Server side (custom servers)</h2>
+<p>Test the above client code by launching local custom servers through the FastMCP library</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a></a></span>
+<span id="cb2-2"><a></a>mcp <span class="op">=</span> FastMCP(<span class="st">"Math"</span>)</span>
+<span id="cb2-3"><a></a></span>
+<span id="cb2-4"><a></a><span class="at">@mcp.tool</span></span>
+<span id="cb2-5"><a></a><span class="cf">async</span> <span class="kw">def</span> plus (a: <span class="bu">int</span>, b: <span class="bu">int</span>):</span>
+<span id="cb2-6"><a></a>    <span class="cf">return</span> a<span class="op">+</span>b</span>
+<span id="cb2-7"><a></a></span>
+<span id="cb2-8"><a></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb2-9"><a></a>    mcp.run(transport<span class="op">=</span><span class="st">"stdio"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a></a></span>
+<span id="cb3-2"><a></a>mcp <span class="op">=</span> FastMCP(<span class="st">"Weather"</span>)</span>
+<span id="cb3-3"><a></a></span>
+<span id="cb3-4"><a></a><span class="at">@mcp.tool</span></span>
+<span id="cb3-5"><a></a><span class="cf">async</span> <span class="kw">def</span> get_weather (city: <span class="bu">str</span>):</span>
+<span id="cb3-6"><a></a>    <span class="cf">return</span> <span class="st">"sunny"</span></span>
+<span id="cb3-7"><a></a></span>
+<span id="cb3-8"><a></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb3-9"><a></a>    mcp.run(transport<span class="op">=</span><span class="st">"http"</span>, </span>
+<span id="cb3-10"><a></a>        <span class="co"># url="localhost",</span></span>
+<span id="cb3-11"><a></a>        <span class="co"># port=8000</span></span>
+<span id="cb3-12"><a></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section></section>
 <section>
-<section id="fine-tuning-openai-models---best-practices" class="title-slide slide level1 center">
-<h1>Fine Tuning OpenAI Models - Best Practices</h1>
+<section id="transports" class="title-slide slide level1 center">
+<h1>Transports</h1>
+
+</section>
+<section id="stateless-vs-statefull" class="slide level2">
+<h2>Stateless vs Statefull</h2>
 <ul>
-<li><a href="https://www.youtube.com/watch?v=Q0GSZD0Na1s">Video</a></li>
+<li>By default it is stateless: new server started at each call.</li>
 </ul>
 </section>
-<section id="when-to-fine-tune-1" class="slide level2">
-<h2>When to fine-tune</h2>
+<section id="http" class="slide level2">
+<h2>HTTP</h2>
+<p>You can: - Indicate headers - Authenticate</p>
+</section>
+<section id="stdio" class="slide level2">
+<h2>stdio</h2>
+<p>You can:</p>
 <ul>
-<li>Good for:
-<ul>
-<li>Follow given format or tone.</li>
-<li>Processing the input following specific, complex instructions.</li>
-<li>Improve latency (shorter prompt to process, since we don’t need to include multiple examples)</li>
-<li>Reducing token usage (again, shorter prompt)</li>
-</ul></li>
-<li>Not good for:
-<ul>
-<li>Teaching new knowledge.</li>
-<li>Performing multiple, unrelated tasks:
-<ul>
-<li>Do prompt-engineering or use multiple FT models.</li>
-</ul></li>
-<li>Including up-to-date content in responses
-<ul>
-<li>Too much latency.</li>
-<li>Use RAG instead.</li>
-</ul></li>
-</ul></li>
+<li>communicate via strings as in command line input / output</li>
 </ul>
 </section>
-<section id="fine-tuning-vs-other-optimization-techniques" class="slide level2">
-<h2>Fine-tuning vs other optimization techniques</h2>
-<p><a href="https://platform.openai.com/docs/guides/optimizing-llm-accuracy">OpenAI blog post</a></p>
+<section id="statefull" class="slide level2">
+<h2>Statefull</h2>
 <ul>
-<li>Context optimization (what the model needs to know): move towards prompt / RAG</li>
-<li>LLM optimization (how the model needs to act): move towards fine-tuning.
+<li>Use statefull with sessions</li>
+<li>For example if the server maintains context across tool invocations</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a></a><span class="cf">async</span> <span class="cf">with</span> client.session ():</span>
+<span id="cb4-2"><a></a>    tools <span class="op">=</span> <span class="cf">await</span> load_mcp_tools ()</span>
+<span id="cb4-3"><a></a>    agent <span class="op">=</span> create_agent (</span>
+<span id="cb4-4"><a></a>        model<span class="op">=</span><span class="st">"..."</span>,</span>
+<span id="cb4-5"><a></a>        tools,</span>
+<span id="cb4-6"><a></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="stateful-functionalities" class="slide level2">
+<h2>stateful functionalities:</h2>
+<p>We can: - Get the tools - Get structured content: - using the <code>artifact</code> field of <code>ToolMessage</code> - using <code>interceptors</code> e.g., to automatically append the structured content to tool result:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a></a><span class="cf">async</span> <span class="kw">def</span> my_interceptor (request: MCPToolCallRequest, handler):</span>
+<span id="cb5-2"><a></a>    result <span class="op">=</span> <span class="cf">await</span> handler (request)</span>
+<span id="cb5-3"><a></a>    <span class="co"># result.structuredContent: dict</span></span>
+<span id="cb5-4"><a></a></span>
+<span id="cb5-5"><a></a>client <span class="op">=</span> MultiServerMCPClient ({...}, tool_interceptors<span class="op">=</span>[my_interceptor])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="get-multimedia-content" class="slide level2">
+<h2>Get multimedia content</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a></a>response <span class="op">=</span> <span class="cf">await</span> agent.ainvoke...</span>
+<span id="cb6-2"><a></a>response[<span class="st">"messages"</span>]</span>
+<span id="cb6-3"><a></a><span class="cf">for</span> message <span class="kw">in</span> response[<span class="st">"messages"</span>]:</span>
+<span id="cb6-4"><a></a>    <span class="cf">for</span> block <span class="kw">in</span> message.content_blocks:</span>
+<span id="cb6-5"><a></a>        <span class="cf">if</span> block[<span class="st">"type"</span>] <span class="op">==</span> ... <span class="co"># "text", "image", ...</span></span>
+<span id="cb6-6"><a></a>            block.get(...)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="get-resources" class="slide level2">
+<h2>Get resources</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a></a>blobs <span class="op">=</span> <span class="cf">await</span> client.get_resources(<span class="st">"server_name"</span>, uris<span class="op">=</span>...)</span>
+<span id="cb7-2"><a></a><span class="cf">for</span> blob <span class="kw">in</span> blobs:</span>
+<span id="cb7-3"><a></a>    ...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="get-prompts" class="slide level2">
+<h2>get prompts</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a></a>messages <span class="op">=</span> <span class="cf">await</span> client.get_prompt (...)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="interceptors-accessing-runtime-context" class="slide level2">
+<h2>interceptors: accessing runtime context</h2>
 <ul>
-<li>Example: say “I don’t know” more often when uncertain.</li>
-</ul></li>
-<li>We can use both RAG and fine-tuning.</li>
+<li>Access user details (ID, api keys, …)</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a></span>
+<span id="cb9-2"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb9-3"><a></a>    my_field: ...</span>
+<span id="cb9-4"><a></a></span>
+<span id="cb9-5"><a></a><span class="cf">async</span> <span class="kw">def</span> my_interceptor (request: MCPToolCallRequest, handler):</span>
+<span id="cb9-6"><a></a>    result <span class="op">=</span> <span class="cf">await</span> handler (request)    </span>
+<span id="cb9-7"><a></a>    <span class="co"># request.runtime.context.my_field</span></span>
+<span id="cb9-8"><a></a>    modified_request <span class="op">=</span> request.override (</span>
+<span id="cb9-9"><a></a>        args <span class="op">=</span> {</span>
+<span id="cb9-10"><a></a>            <span class="op">**</span>request.args,</span>
+<span id="cb9-11"><a></a>            {<span class="st">"my_field"</span>: my_field}</span>
+<span id="cb9-12"><a></a>        }</span>
+<span id="cb9-13"><a></a>    )</span>
+<span id="cb9-14"><a></a>    <span class="cf">return</span> <span class="cf">await</span> handler (modified_request)</span>
+<span id="cb9-15"><a></a></span>
+<span id="cb9-16"><a></a>client <span class="op">=</span> MultiServerMCPClient ({...}, tool_interceptors<span class="op">=</span>[my_interceptor])</span>
+<span id="cb9-17"><a></a></span>
+<span id="cb9-18"><a></a>tools <span class="op">=</span> client.get_tools (...)</span>
+<span id="cb9-19"><a></a></span>
+<span id="cb9-20"><a></a>agent <span class="op">=</span> create_agent (</span>
+<span id="cb9-21"><a></a>    model<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb9-22"><a></a>    tools,</span>
+<span id="cb9-23"><a></a>    context_scheme<span class="op">=</span>ContextSchema,</span>
+<span id="cb9-24"><a></a>)</span>
+<span id="cb9-25"><a></a></span>
+<span id="cb9-26"><a></a>result <span class="op">=</span> <span class="cf">await</span> agent.ainvoke (</span>
+<span id="cb9-27"><a></a>    <span class="st">"..."</span>,</span>
+<span id="cb9-28"><a></a>    context<span class="op">=</span>{<span class="st">"my_field"</span>: my_value},</span>
+<span id="cb9-29"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="store-and-state" class="slide level2">
+<h2>Store and State</h2>
+<ul>
+<li>Similar to the above, see context engineering notes</li>
 </ul>
 </section>
-<section id="preparing-the-dataset" class="slide level2">
-<h2>Preparing the dataset</h2>
-<ul>
-<li>Take the set of instructions and prompts that you found work best for the model prior to fine-tuning, and include them in every training example.</li>
-<li>Take at least 50-100 examples.</li>
-</ul>
+<section id="tool-call-id" class="slide level2">
+<h2>Tool Call ID</h2>
+<p>Allows to track tool executions, return properly formatted responses, etc.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a></a>...</span>
+<span id="cb10-2"><a></a>tool_call_id <span class="op">=</span> request.runtime.tool_call_id</span>
+<span id="cb10-3"><a></a><span class="cf">if</span> there_is_issue(request.name):</span>
+<span id="cb10-4"><a></a>    <span class="cf">return</span> ToolMessage (</span>
+<span id="cb10-5"><a></a>        content<span class="op">=</span><span class="st">"There is X issue (e.g., rate limit exceeded)"</span>,</span>
+<span id="cb10-6"><a></a>        tool_call_id<span class="op">=</span>tool_call_id,</span>
+<span id="cb10-7"><a></a>    )</span>
+<span id="cb10-8"><a></a></span>
+<span id="cb10-9"><a></a>result <span class="op">=</span> <span class="cf">await</span> handler(request)</span>
+<span id="cb10-10"><a></a>log_tool_execution (tool_call_id, request.name, success<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-11"><a></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="best-practices" class="slide level2">
-<h2>Best Practices</h2>
-<h3 id="curate-examples-carefully">Curate examples carefully</h3>
-<ul>
-<li>Better spend time on few examples of higher quality.</li>
-<li>Consider prompt baking: using basic prompt to generate initial examples.</li>
-<li>Failure Examples or cases with issues.</li>
-<li>Consider Balance and diversity of data.</li>
-<li>Multi-turn conversations: take representative examples.</li>
-<li>Make sure messages contain all information needed in the response.</li>
-</ul>
+<section id="state-updates-and-commands" class="slide level2">
+<h2>State updates and commands</h2>
+<p>Interceptors can return <code>Command</code> objects to change the state or the flow of the execution.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a></a><span class="cf">async</span> <span class="kw">def</span> my_interceptor (</span>
+<span id="cb11-2"><a></a>    ...</span>
+<span id="cb11-3"><a></a>) <span class="op">-&gt;</span> Command:</span>
+<span id="cb11-4"><a></a>    result <span class="op">=</span> <span class="cf">await</span> handler(request)</span>
+<span id="cb11-5"><a></a>    <span class="cf">if</span> condition:</span>
+<span id="cb11-6"><a></a>        <span class="cf">return</span> Command (</span>
+<span id="cb11-7"><a></a>            update<span class="op">=</span>{</span>
+<span id="cb11-8"><a></a>                <span class="st">"messages"</span>: [result] <span class="cf">if</span> <span class="bu">isinstance</span> (result, ToolMessage) <span class="cf">else</span> [],</span>
+<span id="cb11-9"><a></a>                <span class="st">"task_status"</span>: <span class="st">"completed"</span>,</span>
+<span id="cb11-10"><a></a>            },</span>
+<span id="cb11-11"><a></a>            goto <span class="op">=</span> <span class="st">"my_next_step"</span> <span class="co"># can be "__end__"</span></span>
+<span id="cb11-12"><a></a>        )</span>
+<span id="cb11-13"><a></a>    <span class="cf">return</span> result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="section" class="slide level2">
-<h2></h2>
-<h3 id="iterate-on-hyper-parameters">Iterate on hyper-parameters</h3>
-<ul>
-<li>Start with defaults.</li>
-<li>If not converging, increase the learning rate multiplier.</li>
-<li>If doesn’t seem to learn, increase epochs.</li>
-<li>If becomes less diverse than expected, decrease epochs by 1-2.</li>
-</ul>
+<section id="custom-interceptors" class="slide level2">
+<h2>Custom interceptors</h2>
+<p>You can: - Modify the request before calling the tool - use <code>request.override(...)</code> before <code>result = handler(request)</code> - For instance, change args or header, see above - Perform the action after calling the tool, e.g., manage exceptions</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a></a><span class="cf">try</span>:</span>
+<span id="cb12-2"><a></a>    result <span class="op">=</span> <span class="cf">await</span> handler(request)</span>
+<span id="cb12-3"><a></a><span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb12-4"><a></a>    <span class="bu">print</span> (request.name)</span>
+<span id="cb12-5"><a></a>    ...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="section-1" class="slide level2">
-<h2></h2>
-<h3 id="establish-a-baseline">Establish a baseline</h3>
+<section id="compose-interceptors" class="slide level2">
+<h2>Compose interceptors</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a></a><span class="cf">async</span> <span class="kw">def</span> outer (...):</span>
+<span id="cb13-2"><a></a>    <span class="bu">print</span> (<span class="st">"outer before"</span>)</span>
+<span id="cb13-3"><a></a>    result <span class="op">=</span> <span class="cf">await</span> handler (request)</span>
+<span id="cb13-4"><a></a>    <span class="bu">print</span> (<span class="st">"outer after"</span>)</span>
+<span id="cb13-5"><a></a>    <span class="cf">return</span> result</span>
+<span id="cb13-6"><a></a></span>
+<span id="cb13-7"><a></a><span class="cf">async</span> <span class="kw">def</span> inner (...):</span>
+<span id="cb13-8"><a></a>    <span class="bu">print</span> (<span class="st">"inner before"</span>)</span>
+<span id="cb13-9"><a></a>    result <span class="op">=</span> <span class="cf">await</span> handler (request)</span>
+<span id="cb13-10"><a></a>    <span class="bu">print</span> (<span class="st">"inner after"</span>)</span>
+<span id="cb13-11"><a></a>    <span class="cf">return</span> result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
-<li>Use zero shot or few shot learning as baseline.</li>
+<li>Onion structure:</li>
 </ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a></a></span>
+<span id="cb14-2"><a></a>client <span class="op">=</span> MultiServerMCPClient (</span>
+<span id="cb14-3"><a></a>    {...},</span>
+<span id="cb14-4"><a></a>    tool_interceptors <span class="op">=</span> [outer, inner]</span>
+<span id="cb14-5"><a></a>)</span>
+<span id="cb14-6"><a></a><span class="co"># Execution: outer before -&gt; inner before -&gt; tool -&gt; inner after -&gt; outer after</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="section-2" class="slide level2">
-<h2></h2>
-<h3 id="automate-your-feedback-pipeline">Automate your feedback pipeline</h3>
-<ul>
-<li>Introduce automated evaluations for:
-<ul>
-<li>potential problem cases</li>
-<li>clean up data and use as new training</li>
-</ul></li>
-<li>Consider G-Eval approach (LLM as judge with GPT4) for automated testing with scorecard.</li>
-</ul>
+<section id="callbacks" class="slide level2">
+<h2>Callbacks</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a></a><span class="cf">async</span> <span class="kw">def</span> my_built_in_callback (</span>
+<span id="cb15-2"><a></a>    callback_specific_1,</span>
+<span id="cb15-3"><a></a>    ...</span>
+<span id="cb15-4"><a></a>    context: CallbackContext,</span>
+<span id="cb15-5"><a></a>):</span>
+<span id="cb15-6"><a></a>    <span class="co"># context.my_built_in_callback_specific_field</span></span>
+<span id="cb15-7"><a></a></span>
+<span id="cb15-8"><a></a>client <span class="op">=</span> MultiServerMCPClient (</span>
+<span id="cb15-9"><a></a>    {...},</span>
+<span id="cb15-10"><a></a>    callbacks<span class="op">=</span>Callbacks (my_built_in_callback<span class="op">=</span>my_built_in_callback)</span>
+<span id="cb15-11"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>where <code>my_callback</code> can be one of the built-in callbacks: - on_progress - on_logging_message - …</p>
 </section>
-<section id="section-3" class="slide level2">
-<h2></h2>
-<h3 id="optimize-for-latency-and-token-efficiency">Optimize for latency and token efficiency</h3>
+<section id="elicitation" class="slide level2">
+<h2>Elicitation</h2>
+<p>Allows to interactively obtain information from user from tool</p>
 <ul>
-<li>GPT3.5 fine-tuned for matching accuracy of GPT4 at lower cost / latency.</li>
-<li>Reducing instructions with fine-tuned model.</li>
+<li>Use ctx.elicit() in server’s tool implementation, using schema</li>
 </ul>
-</section>
-<section id="other-uses-for-fine-tuning" class="slide level2">
-<h2>Other uses for fine-tuning</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a></a><span class="kw">class</span> MySchema</span>
+<span id="cb16-2"><a></a>...</span>
+<span id="cb16-3"><a></a><span class="at">@mcp.tool</span> ()</span>
+<span id="cb16-4"><a></a><span class="cf">async</span> <span class="kw">def</span> my_tool (name, ctx: Context):</span>
+<span id="cb16-5"><a></a>    result <span class="op">=</span> <span class="cf">await</span> ctx.elicit (</span>
+<span id="cb16-6"><a></a>        message<span class="op">=</span><span class="st">"..."</span>,</span>
+<span id="cb16-7"><a></a>        schema<span class="op">=</span>MySchema</span>
+<span id="cb16-8"><a></a>    )</span>
+<span id="cb16-9"><a></a>    <span class="cf">if</span> result.action<span class="op">==</span><span class="st">"accept"</span> <span class="kw">and</span> result.data:</span>
+<span id="cb16-10"><a></a>        <span class="co"># result.data.my_field_1, ...</span></span>
+<span id="cb16-11"><a></a>    <span class="co"># result.action can also be "decline" or "cancel"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
-<li>improved function calling or output parsing</li>
-<li>Caution: if the number of possible functions is too large it might be better to include the desired ones in the prompt.</li>
+<li>Use <code>on_elicitation</code> callback in client code:</li>
 </ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a></a><span class="cf">async</span> <span class="kw">def</span> on_elicitation (</span>
+<span id="cb17-2"><a></a>    ... <span class="co"># see documentation</span></span>
+<span id="cb17-3"><a></a>):</span>
+<span id="cb17-4"><a></a>    <span class="cf">return</span> ElicitResult (</span>
+<span id="cb17-5"><a></a>        action<span class="op">=</span><span class="st">"accept"</span>,</span>
+<span id="cb17-6"><a></a>        content<span class="op">=</span>{<span class="st">"my_field_1"</span>: my_value_1, ...}</span>
+<span id="cb17-7"><a></a>    )</span>
+<span id="cb17-8"><a></a>    ...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+
 </section></section>
-<section id="further-reading" class="title-slide slide level1 center">
-<h1>Further reading</h1>
-<ul>
-<li><a href="https://parlance-labs.com/education/#fine-tuning">Fine-tuning - Parlance</a></li>
-<li><a href="https://hamel.dev/blog/posts/fine_tuning_valuable.html">Is Fine-Tuning Still Valuable?</a></li>
-<li><a href="https://www.youtube.com/watch?v=cPn0nHFsvFg">When and Why to Fine Tune</a></li>
-<li><a href="https://www.youtube.com/watch?v=4EPZZkVrXC4">From Prompt to Model: Fine-tuning when you’ve already deployed LLMs in prod</a></li>
-<li><a href="https://www.youtube.com/watch?v=GzEcyBykkdo">Deploying Fine-Tuned Models</a></li>
-<li><a href="https://www.youtube.com/watch?v=mmsa4wDsiy0">Fine-Tuning with Axolotl</a></li>
-<li><a href="https://www.youtube.com/watch?v=h1c_jmk97Ss">Why fine-tuning is dead</a></li>
-<li><a href="https://www.datacamp.com/tutorial/llama3-fine-tuning-locally">Fine-Tuning Llama 3 and Using It Locally: A Step-by-Step Guide</a></li>
-<li><a href="https://www.datacamp.com/tutorial/rag-vs-fine-tuning?utm_cid=19589720821&amp;utm_aid=157098104375&amp;utm_campaign=230119_1-ps-other~dsa-tofu~all_2-b2c_3-emea_4-prc_5-na_6-na_7-le_8-pdsh-go_9-nb-e_10-na_11-na&amp;utm_loc=9212664-&amp;utm_mtd=-c&amp;utm_kw=&amp;utm_source=google&amp;utm_medium=paid_search&amp;utm_content=ps-other~emea-en~dsa~tofu~tutorial~artificial-intelligence&amp;gad_source=1&amp;gad_campaignid=19589720821&amp;gbraid=0AAAAADQ9WsFIxTj2FMxHfYtkNv25bmuXQ&amp;gclid=Cj0KCQiA9t3KBhCQARIsAJOcR7wj9NfQPsOqKHX3h1x-Tiff_LxQP22G2oVC6YC5A8lgWagBU5tdXlEaAkmlEALw_wcB">RAG vs Fine-Tuning: A Comprehensive Tutorial with Practical Examples</a></li>
-<li><a href="https://huggingface.co/docs/peft/main/en/conceptual_guides/lora">LoRA</a></li>
-<li><a href="https://platform.openai.com/docs/guides/supervised-fine-tuning">Supervised fine-tuning - OpenAI</a>
-<ul>
-<li><a href="https://platform.openai.com/docs/guides/model-optimization">Model optimization - OpenAI</a></li>
-</ul></li>
-<li>[Using LangSmith to Support Fine-tuning - Colab’s notebooks]
-<ul>
-<li><a href="https://colab.research.google.com/drive/1tpywvzwOS74YndNXhI8NUaEfPeqOc7ub?usp=sharing&amp;ref=blog.langchain.com">With Llama</a></li>
-<li><a href="https://colab.research.google.com/drive/1YCyDHPSl0d_ULubCVshrP5hLqUCorr7d?usp=sharing&amp;ref=blog.langchain.com">OpenAI</a></li>
-</ul></li>
-<li><a href="https://blog.langchain.com/introducing-tuna-a-tool-for-rapidly-generating-synthetic-fine-tuning-datasets/">Tuna for synthetic dataset generation for fine-tuning</a>
-<ul>
-<li><a href="https://blog.langchain.com/fine-tuning-chatgpt-surpassing-gpt-4-summarization/">Demo</a></li>
-</ul></li>
-<li><a href="https://arxiv.org/abs/2305.11206?ref=blog.langchain.com">LIMA: curating small training datasets</a></li>
-<li><a href="https://cookbook.openai.com/examples/fine_tuning_direct_preference_optimization_guide">Fine-Tuning Techniques - Choosing Between SFT, DPO, and RFT (With a Guide to DPO)</a></li>
-<li><a href="https://parlance-labs.com/education/fine_tuning/daniel.html">Curating data for fine-tuning</a></li>
-</ul>
-
-
-</section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">

@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.8.26">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.27">
 
   <meta name="author" content="Jaume Amores">
   <title>. – Context engineering</title>
@@ -28,6 +28,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-534cd8e3a96973385dffff3f4709048d.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -139,13 +205,953 @@ Jaume Amores
 </div>
 
 </section>
-<section class="slide level2">
-
+<section>
+<section id="context-overview---langchain" class="title-slide slide level1 center">
+<h1>Context overview - LangChain</h1>
+<p><a href="https://docs.langchain.com/oss/python/concepts/context">link</a></p>
+</section>
+<section id="types-of-context" class="slide level2">
+<h2>Types of context</h2>
+<p>Categorized in two dimensions:</p>
 <ul>
-<li><a href="https://docs.langchain.com/oss/python/concepts/context">Context overview - LangChain</a>
+<li>Mutability:
 <ul>
-<li><a href="https://docs.langchain.com/oss/python/langchain/context-engineering">Context engineering - LangChain</a></li>
+<li>Static: doesn’t change along single run
+<ul>
+<li>Examples: user metadata (e.g., profile), database connection details, tools.</li>
 </ul></li>
+<li>Dynamic: it changes
+<ul>
+<li>Examples: conversation history, intermediate results, tool results</li>
+</ul></li>
+</ul></li>
+<li>Lifetime:
+<ul>
+<li>Single run: lost after run.</li>
+<li>Multiple runs: persists across sessions / conversations</li>
+</ul></li>
+</ul>
+</section>
+<section id="context-management-in-langgraph" class="slide level2">
+<h2>Context management in LangGraph</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Context type</th>
+<th>Description</th>
+<th>Mutability</th>
+<th>Lifetime</th>
+<th>Access method</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Static runtime context</td>
+<td>User metadata, database connections, tools</td>
+<td>Static</td>
+<td>Single run</td>
+<td><code>context</code> argument to <code>invoke</code> / <code>stream</code></td>
+</tr>
+<tr class="even">
+<td>Dynamic runtime context (state)</td>
+<td>Conversation history, intermediate results</td>
+<td>Dynamic</td>
+<td>Single run</td>
+<td>LangGraph state object</td>
+</tr>
+<tr class="odd">
+<td>Dynamic cross-conversation context (store)</td>
+<td>Persistent data across sessions</td>
+<td>Dynamic</td>
+<td>Multiple runs</td>
+<td>LangGraph store</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="static-context" class="slide level2">
+<h2>Static context</h2>
+<ul>
+<li>Accessed through the <code>runtime.context</code> property.</li>
+<li>Set when invoking, <code>context_schema=MyContextSchemaClass</code></li>
+<li>Can be accessed in:
+<ul>
+<li>Function with <code>@dynamic_prompt</code> decorator.
+<ul>
+<li>This function is provided:
+<ul>
+<li>In <code>graph.invoke</code>, through the <code>context</code> argument, as <code>context={"my_property": "my_value", ...}</code></li>
+<li>In <code>agent.invoke</code>, through the <code>middleware</code> argument when invoking graph, as <code>middleware=[function]</code>.</li>
+</ul></li>
+</ul></li>
+<li>Node, via especial argument.</li>
+<li>Tool, via especial argument.</li>
+</ul></li>
+</ul>
+</section>
+<section id="using-generic-graph" class="slide level2">
+<h2>Using generic graph</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
+<span id="cb1-2"><a></a></span>
+<span id="cb1-3"><a></a><span class="at">@dataclass</span></span>
+<span id="cb1-4"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb1-5"><a></a>    user_name: <span class="bu">str</span></span>
+<span id="cb1-6"><a></a></span>
+<span id="cb1-7"><a></a>graph.invoke (</span>
+<span id="cb1-8"><a></a>    {<span class="st">"messages"</span>: [{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="st">"Hi!"</span>}]},</span>
+<span id="cb1-9"><a></a>    context<span class="op">=</span>{<span class="st">"user_name"</span>: <span class="st">"Jaume"</span>},</span>
+<span id="cb1-10"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="using-agent" class="slide level2">
+<h2>Using agent</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a></a><span class="im">from</span> langchain.agents <span class="im">import</span> create_agent</span>
+<span id="cb2-2"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> dynamic_prompt, ModelRequest</span>
+<span id="cb2-3"><a></a></span>
+<span id="cb2-4"><a></a><span class="at">@dynamic_prompt</span></span>
+<span id="cb2-5"><a></a><span class="kw">def</span> personalized_prompt (request: ModelRequest) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb2-6"><a></a>    user_name <span class="op">=</span> request.runtime.context.user_name</span>
+<span id="cb2-7"><a></a>    <span class="cf">return</span> <span class="ss">f"You are a helpful assistant. Address user as </span><span class="sc">{</span>user_name<span class="sc">}</span><span class="ss">."</span></span>
+<span id="cb2-8"><a></a></span>
+<span id="cb2-9"><a></a>agent <span class="op">=</span> create_agent (</span>
+<span id="cb2-10"><a></a>    model<span class="op">=</span><span class="st">"gpt..."</span>,</span>
+<span id="cb2-11"><a></a>    tools<span class="op">=</span>[get_weather],</span>
+<span id="cb2-12"><a></a>    middleware<span class="op">=</span>[personalize_prompt],</span>
+<span id="cb2-13"><a></a>    context_schema<span class="op">=</span>ContextSchema</span>
+<span id="cb2-14"><a></a>)</span>
+<span id="cb2-15"><a></a></span>
+<span id="cb2-16"><a></a>agent.invoke (</span>
+<span id="cb2-17"><a></a>    {<span class="st">"messages"</span>: [{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="st">"Hi!"</span>}]},</span>
+<span id="cb2-18"><a></a>    context<span class="op">=</span>ContextSchema(<span class="st">"Jaume"</span>)</span>
+<span id="cb2-19"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="using-node" class="slide level2">
+<h2>Using node</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a></a><span class="im">from</span> langgraph.runtime <span class="im">import</span> Runtime</span>
+<span id="cb3-2"><a></a></span>
+<span id="cb3-3"><a></a><span class="kw">def</span> node (state: State, runtime: Runtime[ContextSchema]):</span>
+<span id="cb3-4"><a></a>    user_name <span class="op">=</span> runtime.context.user_name</span>
+<span id="cb3-5"><a></a>    ...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="using-tool" class="slide level2">
+<h2>Using tool</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a></a><span class="im">from</span> langchain.tools <span class="im">import</span> ToolRuntime</span>
+<span id="cb4-2"><a></a></span>
+<span id="cb4-3"><a></a><span class="kw">def</span> my_tool (runtime: ToolRuntime[ContextSchema]):</span>
+<span id="cb4-4"><a></a>    user_name <span class="op">=</span> runtime.context.user_name</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="dynamic-context" class="slide level2">
+<h2>Dynamic context</h2>
+<ul>
+<li>Accessed through:
+<ul>
+<li>In agent: <code>request.state.get</code>, in function with <code>@dynamic_prompt</code> decorator.
+<ul>
+<li>Pass <code>state_schema=MyStateSchema</code> to <code>invoke</code> call.</li>
+<li>Again, pass <code>middleware=[decorated_function]</code> in <code>invoke</code> call.</li>
+</ul></li>
+<li>In node, through the state argument.</li>
+</ul></li>
+</ul>
+</section>
+<section id="dynamic-context-in-agent" class="slide level2">
+<h2>Dynamic context in agent</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a></a><span class="im">from</span> langchain.agents <span class="im">import</span> create_agent</span>
+<span id="cb5-2"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> dynamic_prompt, ModelRequest</span>
+<span id="cb5-3"><a></a><span class="im">from</span> langchain.agents <span class="im">import</span> AgentState</span>
+<span id="cb5-4"><a></a></span>
+<span id="cb5-5"><a></a><span class="kw">class</span> StateSchema (AgentState):</span>
+<span id="cb5-6"><a></a>    extra_field: <span class="bu">int</span></span>
+<span id="cb5-7"><a></a></span>
+<span id="cb5-8"><a></a><span class="at">@dynamic_prompt</span></span>
+<span id="cb5-9"><a></a><span class="kw">def</span> personalized_prompt (request: ModelRequest) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb5-10"><a></a>    extra_field <span class="op">=</span> request.state.get (<span class="st">"extra_field"</span>, <span class="dv">0</span>)</span>
+<span id="cb5-11"><a></a>    extra_field <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb5-12"><a></a>    <span class="co"># request.state["extra_field"] = extra_field ## Is this correct?</span></span>
+<span id="cb5-13"><a></a>    ...</span>
+<span id="cb5-14"><a></a></span>
+<span id="cb5-15"><a></a>agent <span class="op">=</span> create_agent (</span>
+<span id="cb5-16"><a></a>    model<span class="op">=</span><span class="st">"..."</span>,</span>
+<span id="cb5-17"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb5-18"><a></a>    middleware<span class="op">=</span>[personalized_prompt],</span>
+<span id="cb5-19"><a></a>    state_schema<span class="op">=</span>StateSchema,</span>
+<span id="cb5-20"><a></a>)</span>
+<span id="cb5-21"><a></a></span>
+<span id="cb5-22"><a></a>agent.invoke (</span>
+<span id="cb5-23"><a></a>    {</span>
+<span id="cb5-24"><a></a>        <span class="st">"messages"</span>: <span class="st">"hi"</span>,</span>
+<span id="cb5-25"><a></a>        <span class="st">"extra_field"</span>: <span class="dv">1</span></span>
+<span id="cb5-26"><a></a>    }</span>
+<span id="cb5-27"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="dynamic-context-node" class="slide level2">
+<h2>Dynamic context, node</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a></a></span>
+<span id="cb6-2"><a></a><span class="im">from</span> typing <span class="im">import</span> TypedDict</span>
+<span id="cb6-3"><a></a><span class="im">from</span> langchain.messages <span class="im">import</span> AnyMessage</span>
+<span id="cb6-4"><a></a></span>
+<span id="cb6-5"><a></a><span class="kw">class</span> CustomState (TypedDict):</span>
+<span id="cb6-6"><a></a>    messages: <span class="bu">list</span>[AnyMessage]</span>
+<span id="cb6-7"><a></a>    extra_field: <span class="bu">int</span></span>
+<span id="cb6-8"><a></a></span>
+<span id="cb6-9"><a></a><span class="kw">def</span> node (state: CustomState):</span>
+<span id="cb6-10"><a></a>    extra_field <span class="op">=</span> state[<span class="st">"extra_field"</span>]</span>
+<span id="cb6-11"><a></a>    <span class="cf">return</span> {<span class="st">"extra_field"</span>: extra_field <span class="op">+</span> <span class="dv">1</span>}</span>
+<span id="cb6-12"><a></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="dynamic-cross-conversation-context" class="slide level2">
+<h2>Dynamic cross-conversation context</h2>
+<p>Based on store object, see long-term memory</p>
+</section></section>
+<section>
+<section id="context-engineering---langchain" class="title-slide slide level1 center">
+<h1>Context engineering - LangChain</h1>
+<p><a href="https://docs.langchain.com/oss/python/langchain/context-engineering">link</a></p>
+</section>
+<section id="overview-context-engineering" class="slide level2">
+<h2>Overview: Context engineering</h2>
+<p>Providing the right information and tools in the right format to have the LLM accomplish its task.</p>
+</section>
+<section id="overview-the-agent-loop" class="slide level2">
+<h2>Overview: the agent loop</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource mermaid number-lines code-with-copy"><code class="sourceCode"><span id="cb7-1"><a></a>flowchart</span>
+<span id="cb7-2"><a></a>    Request --&gt; Model </span>
+<span id="cb7-3"><a></a>    Model   -- "Action"      --&gt; Tools</span>
+<span id="cb7-4"><a></a>    Tools   -- "Observations" --&gt; Model</span>
+<span id="cb7-5"><a></a>    Model   --&gt; Result</span>
+<span id="cb7-6"><a></a></span>
+<span id="cb7-7"><a></a>    linkStyle 1,2 stroke-width:2px,stroke-dasharray:5 5;</span>
+<span id="cb7-8"><a></a></span>
+<span id="cb7-9"><a></a>    style Model fill:#FFD966,stroke:#333,stroke-width:2px,color:#000</span>
+<span id="cb7-10"><a></a>    style Tools fill:#FFD966,stroke:#333,stroke-width:2px,color:#000</span>
+<span id="cb7-11"><a></a>    style Request fill:none,stroke:#333,stroke-width:2px,color:#FFFFFF</span>
+<span id="cb7-12"><a></a>    style Result fill:none,stroke:#333,stroke-width:2px,color:#FFFFFF</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Model: receives prompt and list of tools to be used. It either returns a response or requests the tools to perform actions.</li>
+<li>Tools execution: runs the actions and returns resulting observations to model.</li>
+</ul>
+</section>
+<section id="what-you-can-control" class="slide level2">
+<h2>What you can control</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Context Type</th>
+<th>What you control</th>
+<th>Transient or Persistent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Model Context</td>
+<td>What goes into model calls (instructions, tools, message history, response format)</td>
+<td>Transient</td>
+</tr>
+<tr class="even">
+<td>Tools Context</td>
+<td>What tools can access and produce (reads/writes to state, store, and runtime context)</td>
+<td>Persistent</td>
+</tr>
+<tr class="odd">
+<td>Life-cycle Context</td>
+<td>What happens between model and tool calls (summarization, guardrails, logging, etc.)</td>
+<td>Persistent</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-sources" class="slide level2">
+<h2>Data Sources</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Data Source</th>
+<th>Also Known As</th>
+<th>Scope</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Runtime Context</td>
+<td>Static Configuration</td>
+<td>Single conversation</td>
+<td>User ID, database connection, API keys, environment settings</td>
+</tr>
+<tr class="even">
+<td>State</td>
+<td>Short-term memory</td>
+<td>Single conversation</td>
+<td>History of messages, tool results, uploaded files, authentication status</td>
+</tr>
+<tr class="odd">
+<td>Store</td>
+<td>Long-term memory</td>
+<td>Cross conversation</td>
+<td>User preferences, extracted insights, memories, historical data</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="how-it-works" class="slide level2">
+<h2>How it works</h2>
+<p>middleware. It allows to: - hook into any step of the lifecycle - update context - jump to a different step in the lifecycle</p>
+</section>
+<section id="system-prompt-state" class="slide level2">
+<h2>System prompt: state</h2>
+<p>Example: - Depending on history length, we make the response concise or not</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, dynamic_prompt</span>
+<span id="cb8-2"><a></a></span>
+<span id="cb8-3"><a></a><span class="at">@dynamic_prompt</span></span>
+<span id="cb8-4"><a></a><span class="kw">def</span> f (request: ModelRequest) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb8-5"><a></a>    <span class="cf">if</span> <span class="bu">len</span>(request.messages) <span class="op">&gt;</span> <span class="dv">10</span>:</span>
+<span id="cb8-6"><a></a>        m <span class="op">=</span> <span class="st">"Be concise"</span></span>
+<span id="cb8-7"><a></a>    ...</span>
+<span id="cb8-8"><a></a>    <span class="cf">return</span> m</span>
+<span id="cb8-9"><a></a></span>
+<span id="cb8-10"><a></a>create_agent (</span>
+<span id="cb8-11"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb8-12"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb8-13"><a></a>    middleware<span class="op">=</span>[f]</span>
+<span id="cb8-14"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="system-prompt-store" class="slide level2">
+<h2>System prompt: store</h2>
+<p>Example: - Depending on user preferences, use one communication style or another</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, dynamic_prompt</span>
+<span id="cb9-2"><a></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
+<span id="cb9-3"><a></a></span>
+<span id="cb9-4"><a></a><span class="at">@dataclass</span></span>
+<span id="cb9-5"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb9-6"><a></a>    user_id: <span class="bu">str</span></span>
+<span id="cb9-7"><a></a></span>
+<span id="cb9-8"><a></a><span class="at">@dynamic_prompt</span></span>
+<span id="cb9-9"><a></a><span class="kw">def</span> f (request: ModelRequest) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb9-10"><a></a>    user_id <span class="op">=</span> request.runtime.context.user_id</span>
+<span id="cb9-11"><a></a>    store <span class="op">=</span> request.runtime.store</span>
+<span id="cb9-12"><a></a>    ...</span>
+<span id="cb9-13"><a></a>    <span class="cf">return</span> m</span>
+<span id="cb9-14"><a></a></span>
+<span id="cb9-15"><a></a>create_agent (</span>
+<span id="cb9-16"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb9-17"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb9-18"><a></a>    middleware<span class="op">=</span>[f],</span>
+<span id="cb9-19"><a></a>    context_scheme<span class="op">=</span>ContextScheme,</span>
+<span id="cb9-20"><a></a>    store<span class="op">=</span>InMemoryStore()</span>
+<span id="cb9-21"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="system-prompt-runtime-context" class="slide level2">
+<h2>System prompt: runtime context</h2>
+<p>Example: - Depending on user priviligies, we request the model to only use read tools or read/write</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, dynamic_prompt</span>
+<span id="cb10-2"><a></a></span>
+<span id="cb10-3"><a></a><span class="at">@dataclass</span></span>
+<span id="cb10-4"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb10-5"><a></a>    role: <span class="bu">str</span> <span class="op">=</span> Field (description<span class="op">=</span><span class="st">"user role: admin, user, guest"</span>)</span>
+<span id="cb10-6"><a></a></span>
+<span id="cb10-7"><a></a><span class="at">@dynamic_prompt</span></span>
+<span id="cb10-8"><a></a><span class="kw">def</span> f (request: ModelRequest) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb10-9"><a></a>    <span class="cf">if</span> request.runtime.context.role <span class="op">==</span> <span class="st">"user"</span>:</span>
+<span id="cb10-10"><a></a>        m <span class="op">=</span> <span class="st">"Use only read tools"</span></span>
+<span id="cb10-11"><a></a>    ...</span>
+<span id="cb10-12"><a></a>    <span class="cf">return</span> m</span>
+<span id="cb10-13"><a></a></span>
+<span id="cb10-14"><a></a>create_agent (</span>
+<span id="cb10-15"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb10-16"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb10-17"><a></a>    middleware<span class="op">=</span>[f],</span>
+<span id="cb10-18"><a></a>    context_scheme<span class="op">=</span>ContextSchema,</span>
+<span id="cb10-19"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="messages-state" class="slide level2">
+<h2>Messages: state</h2>
+<p>Example: - Inject uploaded file context from State when relevant to query.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, ModelResponse, wrap_model_call</span>
+<span id="cb11-2"><a></a></span>
+<span id="cb11-3"><a></a><span class="at">@wrap_model_call</span></span>
+<span id="cb11-4"><a></a><span class="kw">def</span> f (</span>
+<span id="cb11-5"><a></a>    request: ModelRequest, </span>
+<span id="cb11-6"><a></a>    handler: Callable[[ModelRequest], ModelResponse]</span>
+<span id="cb11-7"><a></a>) <span class="op">-&gt;</span> ModelResponse:</span>
+<span id="cb11-8"><a></a>    <span class="cf">if</span> request.state.get(<span class="st">"uploaded_files"</span>):</span>
+<span id="cb11-9"><a></a>        file_context <span class="op">=</span> integrate (request.state.get(<span class="st">"uploaded_files"</span>))</span>
+<span id="cb11-10"><a></a>        messages <span class="op">=</span> [</span>
+<span id="cb11-11"><a></a>            <span class="op">*</span>request.messages,</span>
+<span id="cb11-12"><a></a>            {<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: file_context}</span>
+<span id="cb11-13"><a></a>        ]</span>
+<span id="cb11-14"><a></a>    request <span class="op">=</span> request.override (messages<span class="op">=</span>messages)</span>
+<span id="cb11-15"><a></a>    ...</span>
+<span id="cb11-16"><a></a>    <span class="cf">return</span> handler(request)</span>
+<span id="cb11-17"><a></a></span>
+<span id="cb11-18"><a></a>create_agent (</span>
+<span id="cb11-19"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb11-20"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb11-21"><a></a>    middleware<span class="op">=</span>[f]</span>
+<span id="cb11-22"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="messages-store" class="slide level2">
+<h2>Messages: store</h2>
+<p>Example: - Retrieve user’s email writing style from store to guide the model.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, ModelResponse, wrap_model_call</span>
+<span id="cb12-2"><a></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
+<span id="cb12-3"><a></a></span>
+<span id="cb12-4"><a></a><span class="at">@dataclass</span></span>
+<span id="cb12-5"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb12-6"><a></a>    user_id: <span class="bu">str</span></span>
+<span id="cb12-7"><a></a></span>
+<span id="cb12-8"><a></a><span class="at">@wrap_model_call</span></span>
+<span id="cb12-9"><a></a><span class="kw">def</span> f (</span>
+<span id="cb12-10"><a></a>    request: ModelRequest, </span>
+<span id="cb12-11"><a></a>    handler: Callable[[ModelRequest], ModelResponse]</span>
+<span id="cb12-12"><a></a>) <span class="op">-&gt;</span> ModelResponse:</span>
+<span id="cb12-13"><a></a>    user_id <span class="op">=</span> request.runtime.context.user_id</span>
+<span id="cb12-14"><a></a>    store <span class="op">=</span> request.runtime.store</span>
+<span id="cb12-15"><a></a>    ...</span>
+<span id="cb12-16"><a></a>    new_instructions <span class="op">=</span> integrate (guiding_style)</span>
+<span id="cb12-17"><a></a>    messages <span class="op">=</span> [</span>
+<span id="cb12-18"><a></a>        <span class="op">*</span>request.messages,</span>
+<span id="cb12-19"><a></a>        {<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: new_instructions}</span>
+<span id="cb12-20"><a></a>    ]</span>
+<span id="cb12-21"><a></a>    request <span class="op">=</span> request.override (messages<span class="op">=</span>messages)</span>
+<span id="cb12-22"><a></a></span>
+<span id="cb12-23"><a></a>    <span class="cf">return</span> handler(request)</span>
+<span id="cb12-24"><a></a></span>
+<span id="cb12-25"><a></a>create_agent (</span>
+<span id="cb12-26"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb12-27"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb12-28"><a></a>    middleware<span class="op">=</span>[f],</span>
+<span id="cb12-29"><a></a>    context_scheme<span class="op">=</span>ContextScheme,</span>
+<span id="cb12-30"><a></a>    store<span class="op">=</span>InMemoryStore()</span>
+<span id="cb12-31"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="messages-runtime-context" class="slide level2">
+<h2>Messages: runtime context</h2>
+<p>Example: - Depending on user profile details, we request the model certain compliance rules</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, ModelResponse, wrap_model_call</span>
+<span id="cb13-2"><a></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
+<span id="cb13-3"><a></a></span>
+<span id="cb13-4"><a></a><span class="at">@dataclass</span></span>
+<span id="cb13-5"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb13-6"><a></a>    user_id: <span class="bu">str</span></span>
+<span id="cb13-7"><a></a></span>
+<span id="cb13-8"><a></a><span class="at">@wrap_model_call</span></span>
+<span id="cb13-9"><a></a><span class="kw">def</span> f (</span>
+<span id="cb13-10"><a></a>    request: ModelRequest, </span>
+<span id="cb13-11"><a></a>    handler: Callable[[ModelRequest], ModelResponse]</span>
+<span id="cb13-12"><a></a>) <span class="op">-&gt;</span> ModelResponse:</span>
+<span id="cb13-13"><a></a>    profile_details_1 <span class="op">=</span> request.runtime.context.profile_details_1</span>
+<span id="cb13-14"><a></a>    ...</span>
+<span id="cb13-15"><a></a>    new_instructions <span class="op">=</span> get_rules (profile_details_1, ...)</span>
+<span id="cb13-16"><a></a>    messages <span class="op">=</span> [</span>
+<span id="cb13-17"><a></a>        <span class="op">*</span>request.messages,</span>
+<span id="cb13-18"><a></a>        {<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: new_instructions}</span>
+<span id="cb13-19"><a></a>    ]</span>
+<span id="cb13-20"><a></a>    request <span class="op">=</span> request.override (messages<span class="op">=</span>messages)</span>
+<span id="cb13-21"><a></a></span>
+<span id="cb13-22"><a></a>    <span class="cf">return</span> handler(request)</span>
+<span id="cb13-23"><a></a></span>
+<span id="cb13-24"><a></a>create_agent (</span>
+<span id="cb13-25"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb13-26"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb13-27"><a></a>    middleware<span class="op">=</span>[f],</span>
+<span id="cb13-28"><a></a>    context_scheme<span class="op">=</span>ContextScheme,</span>
+<span id="cb13-29"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="tools-annotation" class="slide level2">
+<h2>Tools: annotation</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a></a><span class="at">@tool</span></span>
+<span id="cb14-2"><a></a><span class="kw">def</span> my_tool (</span>
+<span id="cb14-3"><a></a>    param1: param_type,</span>
+<span id="cb14-4"><a></a>    ...</span>
+<span id="cb14-5"><a></a>) <span class="op">-&gt;</span> return_type:</span>
+<span id="cb14-6"><a></a>    <span class="co">"""</span></span>
+<span id="cb14-7"><a></a><span class="co">        This tool does X and Y based on param1.... Use this tool in this and that situation.</span></span>
+<span id="cb14-8"><a></a></span>
+<span id="cb14-9"><a></a><span class="co">        Args:</span></span>
+<span id="cb14-10"><a></a><span class="co">            param1: description: value_1, value_2, value_3</span></span>
+<span id="cb14-11"><a></a><span class="co">    """</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="tools-state" class="slide level2">
+<h2>Tools: state</h2>
+<p>Example: - Depending on messages or authentication status, restrict usage of tools</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, ModelResponse, wrap_model_call</span>
+<span id="cb15-2"><a></a></span>
+<span id="cb15-3"><a></a><span class="at">@wrap_model_call</span></span>
+<span id="cb15-4"><a></a><span class="kw">def</span> f (</span>
+<span id="cb15-5"><a></a>    request: ModelRequest, </span>
+<span id="cb15-6"><a></a>    handler: Callable[[ModelRequest], ModelResponse]</span>
+<span id="cb15-7"><a></a>) <span class="op">-&gt;</span> ModelResponse:</span>
+<span id="cb15-8"><a></a>    <span class="cf">if</span> request.state.get(<span class="st">"authentication"</span>)<span class="op">==</span><span class="st">"Bad"</span>:</span>
+<span id="cb15-9"><a></a>        tools_to_use <span class="op">=</span> restrict_tools (request.tools, startswith<span class="op">=</span><span class="st">"public"</span>)</span>
+<span id="cb15-10"><a></a>        </span>
+<span id="cb15-11"><a></a>    request <span class="op">=</span> request.override (tools<span class="op">=</span>tools_to_use)</span>
+<span id="cb15-12"><a></a>    ...</span>
+<span id="cb15-13"><a></a>    <span class="cf">return</span> handler(request)</span>
+<span id="cb15-14"><a></a></span>
+<span id="cb15-15"><a></a>create_agent (</span>
+<span id="cb15-16"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb15-17"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb15-18"><a></a>    middleware<span class="op">=</span>[f]</span>
+<span id="cb15-19"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="tools-store" class="slide level2">
+<h2>Tools: store</h2>
+<p>Example: - Depending on user preferences, use certain tools</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, ModelResponse, wrap_model_call</span>
+<span id="cb16-2"><a></a></span>
+<span id="cb16-3"><a></a><span class="at">@dataclass</span></span>
+<span id="cb16-4"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb16-5"><a></a>    user_id: <span class="bu">str</span></span>
+<span id="cb16-6"><a></a></span>
+<span id="cb16-7"><a></a><span class="at">@wrap_model_call</span></span>
+<span id="cb16-8"><a></a><span class="kw">def</span> f (</span>
+<span id="cb16-9"><a></a>    request: ModelRequest, </span>
+<span id="cb16-10"><a></a>    handler: Callable[[ModelRequest], ModelResponse]</span>
+<span id="cb16-11"><a></a>) <span class="op">-&gt;</span> ModelResponse:</span>
+<span id="cb16-12"><a></a>    preferences <span class="op">=</span> get_preferences (request.runtime.context.user_id, request.runtime.store)</span>
+<span id="cb16-13"><a></a>    tools_to_use <span class="op">=</span> restrict_tools (request.tools, preferences)</span>
+<span id="cb16-14"><a></a>    request <span class="op">=</span> request.override (tools<span class="op">=</span>tools_to_use)</span>
+<span id="cb16-15"><a></a>    ...</span>
+<span id="cb16-16"><a></a>    <span class="cf">return</span> handler(request)</span>
+<span id="cb16-17"><a></a></span>
+<span id="cb16-18"><a></a>create_agent (</span>
+<span id="cb16-19"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb16-20"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb16-21"><a></a>    middleware<span class="op">=</span>[f],</span>
+<span id="cb16-22"><a></a>    context_scheme<span class="op">=</span>ContextSchema,</span>
+<span id="cb16-23"><a></a>    store<span class="op">=</span>InMemoryStore()</span>
+<span id="cb16-24"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="tools-runtime-context" class="slide level2">
+<h2>Tools: runtime context</h2>
+<p>Example: - Depending on user details, use certain tools</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, ModelResponse, wrap_model_call</span>
+<span id="cb17-2"><a></a></span>
+<span id="cb17-3"><a></a><span class="at">@dataclass</span></span>
+<span id="cb17-4"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb17-5"><a></a>    user_id: <span class="bu">str</span></span>
+<span id="cb17-6"><a></a></span>
+<span id="cb17-7"><a></a><span class="at">@wrap_model_call</span></span>
+<span id="cb17-8"><a></a><span class="kw">def</span> f (</span>
+<span id="cb17-9"><a></a>    request: ModelRequest, </span>
+<span id="cb17-10"><a></a>    handler: Callable[[ModelRequest], ModelResponse]</span>
+<span id="cb17-11"><a></a>) <span class="op">-&gt;</span> ModelResponse:</span>
+<span id="cb17-12"><a></a>    details <span class="op">=</span> get_details (request.runtime.context.user_details)</span>
+<span id="cb17-13"><a></a>    tools_to_use <span class="op">=</span> restrict_tools (request.tools, details)</span>
+<span id="cb17-14"><a></a>    request <span class="op">=</span> request.override (tools<span class="op">=</span>tools_to_use)</span>
+<span id="cb17-15"><a></a>    ...</span>
+<span id="cb17-16"><a></a>    <span class="cf">return</span> handler(request)</span>
+<span id="cb17-17"><a></a></span>
+<span id="cb17-18"><a></a>create_agent (</span>
+<span id="cb17-19"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb17-20"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb17-21"><a></a>    middleware<span class="op">=</span>[f],</span>
+<span id="cb17-22"><a></a>    context_scheme<span class="op">=</span>ContextSchema,</span>
+<span id="cb17-23"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="model-state" class="slide level2">
+<h2>Model: state</h2>
+<p>Example: - Depending on history length, we use a faster or slower model</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, ModelResponse, wrap_model_call</span>
+<span id="cb18-2"><a></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> init_chat_model</span>
+<span id="cb18-3"><a></a></span>
+<span id="cb18-4"><a></a>models <span class="op">=</span> {</span>
+<span id="cb18-5"><a></a>    <span class="st">"fast"</span>: init_chat_model (<span class="st">"gpt..."</span>),</span>
+<span id="cb18-6"><a></a>    <span class="st">"slow"</span>: init_chat_model (<span class="st">"gpt..."</span>)</span>
+<span id="cb18-7"><a></a>}</span>
+<span id="cb18-8"><a></a></span>
+<span id="cb18-9"><a></a><span class="at">@wrap_model_call</span></span>
+<span id="cb18-10"><a></a><span class="kw">def</span> f (</span>
+<span id="cb18-11"><a></a>    request: ModelRequest, </span>
+<span id="cb18-12"><a></a>    handler: Callable[[ModelRequest], ModelResponse]</span>
+<span id="cb18-13"><a></a>) <span class="op">-&gt;</span> ModelResponse:</span>
+<span id="cb18-14"><a></a>    </span>
+<span id="cb18-15"><a></a>    model <span class="op">=</span> select_model (</span>
+<span id="cb18-16"><a></a>        request.state.get(<span class="st">"field"</span>), </span>
+<span id="cb18-17"><a></a>        request.messages, </span>
+<span id="cb18-18"><a></a>        models</span>
+<span id="cb18-19"><a></a>    )</span>
+<span id="cb18-20"><a></a>    request <span class="op">=</span> request.override (model<span class="op">=</span>model)</span>
+<span id="cb18-21"><a></a>    </span>
+<span id="cb18-22"><a></a>    <span class="cf">return</span> handler(request)</span>
+<span id="cb18-23"><a></a></span>
+<span id="cb18-24"><a></a>create_agent (</span>
+<span id="cb18-25"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb18-26"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb18-27"><a></a>    middleware<span class="op">=</span>[f]</span>
+<span id="cb18-28"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="model-store" class="slide level2">
+<h2>Model: store</h2>
+<p>Example: - Depending on user preferences, use cheaper or more expensive model</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, ModelResponse, wrap_model_call</span>
+<span id="cb19-2"><a></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> init_chat_model</span>
+<span id="cb19-3"><a></a></span>
+<span id="cb19-4"><a></a>models <span class="op">=</span> {</span>
+<span id="cb19-5"><a></a>    <span class="st">"fast"</span>: init_chat_model (<span class="st">"gpt..."</span>),</span>
+<span id="cb19-6"><a></a>    <span class="st">"slow"</span>: init_chat_model (<span class="st">"gpt..."</span>)</span>
+<span id="cb19-7"><a></a>}</span>
+<span id="cb19-8"><a></a></span>
+<span id="cb19-9"><a></a><span class="at">@dataclass</span></span>
+<span id="cb19-10"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb19-11"><a></a>    user_id: <span class="bu">str</span></span>
+<span id="cb19-12"><a></a></span>
+<span id="cb19-13"><a></a><span class="at">@wrap_model_call</span></span>
+<span id="cb19-14"><a></a><span class="kw">def</span> f (</span>
+<span id="cb19-15"><a></a>    request: ModelRequest, </span>
+<span id="cb19-16"><a></a>    handler: Callable[[ModelRequest], ModelResponse]</span>
+<span id="cb19-17"><a></a>) <span class="op">-&gt;</span> ModelResponse:</span>
+<span id="cb19-18"><a></a>    preferences <span class="op">=</span> get_preferences (request.runtime.context.user_id, request.runtime.store)</span>
+<span id="cb19-19"><a></a>    model <span class="op">=</span> select_model (preferences, models)</span>
+<span id="cb19-20"><a></a>    request <span class="op">=</span> request.override (model<span class="op">=</span>model)</span>
+<span id="cb19-21"><a></a></span>
+<span id="cb19-22"><a></a>    <span class="cf">return</span> handler(request)</span>
+<span id="cb19-23"><a></a></span>
+<span id="cb19-24"><a></a>create_agent (</span>
+<span id="cb19-25"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb19-26"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb19-27"><a></a>    middleware<span class="op">=</span>[f],</span>
+<span id="cb19-28"><a></a>    context_scheme<span class="op">=</span>ContextSchema,</span>
+<span id="cb19-29"><a></a>    store<span class="op">=</span>InMemoryStore()</span>
+<span id="cb19-30"><a></a>)</span>
+<span id="cb19-31"><a></a></span>
+<span id="cb19-32"><a></a><span class="co">## Model: runtime context</span></span>
+<span id="cb19-33"><a></a></span>
+<span id="cb19-34"><a></a>Example: </span>
+<span id="cb19-35"><a></a><span class="op">-</span> Depending on user <span class="kw">and</span> environment details, use certain models</span>
+<span id="cb19-36"><a></a></span>
+<span id="cb19-37"><a></a>```python</span>
+<span id="cb19-38"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, ModelResponse, wrap_model_call</span>
+<span id="cb19-39"><a></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> init_chat_model</span>
+<span id="cb19-40"><a></a></span>
+<span id="cb19-41"><a></a>models <span class="op">=</span> {</span>
+<span id="cb19-42"><a></a>    <span class="st">"fast"</span>: init_chat_model (<span class="st">"gpt..."</span>),</span>
+<span id="cb19-43"><a></a>    <span class="st">"slow"</span>: init_chat_model (<span class="st">"gpt..."</span>)</span>
+<span id="cb19-44"><a></a>}</span>
+<span id="cb19-45"><a></a></span>
+<span id="cb19-46"><a></a><span class="at">@wrap_model_call</span></span>
+<span id="cb19-47"><a></a><span class="kw">def</span> f (</span>
+<span id="cb19-48"><a></a>    request: ModelRequest, </span>
+<span id="cb19-49"><a></a>    handler: Callable[[ModelRequest], ModelResponse]</span>
+<span id="cb19-50"><a></a>) <span class="op">-&gt;</span> ModelResponse:</span>
+<span id="cb19-51"><a></a>    details <span class="op">=</span> get_details (request.runtime.context.user_details)</span>
+<span id="cb19-52"><a></a>    model <span class="op">=</span> select_model (preferences, models)</span>
+<span id="cb19-53"><a></a>    request <span class="op">=</span> request.override (model<span class="op">=</span>model)</span>
+<span id="cb19-54"><a></a>    <span class="cf">return</span> handler(request)</span>
+<span id="cb19-55"><a></a></span>
+<span id="cb19-56"><a></a>create_agent (</span>
+<span id="cb19-57"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb19-58"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb19-59"><a></a>    middleware<span class="op">=</span>[f],</span>
+<span id="cb19-60"><a></a>    context_scheme<span class="op">=</span>ContextSchema,</span>
+<span id="cb19-61"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="response-format-state" class="slide level2">
+<h2>Response format: state</h2>
+<p>Example: - Depending on history length and other field values of current state, we use more or less detailed format</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, ModelResponse, wrap_model_call</span>
+<span id="cb20-2"><a></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<span id="cb20-3"><a></a></span>
+<span id="cb20-4"><a></a><span class="kw">class</span> DetailedFormat (BaseModel):</span>
+<span id="cb20-5"><a></a>    <span class="co">"""Structured information to be used for this and other purpose"""</span></span>
+<span id="cb20-6"><a></a>    field_1: <span class="bu">str</span> <span class="op">=</span> Field (description<span class="op">=</span><span class="st">"..."</span>)</span>
+<span id="cb20-7"><a></a>    more_details: <span class="bu">str</span> <span class="op">=</span> Field (description<span class="op">=</span><span class="st">"..."</span>)</span>
+<span id="cb20-8"><a></a></span>
+<span id="cb20-9"><a></a><span class="kw">class</span> ShortFormat (BaseModel):</span>
+<span id="cb20-10"><a></a>    field_1: <span class="bu">str</span> <span class="op">=</span> Field (description<span class="op">=</span><span class="st">"..."</span>)</span>
+<span id="cb20-11"><a></a></span>
+<span id="cb20-12"><a></a>formats <span class="op">=</span> {</span>
+<span id="cb20-13"><a></a>    <span class="st">"detailed"</span>: DetailedFormat,</span>
+<span id="cb20-14"><a></a>    <span class="st">"short"</span>: ShortFormat</span>
+<span id="cb20-15"><a></a>}</span>
+<span id="cb20-16"><a></a></span>
+<span id="cb20-17"><a></a><span class="at">@wrap_model_call</span></span>
+<span id="cb20-18"><a></a><span class="kw">def</span> f (</span>
+<span id="cb20-19"><a></a>    request: ModelRequest, </span>
+<span id="cb20-20"><a></a>    handler: Callable[[ModelRequest], ModelResponse]</span>
+<span id="cb20-21"><a></a>) <span class="op">-&gt;</span> ModelResponse:</span>
+<span id="cb20-22"><a></a>    </span>
+<span id="cb20-23"><a></a>    <span class="bu">format</span> <span class="op">=</span> select_format (</span>
+<span id="cb20-24"><a></a>        request.state.get(<span class="st">"field"</span>), </span>
+<span id="cb20-25"><a></a>        request.messages, </span>
+<span id="cb20-26"><a></a>        formats</span>
+<span id="cb20-27"><a></a>    )</span>
+<span id="cb20-28"><a></a>    request <span class="op">=</span> request.override (response_format<span class="op">=</span><span class="bu">format</span>)</span>
+<span id="cb20-29"><a></a>    </span>
+<span id="cb20-30"><a></a>    <span class="cf">return</span> handler(request)</span>
+<span id="cb20-31"><a></a></span>
+<span id="cb20-32"><a></a>create_agent (</span>
+<span id="cb20-33"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb20-34"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb20-35"><a></a>    middleware<span class="op">=</span>[f]</span>
+<span id="cb20-36"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="response-format-store" class="slide level2">
+<h2>Response format: store</h2>
+<p>Example: - Depending on user preferences, we use more or less detailed format</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, ModelResponse, wrap_model_call</span>
+<span id="cb21-2"><a></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<span id="cb21-3"><a></a></span>
+<span id="cb21-4"><a></a><span class="kw">class</span> DetailedFormat (BaseModel):</span>
+<span id="cb21-5"><a></a>    <span class="co">"""Structured information to be used for this and other purpose"""</span></span>
+<span id="cb21-6"><a></a>    field_1: <span class="bu">str</span> <span class="op">=</span> Field (description<span class="op">=</span><span class="st">"..."</span>)</span>
+<span id="cb21-7"><a></a>    more_details: <span class="bu">str</span> <span class="op">=</span> Field (description<span class="op">=</span><span class="st">"..."</span>)</span>
+<span id="cb21-8"><a></a></span>
+<span id="cb21-9"><a></a><span class="kw">class</span> ShortFormat (BaseModel):</span>
+<span id="cb21-10"><a></a>    field_1: <span class="bu">str</span> <span class="op">=</span> Field (description<span class="op">=</span><span class="st">"..."</span>)</span>
+<span id="cb21-11"><a></a></span>
+<span id="cb21-12"><a></a>formats <span class="op">=</span> {</span>
+<span id="cb21-13"><a></a>    <span class="st">"detailed"</span>: DetailedFormat,</span>
+<span id="cb21-14"><a></a>    <span class="st">"short"</span>: ShortFormat</span>
+<span id="cb21-15"><a></a>}</span>
+<span id="cb21-16"><a></a></span>
+<span id="cb21-17"><a></a><span class="at">@dataclass</span></span>
+<span id="cb21-18"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb21-19"><a></a>    user_id: <span class="bu">str</span></span>
+<span id="cb21-20"><a></a></span>
+<span id="cb21-21"><a></a></span>
+<span id="cb21-22"><a></a><span class="at">@wrap_model_call</span></span>
+<span id="cb21-23"><a></a><span class="kw">def</span> f (</span>
+<span id="cb21-24"><a></a>    request: ModelRequest, </span>
+<span id="cb21-25"><a></a>    handler: Callable[[ModelRequest], ModelResponse]</span>
+<span id="cb21-26"><a></a>) <span class="op">-&gt;</span> ModelResponse:</span>
+<span id="cb21-27"><a></a>    preferences <span class="op">=</span> get_preferences (request.runtime.context.user_id, request.runtime.store)</span>
+<span id="cb21-28"><a></a>    <span class="bu">format</span> <span class="op">=</span> select_format (</span>
+<span id="cb21-29"><a></a>        preferences</span>
+<span id="cb21-30"><a></a>        formats</span>
+<span id="cb21-31"><a></a>    )</span>
+<span id="cb21-32"><a></a>    request <span class="op">=</span> request.override (response_format<span class="op">=</span><span class="bu">format</span>)</span>
+<span id="cb21-33"><a></a></span>
+<span id="cb21-34"><a></a>    <span class="cf">return</span> handler(request)</span>
+<span id="cb21-35"><a></a></span>
+<span id="cb21-36"><a></a>create_agent (</span>
+<span id="cb21-37"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb21-38"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb21-39"><a></a>    middleware<span class="op">=</span>[f],</span>
+<span id="cb21-40"><a></a>    context_scheme<span class="op">=</span>ContextSchema,</span>
+<span id="cb21-41"><a></a>    store<span class="op">=</span>InMemoryStore()</span>
+<span id="cb21-42"><a></a>)</span>
+<span id="cb21-43"><a></a></span>
+<span id="cb21-44"><a></a><span class="co">## Response format: runtime context</span></span>
+<span id="cb21-45"><a></a></span>
+<span id="cb21-46"><a></a>Example: </span>
+<span id="cb21-47"><a></a><span class="op">-</span> Depending on user <span class="kw">and</span> environment details, we use more <span class="kw">or</span> less detailed <span class="bu">format</span></span>
+<span id="cb21-48"><a></a></span>
+<span id="cb21-49"><a></a>```python</span>
+<span id="cb21-50"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> ModelRequest, ModelResponse, wrap_model_call</span>
+<span id="cb21-51"><a></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<span id="cb21-52"><a></a></span>
+<span id="cb21-53"><a></a><span class="kw">class</span> DetailedFormat (BaseModel):</span>
+<span id="cb21-54"><a></a>    <span class="co">"""Structured information to be used for this and other purpose"""</span></span>
+<span id="cb21-55"><a></a>    field_1: <span class="bu">str</span> <span class="op">=</span> Field (description<span class="op">=</span><span class="st">"..."</span>)</span>
+<span id="cb21-56"><a></a>    more_details: <span class="bu">str</span> <span class="op">=</span> Field (description<span class="op">=</span><span class="st">"..."</span>)</span>
+<span id="cb21-57"><a></a></span>
+<span id="cb21-58"><a></a><span class="kw">class</span> ShortFormat (BaseModel):</span>
+<span id="cb21-59"><a></a>    field_1: <span class="bu">str</span> <span class="op">=</span> Field (description<span class="op">=</span><span class="st">"..."</span>)</span>
+<span id="cb21-60"><a></a></span>
+<span id="cb21-61"><a></a>formats <span class="op">=</span> {</span>
+<span id="cb21-62"><a></a>    <span class="st">"detailed"</span>: DetailedFormat,</span>
+<span id="cb21-63"><a></a>    <span class="st">"short"</span>: ShortFormat</span>
+<span id="cb21-64"><a></a>}</span>
+<span id="cb21-65"><a></a></span>
+<span id="cb21-66"><a></a><span class="at">@dataclass</span></span>
+<span id="cb21-67"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb21-68"><a></a>    user_details: <span class="bu">str</span></span>
+<span id="cb21-69"><a></a></span>
+<span id="cb21-70"><a></a><span class="at">@wrap_model_call</span></span>
+<span id="cb21-71"><a></a><span class="kw">def</span> f (</span>
+<span id="cb21-72"><a></a>    request: ModelRequest, </span>
+<span id="cb21-73"><a></a>    handler: Callable[[ModelRequest], ModelResponse]</span>
+<span id="cb21-74"><a></a>) <span class="op">-&gt;</span> ModelResponse:</span>
+<span id="cb21-75"><a></a>    </span>
+<span id="cb21-76"><a></a>    details <span class="op">=</span> get_details (request.runtime.context.user_details)</span>
+<span id="cb21-77"><a></a>    <span class="bu">format</span> <span class="op">=</span> select_format (</span>
+<span id="cb21-78"><a></a>        details</span>
+<span id="cb21-79"><a></a>        formats</span>
+<span id="cb21-80"><a></a>    )</span>
+<span id="cb21-81"><a></a>    request <span class="op">=</span> request.override (response_format<span class="op">=</span><span class="bu">format</span>)</span>
+<span id="cb21-82"><a></a>    <span class="cf">return</span> handler(request)</span>
+<span id="cb21-83"><a></a></span>
+<span id="cb21-84"><a></a>create_agent (</span>
+<span id="cb21-85"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb21-86"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb21-87"><a></a>    middleware<span class="op">=</span>[f],</span>
+<span id="cb21-88"><a></a>    context_scheme<span class="op">=</span>ContextSchema,</span>
+<span id="cb21-89"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="tool-context" class="slide level2">
+<h2>Tool Context</h2>
+</section>
+<section id="tool-context-state" class="slide level2">
+<h2>Tool Context: state</h2>
+<p>Example: - Depending on history length and other field values of current state, the tool performs one action or another</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a></a><span class="im">from</span> langchain.tools <span class="im">import</span> tool, ToolRuntime</span>
+<span id="cb22-2"><a></a></span>
+<span id="cb22-3"><a></a><span class="at">@tool</span></span>
+<span id="cb22-4"><a></a><span class="kw">def</span> my_tool (</span>
+<span id="cb22-5"><a></a>    runtime: ToolRuntime</span>
+<span id="cb22-6"><a></a>):</span>
+<span id="cb22-7"><a></a>    result <span class="op">=</span> obtain_result (</span>
+<span id="cb22-8"><a></a>        runtime.state.get(<span class="st">"field_1"</span>),</span>
+<span id="cb22-9"><a></a>        <span class="co"># request.messages ? </span></span>
+<span id="cb22-10"><a></a>    )</span>
+<span id="cb22-11"><a></a>    <span class="cf">return</span> result</span>
+<span id="cb22-12"><a></a></span>
+<span id="cb22-13"><a></a>create_agent (</span>
+<span id="cb22-14"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb22-15"><a></a>    tools<span class="op">=</span>[my_tool],</span>
+<span id="cb22-16"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="tool-context-store" class="slide level2">
+<h2>Tool Context: store</h2>
+<p>Example: - Depending on user preferences, the tool performs one action or another</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a></a><span class="im">from</span> langchain.tools <span class="im">import</span> tool, ToolRuntime</span>
+<span id="cb23-2"><a></a></span>
+<span id="cb23-3"><a></a><span class="at">@dataclass</span></span>
+<span id="cb23-4"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb23-5"><a></a>    user_id: <span class="bu">str</span></span>
+<span id="cb23-6"><a></a></span>
+<span id="cb23-7"><a></a><span class="at">@tool</span></span>
+<span id="cb23-8"><a></a><span class="kw">def</span> my_tool (</span>
+<span id="cb23-9"><a></a>    runtime: ToolRuntime[ContextSchema]</span>
+<span id="cb23-10"><a></a>):</span>
+<span id="cb23-11"><a></a>    preferences <span class="op">=</span> get_preferences (runtime.context.user_id, runtime.store)</span>
+<span id="cb23-12"><a></a>    result <span class="op">=</span> obtain_result (preferences)</span>
+<span id="cb23-13"><a></a>    <span class="cf">return</span> result</span>
+<span id="cb23-14"><a></a></span>
+<span id="cb23-15"><a></a>create_agent (</span>
+<span id="cb23-16"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb23-17"><a></a>    tools<span class="op">=</span>[my_tool],</span>
+<span id="cb23-18"><a></a>    context_scheme<span class="op">=</span>ContextSchema,</span>
+<span id="cb23-19"><a></a>    store<span class="op">=</span>InMemoryStore()</span>
+<span id="cb23-20"><a></a>)</span>
+<span id="cb23-21"><a></a></span>
+<span id="cb23-22"><a></a><span class="co">## Tool context: runtime context</span></span>
+<span id="cb23-23"><a></a></span>
+<span id="cb23-24"><a></a>Example: </span>
+<span id="cb23-25"><a></a><span class="op">-</span> Depending on user <span class="kw">and</span> environment details, the tool performs one action <span class="kw">or</span> another</span>
+<span id="cb23-26"><a></a></span>
+<span id="cb23-27"><a></a>```python</span>
+<span id="cb23-28"><a></a><span class="im">from</span> langchain.tools <span class="im">import</span> tool, ToolRuntime</span>
+<span id="cb23-29"><a></a></span>
+<span id="cb23-30"><a></a><span class="at">@dataclass</span></span>
+<span id="cb23-31"><a></a><span class="kw">class</span> ContextSchema:</span>
+<span id="cb23-32"><a></a>    user_id: <span class="bu">str</span></span>
+<span id="cb23-33"><a></a></span>
+<span id="cb23-34"><a></a><span class="at">@tool</span></span>
+<span id="cb23-35"><a></a><span class="kw">def</span> my_tool (</span>
+<span id="cb23-36"><a></a>    runtime: ToolRuntime[ContextSchema]</span>
+<span id="cb23-37"><a></a>):</span>
+<span id="cb23-38"><a></a>    details <span class="op">=</span> get_details (runtime.context.user_details)</span>
+<span id="cb23-39"><a></a>    result <span class="op">=</span> obtain_result (details)</span>
+<span id="cb23-40"><a></a>    <span class="cf">return</span> result</span>
+<span id="cb23-41"><a></a></span>
+<span id="cb23-42"><a></a>agent <span class="op">=</span> create_agent (</span>
+<span id="cb23-43"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb23-44"><a></a>    tools<span class="op">=</span>[my_tool],</span>
+<span id="cb23-45"><a></a>    context_scheme<span class="op">=</span>ContextSchema</span>
+<span id="cb23-46"><a></a>)</span>
+<span id="cb23-47"><a></a></span>
+<span id="cb23-48"><a></a>agent.invoke (</span>
+<span id="cb23-49"><a></a>    {<span class="st">"messages"</span>: [{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="st">"my message"</span>}]},</span>
+<span id="cb23-50"><a></a>    context<span class="op">=</span>ContextSchema(</span>
+<span id="cb23-51"><a></a>        <span class="st">"user_id"</span>: ...</span>
+<span id="cb23-52"><a></a>    )</span>
+<span id="cb23-53"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="tool-context-state-write" class="slide level2">
+<h2>Tool Context: state (write)</h2>
+<p>Example: - Depending on history length and other field values of current state, the tool changes the state in certain way</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a></a><span class="im">from</span> langchain.tools <span class="im">import</span> tool, ToolRuntime</span>
+<span id="cb24-2"><a></a><span class="im">from</span> langchain.types <span class="im">import</span> Command</span>
+<span id="cb24-3"><a></a></span>
+<span id="cb24-4"><a></a><span class="at">@tool</span></span>
+<span id="cb24-5"><a></a><span class="kw">def</span> my_tool (</span>
+<span id="cb24-6"><a></a>    runtime: ToolRuntime</span>
+<span id="cb24-7"><a></a>) <span class="op">-&gt;</span> Command:</span>
+<span id="cb24-8"><a></a>    my_update <span class="op">=</span> obtain_result (</span>
+<span id="cb24-9"><a></a>        runtime.state.get(<span class="st">"field_1"</span>),</span>
+<span id="cb24-10"><a></a>        <span class="co"># request.messages ? </span></span>
+<span id="cb24-11"><a></a>    )</span>
+<span id="cb24-12"><a></a>    <span class="cf">return</span> Command (</span>
+<span id="cb24-13"><a></a>        update<span class="op">=</span>{<span class="st">"my_field"</span>: my_update}</span>
+<span id="cb24-14"><a></a>    )</span>
+<span id="cb24-15"><a></a></span>
+<span id="cb24-16"><a></a>create_agent (</span>
+<span id="cb24-17"><a></a>    model<span class="op">=</span>...,</span>
+<span id="cb24-18"><a></a>    tools<span class="op">=</span>[my_tool],</span>
+<span id="cb24-19"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="lifecycle-context-hooks" class="slide level2">
+<h2>Lifecycle context: hooks</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource mermaid number-lines code-with-copy"><code class="sourceCode"><span id="cb25-1"><a></a>flowchart</span>
+<span id="cb25-2"><a></a>    Request --&gt; before_agent</span>
+<span id="cb25-3"><a></a>    before_agent --&gt; before_model</span>
+<span id="cb25-4"><a></a>    before_model --&gt; Model</span>
+<span id="cb25-5"><a></a>    Model["wrap_model_call&lt;br/&gt;Model"] --&gt; after_model</span>
+<span id="cb25-6"><a></a>    after_model -.-&gt; Tool</span>
+<span id="cb25-7"><a></a>    after_model -.-&gt; after_agent</span>
+<span id="cb25-8"><a></a>    Tool["wrap_tool_call&lt;br/&gt;Tool"] --&gt; before_model</span>
+<span id="cb25-9"><a></a>    after_agent --&gt; Response</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="lifcycle-context-actions" class="slide level2">
+<h2>Lifcycle context: actions</h2>
+<ul>
+<li>Control what happens between the core agent steps
+<ul>
+<li>Good for: intercepting data flow to implement cross-cutting concerns like summarization, guardrails, and logging.</li>
+</ul></li>
+<li>Update context
+<ul>
+<li>Modify state and store to persist changes, update conversation history, or save insights</li>
+<li>Jump in the lifecycle - Move to different steps in the agent cycle based on context (e.g., skip tool execution if a condition is met, repeat model call with modified context)</li>
+</ul></li>
+</ul>
+</section>
+<section id="built-in-middleware" class="slide level2">
+<h2>Built-in middleware</h2>
+<p>Summarization:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a></a><span class="im">from</span> langchain.agents <span class="im">import</span> create_agent</span>
+<span id="cb26-2"><a></a><span class="im">from</span> langchain.agents.middleware <span class="im">import</span> SummarizationMiddleware</span>
+<span id="cb26-3"><a></a></span>
+<span id="cb26-4"><a></a>agent <span class="op">=</span> create_agent(</span>
+<span id="cb26-5"><a></a>    model<span class="op">=</span><span class="st">"gpt-4o"</span>,</span>
+<span id="cb26-6"><a></a>    tools<span class="op">=</span>[...],</span>
+<span id="cb26-7"><a></a>    middleware<span class="op">=</span>[</span>
+<span id="cb26-8"><a></a>        SummarizationMiddleware(</span>
+<span id="cb26-9"><a></a>            model<span class="op">=</span><span class="st">"gpt-4o-mini"</span>,</span>
+<span id="cb26-10"><a></a>            trigger<span class="op">=</span>{<span class="st">"tokens"</span>: <span class="dv">4000</span>},</span>
+<span id="cb26-11"><a></a>            keep<span class="op">=</span>{<span class="st">"messages"</span>: <span class="dv">20</span>},</span>
+<span id="cb26-12"><a></a>        ),</span>
+<span id="cb26-13"><a></a>    ],</span>
+<span id="cb26-14"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="best-practices" class="slide level2">
+<h2>Best Practices</h2>
+<ul>
+<li>Start simple - Begin with static prompts and tools, add dynamics only when needed</li>
+<li>Test incrementally - Add one context engineering feature at a time</li>
+<li>Monitor performance - Track model calls, token usage, and latency</li>
+<li>Use built-in middleware - Leverage SummarizationMiddleware, LLMToolSelectorMiddleware, etc.</li>
+<li>Document your context strategy - Make it clear what context is being passed and why</li>
+<li>Understand transient vs persistent: Model context changes are transient (per-call), while life-cycle context changes persist to state</li>
 </ul>
 </section>
 <section id="further-reading" class="slide level2">
@@ -153,10 +1159,13 @@ Jaume Amores
 <ul>
 <li><a href="https://www.youtube.com/watch?v=3s_N60u0jEY">Context Rot: When Long Context Fails</a></li>
 <li><a href="https://blog.langchain.dev/dosu-langsmith-no-prompt-eng/">Continual In-Context Learning</a></li>
+<li><a href="https://www.youtube.com/watch?v=QZFzYMTfxtE&amp;t=320">Prompt Engineering vs Context Engineering | MIM Technovate</a></li>
+<li><a href="https://www.youtube.com/watch?v=vD0E3EUb8-8">Prompt Engineering vs Context Engineering | IBM Technology</a></li>
+<li><a href="https://www.youtube.com/watch?v=ioOHXt7wjhM&amp;t=49">Context is all you need | Prompt Engineering</a></li>
 </ul>
 
 
-</section>
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
