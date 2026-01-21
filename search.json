@@ -18,14 +18,14 @@
     "href": "index.html",
     "title": "Data Science Raw Notes",
     "section": "",
-    "text": "Langchain courses\nEvaluation - Hamel Husain notes\nRAG - Parlance Education\nFine Tuning - Parlance Education\nOther Concepts"
+    "text": "Courses\nEvaluation\nRAG\nFine Tuning\nGuardrails\nContext Engineering\nPrompt Engineering\nMulti-Agent\nModel Context Protocol\nOther Concepts: list of resources"
   },
   {
     "objectID": "index.html#llm",
     "href": "index.html#llm",
     "title": "Data Science Raw Notes",
     "section": "",
-    "text": "Langchain courses\nEvaluation - Hamel Husain notes\nRAG - Parlance Education\nFine Tuning - Parlance Education\nOther Concepts"
+    "text": "Courses\nEvaluation\nRAG\nFine Tuning\nGuardrails\nContext Engineering\nPrompt Engineering\nMulti-Agent\nModel Context Protocol\nOther Concepts: list of resources"
   },
   {
     "objectID": "index.html#analysis",
@@ -33,6 +33,13 @@
     "title": "Data Science Raw Notes",
     "section": "Analysis",
     "text": "Analysis\n\nA/B Testing\nError Analysis"
+  },
+  {
+    "objectID": "index.html#vibe-coding",
+    "href": "index.html#vibe-coding",
+    "title": "Data Science Raw Notes",
+    "section": "Vibe Coding",
+    "text": "Vibe Coding\n\nResources"
   },
   {
     "objectID": "llm/langchain_courses.html#custom-reducers",
@@ -635,6 +642,34 @@
     "title": "Hamel Husain Eval Notes",
     "section": "Plan experiments not features",
     "text": "Plan experiments not features\nTo complete reading."
+  },
+  {
+    "objectID": "llm/multi_agent.html#why-multi-agent",
+    "href": "llm/multi_agent.html#why-multi-agent",
+    "title": "Multi-Agent",
+    "section": "Why multi-agent",
+    "text": "Why multi-agent\n\nContext management:\n\nMany tasks with long context each one.\nNeed to selectively surface needed context at each time.\n\nDistributted development:\n\nDifferent teams work on different tasks / agents, with clear boundaries.\n\nParallel execution:\n\nDifferent tasks / agents run in parallel.\n\nEnforce sequential constraints: unlock capabilities only when conditions are met."
+  },
+  {
+    "objectID": "llm/multi_agent.html#multi-agent-vs-single-agent-with-multiple-tools",
+    "href": "llm/multi_agent.html#multi-agent-vs-single-agent-with-multiple-tools",
+    "title": "Multi-Agent",
+    "section": "Multi-agent vs single agent with multiple tools:",
+    "text": "Multi-agent vs single agent with multiple tools:\n\nToo many tools -&gt; agent makes poor selection of tool to use.\nIt may require too much context.\n\nMulti-agent especially interesting if context can be split into domains."
+  },
+  {
+    "objectID": "llm/multi_agent.html#patterns",
+    "href": "llm/multi_agent.html#patterns",
+    "title": "Multi-Agent",
+    "section": "Patterns",
+    "text": "Patterns\n\nSubagents:\n\nEach subagent is a tool for the supervisor agent.\nAll routing through centralized supervisor agent\n\nSupervisor communicates separately with different subagents and with user.\nSub-agents don’t communicate with user directly.\nThey are stateless by default. Supervisor keeps state.\n\nSupervisor decides dynamically when and how to call each subagent, or to not call any.\n\nHandoffs:\n\nDepending on centralized state, one agent may transfer the task (or part of it?) to another one.\nTool (which may be agent?) update state variable that triggers\n\nRouting\nConfiguration changes\nSwitching agents or adjusting current agent’s tools and prompt.\n\n\nSkills:\n\nAgent loads skills as required.\n\nEach skill may be loaded by dedicated agent.\n\nEach skill may be a specialized prompt or knowledge loaded on-demand.\n\nRouter:\n\nUser’s query is classified into one of X tasks. Relevant agent is called.\nOutput from different agents is synthesized.\n\nCustom:\n\nCombination of the above.\nEach agent may be node in final graph."
+  },
+  {
+    "objectID": "llm/multi_agent.html#choosing-a-pattern",
+    "href": "llm/multi_agent.html#choosing-a-pattern",
+    "title": "Multi-Agent",
+    "section": "Choosing a pattern",
+    "text": "Choosing a pattern\n\n\n\n\n\n\n\n\n\n\nPattern\nDistributed development\nParallel\nMulti-hop (1)\nDirect user interaction (2)\n\n\n\n\nSubagent\n5\n5\n5\n1\n\n\nHandsoff\n0\n0\n5\n5\n\n\nSkills\n0\n3\n5\n5\n\n\nRouter\n3\n5\n0\n3\n\n\n\n\n\nMulti-hop: can multiple subagents be called in a series?\n\n\nDirect interaction: can subagents converse directly with user?"
   },
   {
     "objectID": "llm/mcp.html#client-side",
