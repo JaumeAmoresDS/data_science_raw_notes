@@ -4,13 +4,22 @@ title: "Data Science Raw Notes"
 
 ## LLM
 
-- [Langchain courses](llm/langchain_courses.ipynb)
-- [Evaluation - Hamel Husain notes](llm/evals_hamel.ipynb)
-- [RAG - Parlance Education](llm/rag_parlance.ipynb)
-- [Fine Tuning - Parlance Education](llm/fine_tuning.ipynb)
-- [Other Concepts](llm/other_concepts.ipynb)
+- [Courses](llm/langchain_courses.ipynb)
+- [Evaluation](llm/evals_hamel.ipynb)
+- [RAG](llm/rag_parlance.ipynb)
+- [Fine Tuning](llm/fine_tuning.ipynb)
+- [Guardrails](llm/guardrails.ipynb)
+- [Context Engineering](llm/context_engineering.ipynb)
+- [Prompt Engineering](llm/prompt_engineering.ipynb)
+- [Multi-Agent](llm/multi_agent.ipynb)
+- [Model Context Protocol](llm/mcp.ipynb)
+- [Other Concepts: list of resources](llm/resources.ipynb)
 
 ## Analysis
 
 - [A/B Testing](analysis/ab_testing.ipynb)
 - [Error Analysis](analysis/error_analysis.ipynb)
+
+## Vibe Coding
+
+- [Resources](llm/resources.ipynb)
