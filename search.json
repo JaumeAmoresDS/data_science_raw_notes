@@ -644,32 +644,158 @@
     "text": "Plan experiments not features\nTo complete reading."
   },
   {
+    "objectID": "llm/multi_agent.html",
+    "href": "llm/multi_agent.html",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "Context management:\n\nMany tasks with long context each one.\nNeed to selectively surface needed context at each time.\n\nDistributted development:\n\nDifferent teams work on different tasks / agents, with clear boundaries.\n\nParallel execution:\n\nDifferent tasks / agents run in parallel.\n\nEnforce sequential constraints: unlock capabilities only when conditions are met.\n\n\n\n\n\nToo many tools -&gt; agent makes poor selection of tool to use.\nIt may require too much context.\n\nMulti-agent especially interesting if context can be split into domains.\n\n\n\n\n\n\nAgents:\n\nEach subagent is a tool for the supervisor agent.\nAll routing through centralized supervisor agent\n\nSupervisor communicates separately with different subagents and with user.\nSub-agents don’t communicate with user directly.\nThey are stateless by default. Supervisor keeps state.\n\nSupervisor decides dynamically when and how to call each subagent, or to not call any.\n\nHandoffs:\n\nDepending on centralized state, one agent may transfer the task (or part of it?) to another one.\nTool (which may be agent?) update state variable that triggers\n\nRouting\nConfiguration changes\nSwitching agents or adjusting current agent’s tools and prompt.\n\n\nSkills:\n\nAgent loads skills as required.\n\nEach skill may be loaded by dedicated agent.\n\nEach skill may be a specialized prompt or knowledge loaded on-demand.\n\nRouter:\n\nUser’s query is classified into one of X tasks. Relevant agent is called.\nOutput from different agents is synthesized.\n\nCustom:\n\nCombination of the above.\nEach agent may be node in final graph.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPattern\nDistributed development\nParallel\nMulti-hop (1)\nDirect user interaction (2)\n\n\n\n\nSubagent\n5\n5\n5\n1\n\n\nHandsoff\n0\n0\n5\n5\n\n\nSkills\n0\n3\n5\n5\n\n\nRouter\n3\n5\n0\n3\n\n\n\n\n\nMulti-hop: can multiple subagents be called in a series?\n\n\nDirect interaction: can subagents converse directly with user?\n\n\n\n\n\nflowchart LR\nUser[\"User Request\"] --&gt; Supervisor\nSupervisor --&gt; Subagent1\nSubagent1 --&gt; Supervisor\nSupervisor --&gt; Subagent2\nSubagent2 --&gt; Supervisor\nSupervisor --&gt; Subagent3\nSubagent3 --&gt; Supervisor\nSupervisor --&gt; Response\n\n\n\nsequenceDiagram\n    participant User\n    participant Supervisor\n    participant Coffee subagent\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Supervisor: I want coffee\n    note right of User: Call 1\n    end\n\n    rect rgb(0, 0, 0)\n    Supervisor-&gt;&gt;Coffee subagent: coffee_subagent()\n    note right of Supervisor: Call 2\n    end\n\n    Coffee subagent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0, 0, 0)\n    buy_coffee tool--&gt;&gt;Coffee subagent: Done\n    note right of Coffee subagent: Call 3\n    end\n\n    rect rgb(0, 0, 0)\n    Coffee subagent--&gt;&gt;Supervisor: bought coffee\n    note right of Supervisor: Call 4\n    end\n\n    Supervisor--&gt;&gt;User: I bought your cofee\n\n\n\n\nflowchart LR\nUser[\"User Request\"] --&gt; A[\"Agent A\"]\nA[\"Agent A\"] &lt;--&gt; B[\"Agent B\"]\nA &lt;--&gt; C[\"Agent C\"]\nA --&gt; Response\nB &lt;--&gt; C\nB --&gt; Response\nC --&gt; Response\n\n\n\nsequenceDiagram\n    participant User\n    participant Main Agent\n    participant Coffee Agent\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Main Agent: I want coffee\n    note right of User: Call 1\n    end\n\n    rect rgb(0, 0, 0)\n    Main Agent-&gt;&gt;Coffee Agent: transfer_to_coffee_agent()\n    note right of Main Agent: Call 2\n    end\n\n    Coffee Agent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0, 0, 0)\n    buy_coffee tool--&gt;&gt;Coffee Agent: Done\n    note right of Coffee Agent: Call 3\n    end\n\n    Coffee Agent--&gt;&gt;User: I bought your cofee\n\n\n\n\nflowchart LR\nUser[\"User Request\"] --&gt; M[\"Agent\"]\nM --&gt; A[\"Skill A\"]\nM --&gt; B[\"Skill B\"]\nM --&gt; C[\"Skill C\"]\nM --&gt; Response\n\n\n\nsequenceDiagram\n    participant User\n    participant Agent\n    participant load_skill tool\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Agent: I want coffee\n    note right of User: Call 1\n    end\n\n    Agent-&gt;&gt;load_skill tool: load_skill(\"coffee\")\n\n    rect rgb(0,0,0)\n    load_skill tool--&gt;&gt;Agent: Coffee skill context\n    note right of Agent: Call 2\n    end\n\n    Agent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0,0,0)\n    buy_coffee tool--&gt;&gt;Agent: Done\n    note right of Agent: Call 3\n    end\n\n    Agent--&gt;&gt;User: I bought your cofee\n\n\n\n\nflowchart LR\nUser[\"User Request\"] --&gt; Router\nRouter --&gt; A[\"Agent A\"]\nRouter --&gt; B[\"Agent B\"]\nRouter --&gt; C[\"Agent C\"]\nA --&gt; Synthesis\nB --&gt; Synthesis\nC --&gt; Synthesis\nSynthesis --&gt; Response\n\n\n\nsequenceDiagram\n    participant User\n    participant Router\n    participant Coffee Agent\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Router: I want coffee\n    note right of User: Call 1\n    end\n\n    rect rgb(0, 0, 0)\n    Router-&gt;&gt;Coffee Agent: coffee_agent()\n    note right of Router: Call 2\n    end\n\n    Coffee Agent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0, 0, 0)\n    buy_coffee tool--&gt;&gt;Coffee Agent: Done\n    note right of Coffee Agent: Call 3\n    end\n\n    Coffee Agent--&gt;&gt;User: I bought your cofee\n\n\n\n\n\nSubagents: statless: 4 * 2 = 8 calls\nHandoffs: coffee agent keeps state, no handoff, calls tool directly (call 1), after done (call 2) responds to user : 3+2 = 5\nSkills: coffee skills not required.\n\nAfter receiving repeat request (call 1), agent calls buy tool.\nAfter response “Done”, (call 2) responds to user.\n3+2=5\n\nRouter:\n\nAfter receiving repeat request (call 1), router calls Coffee Agent (call 2).\nAfter response “Done”, (call 3) Coffee Agent responds to user.\n3+3=6\n\n\n\n\n\nsequenceDiagram\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Supervisor: Compare Python, JS, Ruby\n    note right of User: Call 1\n    end\n\n    rect rgb(0, 0, 0)\n    Supervisor-&gt;&gt;Python Expert: get_analysis()\n    note right of Supervisor: Call 2\n    end\n\n    Python Expert--&gt;&gt;Supervisor: python analysis\n\n    rect rgb(0, 0, 0)\n    Supervisor-&gt;&gt;JS Expert: get_analysis()\n    note right of Supervisor: Call 4\n    end\n\n    JS Expert--&gt;&gt;Supervisor: js analysis\n\n    rect rgb(0, 0, 0)\n    Supervisor-&gt;&gt;Ruby Expert: get_analysis()\n    note right of Supervisor: Call 5\n    end\n\n    Ruby Expert--&gt;&gt;Supervisor: ruby analysis\n\n    rect rgb(0, 0, 0)\n    Supervisor--&gt;&gt;User: Comparison\n    note right of Supervisor: Call 6\n    end\n\n\n\n\nsequenceDiagram\n    participant User\n    participant Main Agent\n    participant Coffee Agent\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Main Agent: I want coffee\n    note right of User: Call 1\n    end\n\n    rect rgb(0, 0, 0)\n    Main Agent-&gt;&gt;Coffee Agent: transfer_to_coffee_agent()\n    note right of Main Agent: Call 2\n    end\n\n    Coffee Agent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0, 0, 0)\n    buy_coffee tool--&gt;&gt;Coffee Agent: Done\n    note right of Coffee Agent: Call 3\n    end\n\n    Coffee Agent--&gt;&gt;User: I bought your cofee\n\n\n\n\nsequenceDiagram\n    participant User\n    participant Agent\n    participant load_skill tool\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Agent: I want coffee\n    note right of User: Call 1\n    end\n\n    Agent-&gt;&gt;load_skill tool: load_skill(\"coffee\")\n\n    rect rgb(0,0,0)\n    load_skill tool--&gt;&gt;Agent: Coffee skill context\n    note right of Agent: Call 2\n    end\n\n    Agent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0,0,0)\n    buy_coffee tool--&gt;&gt;Agent: Done\n    note right of Agent: Call 3\n    end\n\n    Agent--&gt;&gt;User: I bought your cofee\n\n\n\n\nsequenceDiagram\n    participant User\n    participant Router\n    participant Coffee Agent\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Router: I want coffee\n    note right of User: Call 1\n    end\n\n    rect rgb(0, 0, 0)\n    Router-&gt;&gt;Coffee Agent: coffee_agent()\n    note right of Router: Call 2\n    end\n\n    Coffee Agent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0, 0, 0)\n    buy_coffee tool--&gt;&gt;Coffee Agent: Done\n    note right of Coffee Agent: Call 3\n    end\n\n    Coffee Agent--&gt;&gt;User: I bought your cofee"
+  },
+  {
     "objectID": "llm/multi_agent.html#why-multi-agent",
     "href": "llm/multi_agent.html#why-multi-agent",
     "title": "Multi-Agent",
-    "section": "Why multi-agent",
-    "text": "Why multi-agent\n\nContext management:\n\nMany tasks with long context each one.\nNeed to selectively surface needed context at each time.\n\nDistributted development:\n\nDifferent teams work on different tasks / agents, with clear boundaries.\n\nParallel execution:\n\nDifferent tasks / agents run in parallel.\n\nEnforce sequential constraints: unlock capabilities only when conditions are met."
+    "section": "",
+    "text": "Context management:\n\nMany tasks with long context each one.\nNeed to selectively surface needed context at each time.\n\nDistributted development:\n\nDifferent teams work on different tasks / agents, with clear boundaries.\n\nParallel execution:\n\nDifferent tasks / agents run in parallel.\n\nEnforce sequential constraints: unlock capabilities only when conditions are met."
   },
   {
     "objectID": "llm/multi_agent.html#multi-agent-vs-single-agent-with-multiple-tools",
     "href": "llm/multi_agent.html#multi-agent-vs-single-agent-with-multiple-tools",
     "title": "Multi-Agent",
-    "section": "Multi-agent vs single agent with multiple tools:",
-    "text": "Multi-agent vs single agent with multiple tools:\n\nToo many tools -&gt; agent makes poor selection of tool to use.\nIt may require too much context.\n\nMulti-agent especially interesting if context can be split into domains."
+    "section": "",
+    "text": "Too many tools -&gt; agent makes poor selection of tool to use.\nIt may require too much context.\n\nMulti-agent especially interesting if context can be split into domains."
   },
   {
     "objectID": "llm/multi_agent.html#patterns",
     "href": "llm/multi_agent.html#patterns",
     "title": "Multi-Agent",
-    "section": "Patterns",
-    "text": "Patterns\n\nSubagents:\n\nEach subagent is a tool for the supervisor agent.\nAll routing through centralized supervisor agent\n\nSupervisor communicates separately with different subagents and with user.\nSub-agents don’t communicate with user directly.\nThey are stateless by default. Supervisor keeps state.\n\nSupervisor decides dynamically when and how to call each subagent, or to not call any.\n\nHandoffs:\n\nDepending on centralized state, one agent may transfer the task (or part of it?) to another one.\nTool (which may be agent?) update state variable that triggers\n\nRouting\nConfiguration changes\nSwitching agents or adjusting current agent’s tools and prompt.\n\n\nSkills:\n\nAgent loads skills as required.\n\nEach skill may be loaded by dedicated agent.\n\nEach skill may be a specialized prompt or knowledge loaded on-demand.\n\nRouter:\n\nUser’s query is classified into one of X tasks. Relevant agent is called.\nOutput from different agents is synthesized.\n\nCustom:\n\nCombination of the above.\nEach agent may be node in final graph."
+    "section": "",
+    "text": "Agents:\n\nEach subagent is a tool for the supervisor agent.\nAll routing through centralized supervisor agent\n\nSupervisor communicates separately with different subagents and with user.\nSub-agents don’t communicate with user directly.\nThey are stateless by default. Supervisor keeps state.\n\nSupervisor decides dynamically when and how to call each subagent, or to not call any.\n\nHandoffs:\n\nDepending on centralized state, one agent may transfer the task (or part of it?) to another one.\nTool (which may be agent?) update state variable that triggers\n\nRouting\nConfiguration changes\nSwitching agents or adjusting current agent’s tools and prompt.\n\n\nSkills:\n\nAgent loads skills as required.\n\nEach skill may be loaded by dedicated agent.\n\nEach skill may be a specialized prompt or knowledge loaded on-demand.\n\nRouter:\n\nUser’s query is classified into one of X tasks. Relevant agent is called.\nOutput from different agents is synthesized.\n\nCustom:\n\nCombination of the above.\nEach agent may be node in final graph."
   },
   {
     "objectID": "llm/multi_agent.html#choosing-a-pattern",
     "href": "llm/multi_agent.html#choosing-a-pattern",
     "title": "Multi-Agent",
-    "section": "Choosing a pattern",
-    "text": "Choosing a pattern\n\n\n\n\n\n\n\n\n\n\nPattern\nDistributed development\nParallel\nMulti-hop (1)\nDirect user interaction (2)\n\n\n\n\nSubagent\n5\n5\n5\n1\n\n\nHandsoff\n0\n0\n5\n5\n\n\nSkills\n0\n3\n5\n5\n\n\nRouter\n3\n5\n0\n3\n\n\n\n\n\nMulti-hop: can multiple subagents be called in a series?\n\n\nDirect interaction: can subagents converse directly with user?"
+    "section": "",
+    "text": "Pattern\nDistributed development\nParallel\nMulti-hop (1)\nDirect user interaction (2)\n\n\n\n\nSubagent\n5\n5\n5\n1\n\n\nHandsoff\n0\n0\n5\n5\n\n\nSkills\n0\n3\n5\n5\n\n\nRouter\n3\n5\n0\n3\n\n\n\n\n\nMulti-hop: can multiple subagents be called in a series?\n\n\nDirect interaction: can subagents converse directly with user?"
+  },
+  {
+    "objectID": "llm/multi_agent.html#subagents-diagram",
+    "href": "llm/multi_agent.html#subagents-diagram",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "flowchart LR\nUser[\"User Request\"] --&gt; Supervisor\nSupervisor --&gt; Subagent1\nSubagent1 --&gt; Supervisor\nSupervisor --&gt; Subagent2\nSubagent2 --&gt; Supervisor\nSupervisor --&gt; Subagent3\nSubagent3 --&gt; Supervisor\nSupervisor --&gt; Response"
+  },
+  {
+    "objectID": "llm/multi_agent.html#subagents-one-shot-request",
+    "href": "llm/multi_agent.html#subagents-one-shot-request",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "sequenceDiagram\n    participant User\n    participant Supervisor\n    participant Coffee subagent\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Supervisor: I want coffee\n    note right of User: Call 1\n    end\n\n    rect rgb(0, 0, 0)\n    Supervisor-&gt;&gt;Coffee subagent: coffee_subagent()\n    note right of Supervisor: Call 2\n    end\n\n    Coffee subagent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0, 0, 0)\n    buy_coffee tool--&gt;&gt;Coffee subagent: Done\n    note right of Coffee subagent: Call 3\n    end\n\n    rect rgb(0, 0, 0)\n    Coffee subagent--&gt;&gt;Supervisor: bought coffee\n    note right of Supervisor: Call 4\n    end\n\n    Supervisor--&gt;&gt;User: I bought your cofee"
+  },
+  {
+    "objectID": "llm/multi_agent.html#handoffs-diagram",
+    "href": "llm/multi_agent.html#handoffs-diagram",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "flowchart LR\nUser[\"User Request\"] --&gt; A[\"Agent A\"]\nA[\"Agent A\"] &lt;--&gt; B[\"Agent B\"]\nA &lt;--&gt; C[\"Agent C\"]\nA --&gt; Response\nB &lt;--&gt; C\nB --&gt; Response\nC --&gt; Response"
+  },
+  {
+    "objectID": "llm/multi_agent.html#handoffs-one-shot-request",
+    "href": "llm/multi_agent.html#handoffs-one-shot-request",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "sequenceDiagram\n    participant User\n    participant Main Agent\n    participant Coffee Agent\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Main Agent: I want coffee\n    note right of User: Call 1\n    end\n\n    rect rgb(0, 0, 0)\n    Main Agent-&gt;&gt;Coffee Agent: transfer_to_coffee_agent()\n    note right of Main Agent: Call 2\n    end\n\n    Coffee Agent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0, 0, 0)\n    buy_coffee tool--&gt;&gt;Coffee Agent: Done\n    note right of Coffee Agent: Call 3\n    end\n\n    Coffee Agent--&gt;&gt;User: I bought your cofee"
+  },
+  {
+    "objectID": "llm/multi_agent.html#skills-diagram",
+    "href": "llm/multi_agent.html#skills-diagram",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "flowchart LR\nUser[\"User Request\"] --&gt; M[\"Agent\"]\nM --&gt; A[\"Skill A\"]\nM --&gt; B[\"Skill B\"]\nM --&gt; C[\"Skill C\"]\nM --&gt; Response"
+  },
+  {
+    "objectID": "llm/multi_agent.html#skills-one-shot-request",
+    "href": "llm/multi_agent.html#skills-one-shot-request",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "sequenceDiagram\n    participant User\n    participant Agent\n    participant load_skill tool\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Agent: I want coffee\n    note right of User: Call 1\n    end\n\n    Agent-&gt;&gt;load_skill tool: load_skill(\"coffee\")\n\n    rect rgb(0,0,0)\n    load_skill tool--&gt;&gt;Agent: Coffee skill context\n    note right of Agent: Call 2\n    end\n\n    Agent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0,0,0)\n    buy_coffee tool--&gt;&gt;Agent: Done\n    note right of Agent: Call 3\n    end\n\n    Agent--&gt;&gt;User: I bought your cofee"
+  },
+  {
+    "objectID": "llm/multi_agent.html#router-diagram",
+    "href": "llm/multi_agent.html#router-diagram",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "flowchart LR\nUser[\"User Request\"] --&gt; Router\nRouter --&gt; A[\"Agent A\"]\nRouter --&gt; B[\"Agent B\"]\nRouter --&gt; C[\"Agent C\"]\nA --&gt; Synthesis\nB --&gt; Synthesis\nC --&gt; Synthesis\nSynthesis --&gt; Response"
+  },
+  {
+    "objectID": "llm/multi_agent.html#router-one-shot-request",
+    "href": "llm/multi_agent.html#router-one-shot-request",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "sequenceDiagram\n    participant User\n    participant Router\n    participant Coffee Agent\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Router: I want coffee\n    note right of User: Call 1\n    end\n\n    rect rgb(0, 0, 0)\n    Router-&gt;&gt;Coffee Agent: coffee_agent()\n    note right of Router: Call 2\n    end\n\n    Coffee Agent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0, 0, 0)\n    buy_coffee tool--&gt;&gt;Coffee Agent: Done\n    note right of Coffee Agent: Call 3\n    end\n\n    Coffee Agent--&gt;&gt;User: I bought your cofee"
+  },
+  {
+    "objectID": "llm/multi_agent.html#repeat-request",
+    "href": "llm/multi_agent.html#repeat-request",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "Subagents: statless: 4 * 2 = 8 calls\nHandoffs: coffee agent keeps state, no handoff, calls tool directly (call 1), after done (call 2) responds to user : 3+2 = 5\nSkills: coffee skills not required.\n\nAfter receiving repeat request (call 1), agent calls buy tool.\nAfter response “Done”, (call 2) responds to user.\n3+2=5\n\nRouter:\n\nAfter receiving repeat request (call 1), router calls Coffee Agent (call 2).\nAfter response “Done”, (call 3) Coffee Agent responds to user.\n3+3=6"
+  },
+  {
+    "objectID": "llm/multi_agent.html#subagents-multi-language-comparison",
+    "href": "llm/multi_agent.html#subagents-multi-language-comparison",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "sequenceDiagram\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Supervisor: Compare Python, JS, Ruby\n    note right of User: Call 1\n    end\n\n    rect rgb(0, 0, 0)\n    Supervisor-&gt;&gt;Python Expert: get_analysis()\n    note right of Supervisor: Call 2\n    end\n\n    Python Expert--&gt;&gt;Supervisor: python analysis\n\n    rect rgb(0, 0, 0)\n    Supervisor-&gt;&gt;JS Expert: get_analysis()\n    note right of Supervisor: Call 4\n    end\n\n    JS Expert--&gt;&gt;Supervisor: js analysis\n\n    rect rgb(0, 0, 0)\n    Supervisor-&gt;&gt;Ruby Expert: get_analysis()\n    note right of Supervisor: Call 5\n    end\n\n    Ruby Expert--&gt;&gt;Supervisor: ruby analysis\n\n    rect rgb(0, 0, 0)\n    Supervisor--&gt;&gt;User: Comparison\n    note right of Supervisor: Call 6\n    end"
+  },
+  {
+    "objectID": "llm/multi_agent.html#handoffs-one-shot-request-1",
+    "href": "llm/multi_agent.html#handoffs-one-shot-request-1",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "sequenceDiagram\n    participant User\n    participant Main Agent\n    participant Coffee Agent\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Main Agent: I want coffee\n    note right of User: Call 1\n    end\n\n    rect rgb(0, 0, 0)\n    Main Agent-&gt;&gt;Coffee Agent: transfer_to_coffee_agent()\n    note right of Main Agent: Call 2\n    end\n\n    Coffee Agent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0, 0, 0)\n    buy_coffee tool--&gt;&gt;Coffee Agent: Done\n    note right of Coffee Agent: Call 3\n    end\n\n    Coffee Agent--&gt;&gt;User: I bought your cofee"
+  },
+  {
+    "objectID": "llm/multi_agent.html#skills-one-shot-request-1",
+    "href": "llm/multi_agent.html#skills-one-shot-request-1",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "sequenceDiagram\n    participant User\n    participant Agent\n    participant load_skill tool\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Agent: I want coffee\n    note right of User: Call 1\n    end\n\n    Agent-&gt;&gt;load_skill tool: load_skill(\"coffee\")\n\n    rect rgb(0,0,0)\n    load_skill tool--&gt;&gt;Agent: Coffee skill context\n    note right of Agent: Call 2\n    end\n\n    Agent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0,0,0)\n    buy_coffee tool--&gt;&gt;Agent: Done\n    note right of Agent: Call 3\n    end\n\n    Agent--&gt;&gt;User: I bought your cofee"
+  },
+  {
+    "objectID": "llm/multi_agent.html#router-one-shot-request-1",
+    "href": "llm/multi_agent.html#router-one-shot-request-1",
+    "title": "Multi-Agent",
+    "section": "",
+    "text": "sequenceDiagram\n    participant User\n    participant Router\n    participant Coffee Agent\n    participant buy_coffee tool\n\n    rect rgb(0, 0, 0)\n    User-&gt;&gt;Router: I want coffee\n    note right of User: Call 1\n    end\n\n    rect rgb(0, 0, 0)\n    Router-&gt;&gt;Coffee Agent: coffee_agent()\n    note right of Router: Call 2\n    end\n\n    Coffee Agent-&gt;&gt;buy_coffee tool: buy_coffee()\n\n    rect rgb(0, 0, 0)\n    buy_coffee tool--&gt;&gt;Coffee Agent: Done\n    note right of Coffee Agent: Call 3\n    end\n\n    Coffee Agent--&gt;&gt;User: I bought your cofee"
+  },
+  {
+    "objectID": "llm/multi_agent.html#key-characteristics",
+    "href": "llm/multi_agent.html#key-characteristics",
+    "title": "Multi-Agent",
+    "section": "Key characteristics",
+    "text": "Key characteristics\n\nAs tools\nStateless\nCentralized\nNo direct user interaction btw subagent and user (possible through interrupts)\nParallelizable"
+  },
+  {
+    "objectID": "llm/multi_agent.html#when-to-use",
+    "href": "llm/multi_agent.html#when-to-use",
+    "title": "Multi-Agent",
+    "section": "When to use",
+    "text": "When to use\n\nMultiple distinct domains\nDistributed development\nParallelization\nNo need of direct interaction btw subagent and user\n\nFor simpler cases with just few tools, use single-agent"
+  },
+  {
+    "objectID": "llm/multi_agent.html#design-decisions",
+    "href": "llm/multi_agent.html#design-decisions",
+    "title": "Multi-Agent",
+    "section": "Design decisions",
+    "text": "Design decisions\n\nSynchronous vs Asynchronous\n\nSynchronous: main agent needs all subagent results before proceeding with conversation with user.\nAsynchronous: the agent can keep conversation and have other requests or update the user while waiting for subagent results.\n\n\n\nTool patterns\n\nTool per agent: more setup but more customization.\nSingle dispatch tool:\n\nConvention over configuration.\nGood for:\n\nDistributed teams\nMany agents."
+  },
+  {
+    "objectID": "llm/multi_agent.html#context-engineering",
+    "href": "llm/multi_agent.html#context-engineering",
+    "title": "Multi-Agent",
+    "section": "Context engineering",
+    "text": "Context engineering\n\nContext spec\n\nDescriptive name of tool, arguments, intent, when to use it.\nFor single dispatch tool, list subagents names:\n\nIn prompt\nAs Enumeration of tool name, if few subagents\nAs get_list tool if dynamic.\n\n\n\n\nSubagent inputs\n\nIn subagent tool, we can get access to main agent state and:\n\nInclude messages from history (either all or latest)\nInclude any other state’s specific field we consider relevant\n\n\n\n\nSubagent outputs\nWays to ensure the main agent gets necessary information backs from subagent: - Prompt subagent: request explicitly to return required results in its last message. - Add structure: - format of output’s message - fill additional state field via Command"
   },
   {
     "objectID": "llm/mcp.html#client-side",
