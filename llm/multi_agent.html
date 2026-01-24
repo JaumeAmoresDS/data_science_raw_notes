@@ -21,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -151,6 +186,44 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#subagent-outputs" id="toc-subagent-outputs" class="nav-link" data-scroll-target="#subagent-outputs">Subagent outputs</a></li>
   </ul></li>
   </ul></li>
+  <li><a href="#handoffs" id="toc-handoffs" class="nav-link" data-scroll-target="#handoffs">Handoffs</a>
+  <ul class="collapse">
+  <li><a href="#overview-1" id="toc-overview-1" class="nav-link" data-scroll-target="#overview-1">Overview</a></li>
+  <li><a href="#key-characteristics-1" id="toc-key-characteristics-1" class="nav-link" data-scroll-target="#key-characteristics-1">Key characteristics</a></li>
+  <li><a href="#when-to-use-1" id="toc-when-to-use-1" class="nav-link" data-scroll-target="#when-to-use-1">When to use</a></li>
+  <li><a href="#implementation-approaches" id="toc-implementation-approaches" class="nav-link" data-scroll-target="#implementation-approaches">Implementation approaches</a>
+  <ul class="collapse">
+  <li><a href="#single-agent-middleware" id="toc-single-agent-middleware" class="nav-link" data-scroll-target="#single-agent-middleware">Single agent + middleware</a></li>
+  <li><a href="#multiple-agents" id="toc-multiple-agents" class="nav-link" data-scroll-target="#multiple-agents">Multiple agents</a></li>
+  </ul></li>
+  <li><a href="#context-engineering-1" id="toc-context-engineering-1" class="nav-link" data-scroll-target="#context-engineering-1">Context engineering</a>
+  <ul class="collapse">
+  <li><a href="#handling-context-between-handoffs" id="toc-handling-context-between-handoffs" class="nav-link" data-scroll-target="#handling-context-between-handoffs">Handling context between handoffs</a></li>
+  </ul></li>
+  <li><a href="#returning-control-to-the-user" id="toc-returning-control-to-the-user" class="nav-link" data-scroll-target="#returning-control-to-the-user">Returning control to the user</a></li>
+  <li><a href="#implementation-considerations" id="toc-implementation-considerations" class="nav-link" data-scroll-target="#implementation-considerations">Implementation considerations</a></li>
+  </ul></li>
+  <li><a href="#skills" id="toc-skills" class="nav-link" data-scroll-target="#skills">Skills</a>
+  <ul class="collapse">
+  <li><a href="#key-characteristics-2" id="toc-key-characteristics-2" class="nav-link" data-scroll-target="#key-characteristics-2">Key characteristics</a></li>
+  <li><a href="#when-to-use-2" id="toc-when-to-use-2" class="nav-link" data-scroll-target="#when-to-use-2">When to use</a></li>
+  <li><a href="#extending-the-pattern" id="toc-extending-the-pattern" class="nav-link" data-scroll-target="#extending-the-pattern">Extending the pattern</a></li>
+  </ul></li>
+  <li><a href="#router" id="toc-router" class="nav-link" data-scroll-target="#router">Router</a>
+  <ul class="collapse">
+  <li><a href="#key-characteristics-3" id="toc-key-characteristics-3" class="nav-link" data-scroll-target="#key-characteristics-3">Key characteristics</a></li>
+  <li><a href="#when-to-use-3" id="toc-when-to-use-3" class="nav-link" data-scroll-target="#when-to-use-3">When to use</a></li>
+  <li><a href="#single-agent-vs-multiple-agents" id="toc-single-agent-vs-multiple-agents" class="nav-link" data-scroll-target="#single-agent-vs-multiple-agents">Single agent vs multiple agents</a>
+  <ul class="collapse">
+  <li><a href="#single-agent" id="toc-single-agent" class="nav-link" data-scroll-target="#single-agent">Single agent</a></li>
+  </ul></li>
+  <li><a href="#multiple-agents-1" id="toc-multiple-agents-1" class="nav-link" data-scroll-target="#multiple-agents-1">Multiple agents</a></li>
+  <li><a href="#stateless-vs-stateful" id="toc-stateless-vs-stateful" class="nav-link" data-scroll-target="#stateless-vs-stateful">Stateless vs stateful</a>
+  <ul class="collapse">
+  <li><a href="#tool-wrapper" id="toc-tool-wrapper" class="nav-link" data-scroll-target="#tool-wrapper">1. Tool wrapper</a></li>
+  <li><a href="#full-persistence" id="toc-full-persistence" class="nav-link" data-scroll-target="#full-persistence">2. Full persistence</a></li>
+  </ul></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -184,6 +257,7 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="overview" class="level1">
 <h1>Overview</h1>
+<p><a href="https://docs.langchain.com/oss/python/langchain/multi-agent/index">link</a></p>
 <section id="why-multi-agent" class="level2">
 <h2 class="anchored" data-anchor-id="why-multi-agent">Why multi-agent</h2>
 <ul>
@@ -622,6 +696,7 @@ Synthesis --&gt; Response</code></pre>
 </section>
 <section id="subagents" class="level1">
 <h1>Subagents</h1>
+<p><a href="https://docs.langchain.com/oss/python/langchain/multi-agent/subagents">link</a></p>
 <section id="key-characteristics" class="level2">
 <h2 class="anchored" data-anchor-id="key-characteristics">Key characteristics</h2>
 <ul>
@@ -694,6 +769,182 @@ Synthesis --&gt; Response</code></pre>
 <section id="subagent-outputs" class="level3">
 <h3 class="anchored" data-anchor-id="subagent-outputs">Subagent outputs</h3>
 <p>Ways to ensure the main agent gets necessary information backs from subagent: - Prompt subagent: request explicitly to return required results in its last message. - Add structure: - format of output’s message - fill additional state field via <code>Command</code></p>
+</section>
+</section>
+</section>
+<section id="handoffs" class="level1">
+<h1>Handoffs</h1>
+<p><a href="https://docs.langchain.com/oss/python/langchain/multi-agent/handoffs">link</a></p>
+<section id="overview-1" class="level2">
+<h2 class="anchored" data-anchor-id="overview-1">Overview</h2>
+<p>Key concept: - tools update state variable - Example: <code>active_agent</code> or <code>current_step</code> - based on updated state, system (can be single agent) modify: - system prompt - list of tools - routing (next agent / step in graph)</p>
+</section>
+<section id="key-characteristics-1" class="level2">
+<h2 class="anchored" data-anchor-id="key-characteristics-1">Key characteristics</h2>
+<ul>
+<li>Direct interaction</li>
+<li>Stateful</li>
+<li>Tool-based transitions: tools update state to signal that we need to change btw states</li>
+</ul>
+</section>
+<section id="when-to-use-1" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-use-1">When to use</h2>
+<ul>
+<li>Flow:
+<ul>
+<li>Enforce sequential constraints.</li>
+<li>Multi-stage conversational flows.
+<ul>
+<li>Typical use case: custom support, collecting info from customer in specific order (warranty ID before processing refund).</li>
+</ul></li>
+</ul></li>
+<li>Direct interaction.</li>
+<li>No need of paralellization or distributed development.</li>
+</ul>
+</section>
+<section id="implementation-approaches" class="level2">
+<h2 class="anchored" data-anchor-id="implementation-approaches">Implementation approaches</h2>
+<section id="single-agent-middleware" class="level3">
+<h3 class="anchored" data-anchor-id="single-agent-middleware">Single agent + middleware</h3>
+<ul>
+<li>Tools change state variable</li>
+<li>Middleware examine the state before agent being called
+<ul>
+<li>Modify its prompt or the list of tools</li>
+</ul></li>
+</ul>
+</section>
+<section id="multiple-agents" class="level3">
+<h3 class="anchored" data-anchor-id="multiple-agents">Multiple agents</h3>
+<ul>
+<li>Separate agents as separate nodes in graph.</li>
+<li>Tools make transitions by doing: <code>python     return Command (         goto="next_agent", # to indicate next step         graph=Command.PARENT, # to make the transition happen directly         update=my_new_state, # optional     )</code></li>
+</ul>
+</section>
+</section>
+<section id="context-engineering-1" class="level2">
+<h2 class="anchored" data-anchor-id="context-engineering-1">Context engineering</h2>
+<section id="handling-context-between-handoffs" class="level3">
+<h3 class="anchored" data-anchor-id="handling-context-between-handoffs">Handling context between handoffs</h3>
+<p>Tool response needs to include: - Last AIMessage that triggered the handoff - Artificial ToolMessage that indicates new state and acknowledges handoff - <code>graph=...</code>, <code>goto=...</code> (see above)</p>
+<p>Typically in a <code>transfer_to_x_agent</code> tool function</p>
+</section>
+</section>
+<section id="returning-control-to-the-user" class="level2">
+<h2 class="anchored" data-anchor-id="returning-control-to-the-user">Returning control to the user</h2>
+<ul>
+<li>When agent’s turn finishes and we return control to the user, make sure the last message is an <code>AIMessage</code></li>
+</ul>
+</section>
+<section id="implementation-considerations" class="level2">
+<h2 class="anchored" data-anchor-id="implementation-considerations">Implementation considerations</h2>
+<ul>
+<li>Context filtering:
+<ul>
+<li>part of message history, condensed / summarized or not…</li>
+</ul></li>
+<li>Token efficiency (related)</li>
+<li>Tool semantics:
+<ul>
+<li>Only transition tool</li>
+<li>Doing more actions apart from transitioning (e.g., <code>transfer_to_sales()</code> also creates support ticket)</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="skills" class="level1">
+<h1>Skills</h1>
+<p><a href="https://docs.langchain.com/oss/python/langchain/multi-agent/skills">link</a></p>
+<section id="key-characteristics-2" class="level2">
+<h2 class="anchored" data-anchor-id="key-characteristics-2">Key characteristics</h2>
+<ul>
+<li>Prompt-driven: skill information injected via prompt.</li>
+<li>On-demand: different skills are loaded at different times on demand.</li>
+<li>Distributted teams: easy to develop independently.</li>
+<li>Lightweight: simpler than full subagents.</li>
+</ul>
+</section>
+<section id="when-to-use-2" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-use-2">When to use</h2>
+<ul>
+<li>Specialized knowledge for each skill, distinct domains.</li>
+<li>The main agent just needs to get this information.</li>
+</ul>
+</section>
+<section id="extending-the-pattern" class="level2">
+<h2 class="anchored" data-anchor-id="extending-the-pattern">Extending the pattern</h2>
+<ul>
+<li>Dynamically tool loading:
+<ul>
+<li>As a skill is loaded, new relevant tools can be added.
+<ul>
+<li>Example, database admin skill can also load register database, … tools</li>
+</ul></li>
+</ul></li>
+<li>Hierarchical skills:
+<ul>
+<li>General skill can also load more specialized skills if needed
+<ul>
+<li>Example: data-science skill, then pandas skill, numpy skill, etc.</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="router" class="level1">
+<h1>Router</h1>
+<p><a href="https://docs.langchain.com/oss/python/langchain/multi-agent/router">link</a></p>
+<section id="key-characteristics-3" class="level2">
+<h2 class="anchored" data-anchor-id="key-characteristics-3">Key characteristics</h2>
+<ul>
+<li>Router decomposes the query.</li>
+<li>Zero or more specialized agents invoked in parallel.</li>
+<li>Results synthesized at the end.</li>
+</ul>
+</section>
+<section id="when-to-use-3" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-use-3">When to use</h2>
+<ul>
+<li>Tasks well defined into verticals</li>
+<li>Need to summarize / synthesize result at the end.</li>
+<li>Need to query multiple sources in parallel.</li>
+</ul>
+</section>
+<section id="single-agent-vs-multiple-agents" class="level2">
+<h2 class="anchored" data-anchor-id="single-agent-vs-multiple-agents">Single agent vs multiple agents</h2>
+<section id="single-agent" class="level3">
+<h3 class="anchored" data-anchor-id="single-agent">Single agent</h3>
+<p>The query results only in one action, out of N possible actions, being executed by either another node in the graph, which can wrap an agent. It is like having N branches in the graph and just being able to go to one of them, not several of them in parallel.</p>
+<p>We use an edge in the graph which:</p>
+<ul>
+<li>classifies the query into the appropriate branch out of the N possible.</li>
+<li>outputs a <code>Command</code> result with <code>goto</code> indicating destination node.</li>
+</ul>
+</section>
+</section>
+<section id="multiple-agents-1" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-agents-1">Multiple agents</h2>
+<p>The query can contain multiple separate topics, each being tackled by different agent or node in the graph.</p>
+<p>We use a sort of edge function very similar to single agent except for the fact that this one returns <code>M</code> <code>Send</code> objects, one per topic in the query, instead of returning a single <code>Command</code> object.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>topics <span class="op">=</span> get_query_topics (query)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> [Send(topic[<span class="st">"agent"</span>], topic[<span class="st">"description"</span>]) <span class="cf">for</span> topic <span class="kw">in</span> topics]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="stateless-vs-stateful" class="level2">
+<h2 class="anchored" data-anchor-id="stateless-vs-stateful">Stateless vs stateful</h2>
+<ul>
+<li>Typical implementation: stateless router. For single turn conversations.</li>
+<li>Multi-turn conversations: use stateful router using one of two mechanims.</li>
+</ul>
+<section id="tool-wrapper" class="level3">
+<h3 class="anchored" data-anchor-id="tool-wrapper">1. Tool wrapper</h3>
+<p>The stateless router is wrapped as a tool and invoked by a stateful agent which maintains the conversation and state.</p>
+</section>
+<section id="full-persistence" class="level3">
+<h3 class="anchored" data-anchor-id="full-persistence">2. Full persistence</h3>
+<ul>
+<li>The state is persisted in store.</li>
+<li>The router takes the history and passes just the bits relevant for the destination agent, to manage context appropriately.</li>
+</ul>
 
 
 </section>
