@@ -562,16 +562,16 @@
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/03_production_ready_agent.html",
     "href": "llm/courses/langchain/lca-lc-foundations/03_production_ready_agent.html",
-    "title": "1. What is Middleware?",
+    "title": "Production Ready Agent",
     "section": "",
-    "text": "---\ntitle: \"Production Ready Agent\"\nauthor: \"Jaume Amores\"\nformat: html\n---"
+    "text": "video\n\n\n\n\nMiddleware are just the set of functions we can insert to customize a typical agent workflow.\n\nflowchart TD\nInput --&gt; Agent\nAgent -- \"f()\" --&gt; Tools\nTools -- \"g()\" --&gt; Agent\nAgent -- \"h()\" --&gt; Result"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/03_production_ready_agent.html#concepts",
     "href": "llm/courses/langchain/lca-lc-foundations/03_production_ready_agent.html#concepts",
-    "title": "1. What is Middleware?",
-    "section": "Concepts",
-    "text": "Concepts\n\nMiddleware are just the set of functions we can insert to customize a typical agent workflow.\n\nflowchart TD\nInput --&gt; Agent\nAgent -- \"f()\" --&gt; Tools\nTools -- \"g()\" --&gt; Agent\nAgent -- \"h()\" --&gt; Result"
+    "title": "Production Ready Agent",
+    "section": "",
+    "text": "Middleware are just the set of functions we can insert to customize a typical agent workflow.\n\nflowchart TD\nInput --&gt; Agent\nAgent -- \"f()\" --&gt; Tools\nTools -- \"g()\" --&gt; Agent\nAgent -- \"h()\" --&gt; Result"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html",
@@ -954,98 +954,98 @@
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html",
     "href": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html",
-    "title": "1. MCP",
+    "title": "Advanced Agent",
     "section": "",
-    "text": "---\ntitle: \"Advanced Agent\"\nauthor: \"Jaume Amores\"\nformat: html\n---"
+    "text": "video\n\n\n\n\nnotebook 1\n\n\n\nMany mcp servers developed in open source repos or third party providers which can be just plugged into our graph.\n\n\n\n\npython script file defining MCP components\n\nwith FastMCP class\nwith decorators @mcp.xxx:\n\ntool (e.g., websearch)\nprompt (e.g., system prompt)\nresources (e.g., files that can be downloaded from github)\n\n\nIn notebook:\n\nCreate MultiServerMCPClient, and pass:\n\ntransport =&gt; script: stdio\ncommand =&gt; python, uvx (install and run python library)\nargs =&gt; either path to script, or python library to install and run, plus other args (time in Los Angeles)\n\nget the components from client in notebook, then pass them to create_agent\n\n\n\n\n\n\n\nnotebook 2"
   },
   {
-    "objectID": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#mcp",
-    "href": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#mcp",
-    "title": "1. MCP",
-    "section": "1.1. MCP",
-    "text": "1.1. MCP\n\nnotebook 1\n\n\nAdvantages of using MCP\nMany mcp servers developed in open source repos or third party providers which can be just plugged into our graph.\n\n\nComponents\n\npython script file defining MCP components\n\nwith FastMCP class\nwith decorators @mcp.xxx:\n\ntool (e.g., websearch)\nprompt (e.g., system prompt)\nresources (e.g., files that can be downloaded from github)\n\n\nIn notebook:\n\nCreate MultiServerMCPClient, and pass:\n\ntransport =&gt; script: stdio\ncommand =&gt; python, uvx (install and run python library)\nargs =&gt; either path to script, or python library to install and run, plus other args (time in Los Angeles)\n\nget the components from client in notebook, then pass them to create_agent"
+    "objectID": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#mcp-1",
+    "href": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#mcp-1",
+    "title": "Advanced Agent",
+    "section": "",
+    "text": "notebook 1\n\n\n\nMany mcp servers developed in open source repos or third party providers which can be just plugged into our graph.\n\n\n\n\npython script file defining MCP components\n\nwith FastMCP class\nwith decorators @mcp.xxx:\n\ntool (e.g., websearch)\nprompt (e.g., system prompt)\nresources (e.g., files that can be downloaded from github)\n\n\nIn notebook:\n\nCreate MultiServerMCPClient, and pass:\n\ntransport =&gt; script: stdio\ncommand =&gt; python, uvx (install and run python library)\nargs =&gt; either path to script, or python library to install and run, plus other args (time in Los Angeles)\n\nget the components from client in notebook, then pass them to create_agent"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#travel-agent",
     "href": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#travel-agent",
-    "title": "1. MCP",
-    "section": "1.2. Travel Agent",
-    "text": "1.2. Travel Agent\n\nnotebook 2"
+    "title": "Advanced Agent",
+    "section": "",
+    "text": "notebook 2"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#runtime-context",
     "href": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#runtime-context",
-    "title": "1. MCP",
+    "title": "Advanced Agent",
     "section": "2.1. Runtime context",
     "text": "2.1. Runtime context\nnotebook\n\nImplementation\n\nContext schema class: can have defaults\ncreate_agent: context_schema=MyContextClass\ninvoke: context=MyContextClass() or context=MyContextClass(field=my_context_value,...) to pass context at starting point\ntool: runtime:ToolRuntime, runtime.context.my_field\n\n\n\nNotes\n\nContext passed in the context object cannot be accessed directly by the agent.\n\nIt needs to be given through tool calls, which read the context fields and give the appropriate context information based on them.\nFor example, we can just declare tools for each field we want the agent to know and then make each tool retrieve the value of this field. Just by passing the tools at creation time the agent will know how to get these fields when asked (given appropriate description of tool and name of tool)\n\nContext does not change as a result of conversation with user. For this we need to access state."
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#state",
     "href": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#state",
-    "title": "1. MCP",
+    "title": "Advanced Agent",
     "section": "2.2. State",
     "text": "2.2. State\nnotebook\n\nUpdate context in tool\n\nWhat we do actually is to update the state Return Command object\n\n@tool\ndef my_tool (my_field, runtime: ToolRuntime):\nreturn Command(\n    update={\n        \"my_field\":my_field,\n        \"messages\": [\n            ToolMessage(\n                \"Updated xxx\",\n                tool_call_id=runtime.tool_call_id\n            )\n        ]\n    }\n)\n\nAt creation time we pass in a state schema: state_schema=MyStateClass\nMyStateClass is usually a subclass of AgentState\nWe can update the value in invoke call:\n\neither through message content:\n\nagent.invoke(\n    {\"messages\": [HumanMessage(content=\"field value is x\")]},\n    ...\n)\n\nor passing value as additional field of input dictionary\n\nagent.invoke (\n    {\n        \"messages\": [HumanMessage(content=\"hello\")],\n        my_field: my_value\n    }\n)\nIn create_agent, we need to pass a checkpointer for short-term memory\nIn invoke, we need to pass the config dict with thread value\n\n\n\nRead state from tool\nthrough state variable of runtime object: runtime.state[\"my_field\"]"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#issues-of-single-agent",
     "href": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#issues-of-single-agent",
-    "title": "1. MCP",
+    "title": "Advanced Agent",
     "section": "Issues of single agent",
     "text": "Issues of single agent\nIn complex tasks, if a single agent needs to handle\nExample: high quality market research report requiring:\n\nLong workflow\nMany specialist skills at different times: proposing an outline, researching on the web, validating sources, writing the report, editing.\n\nIf we use single agent: - Too many tools to choose from. - Context window overflows with information.\nA multi-agent system can: - Breakdown this complex task into multiple specialized agents. - These can work together to solve the problem."
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#simple-implementation",
     "href": "llm/courses/langchain/lca-lc-foundations/02_advanced_agent.html#simple-implementation",
-    "title": "1. MCP",
+    "title": "Advanced Agent",
     "section": "Simple implementation",
     "text": "Simple implementation\n\nEach subagent calls a tool (could be set of tools)\nEach subagent is wrapped in a tool function\nThe main agent is given the list of tools, where each tool is actually a subagent."
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html",
     "href": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html",
-    "title": "1. Foundational models and Prompting",
+    "title": "Create Agent",
     "section": "",
-    "text": "---\ntitle: \"Create Agent\"\nauthor: \"Jaume Amores\"\nformat: html\n---"
+    "text": "video\n\n\n\n\nnotebook 1\n\nModalities:\n\ninit_chat_model\n\nparameters: temperature, max tokens, timeout, max retries\nsometimes we need a specific way of creating the chat model, not through init_chat_model\n\nExample:\n\nmodel=ChatGoogleGenerativeAI(model=\"gemini-3-pro-preview\")\n\ncreate_agent\n\ncan either indicate the name of the chat model\nor pass in a model already created\n\ninvoke\n\ninvoke with Human+AI starting conversation\n\nstream\n\n\n\n\n\nnotebook 2\n\nWhile creating agent:\n\nsystem_prompt:\n\nBasic role\nwith examples (few-shot)\nexplaining structure to follow for the output\n\nresponse_format: indicating class with fields to fill in."
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html#foundational-models",
     "href": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html#foundational-models",
-    "title": "1. Foundational models and Prompting",
-    "section": "1.1. Foundational models",
-    "text": "1.1. Foundational models\n\nnotebook 1\n\nModalities:\n\ninit_chat_model\n\nparameters: temperature, max tokens, timeout, max retries\nsometimes we need a specific way of creating the chat model, not through init_chat_model\n\nExample:\n\nmodel=ChatGoogleGenerativeAI(model=\"gemini-3-pro-preview\")\n\ncreate_agent\n\ncan either indicate the name of the chat model\nor pass in a model already created\n\ninvoke\n\ninvoke with Human+AI starting conversation\n\nstream"
+    "title": "Create Agent",
+    "section": "",
+    "text": "notebook 1\n\nModalities:\n\ninit_chat_model\n\nparameters: temperature, max tokens, timeout, max retries\nsometimes we need a specific way of creating the chat model, not through init_chat_model\n\nExample:\n\nmodel=ChatGoogleGenerativeAI(model=\"gemini-3-pro-preview\")\n\ncreate_agent\n\ncan either indicate the name of the chat model\nor pass in a model already created\n\ninvoke\n\ninvoke with Human+AI starting conversation\n\nstream"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html#prompting",
     "href": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html#prompting",
-    "title": "1. Foundational models and Prompting",
-    "section": "1.2. Prompting",
-    "text": "1.2. Prompting\n\nnotebook 2\n\nWhile creating agent:\n\nsystem_prompt:\n\nBasic role\nwith examples (few-shot)\nexplaining structure to follow for the output\n\nresponse_format: indicating class with fields to fill in."
+    "title": "Create Agent",
+    "section": "",
+    "text": "notebook 2\n\nWhile creating agent:\n\nsystem_prompt:\n\nBasic role\nwith examples (few-shot)\nexplaining structure to follow for the output\n\nresponse_format: indicating class with fields to fill in."
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html#defining-tool",
     "href": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html#defining-tool",
-    "title": "1. Foundational models and Prompting",
+    "title": "Create Agent",
     "section": "Defining tool",
     "text": "Defining tool\n\nvideo\nnotebook 1\nnotebook 2\n\n\nBasic\n\nDecorator: @tool\nName of function: square_root.\nDocstring explaining functionality and optionally when to use it.\n\n\n\nAlternative: put this info in decorator\n\nname of tool\ndescription (similar to docstring above)\n\n\n\nMore hints: system prompt\n\nIndicate tools at disposal, relation with role of agent, and optionally when to use each tool.\n\n\n\nInvoke tool\ntool.invoke({first_arg: first_val, ...})\n\n\nIndicating to agent:\ncreate_agent (\n    ...,\n    tools=[tool1, tool2,...]\n)"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html#general",
     "href": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html#general",
-    "title": "1. Foundational models and Prompting",
+    "title": "Create Agent",
     "section": "General",
     "text": "General\n\nTransform multimedia content to bytes using io.BytesIO()\nTransform from bytes to b64 using base64, encoding and decoding to utf-8\nHumanMessage content field has list of dicts, one per multimedia type, indicating type, encoding and, if not text, mime_type"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html#image",
     "href": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html#image",
-    "title": "1. Foundational models and Prompting",
+    "title": "Create Agent",
     "section": "Image",
     "text": "Image\n\nFileUpload (ipywidget)"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html#audio",
     "href": "llm/courses/langchain/lca-lc-foundations/01_create_agent.html#audio",
-    "title": "1. Foundational models and Prompting",
+    "title": "Create Agent",
     "section": "Audio",
     "text": "Audio\n\nsounddevice.rec for recording\nscipy.io.wavfile.write for converting to wav format"
   },

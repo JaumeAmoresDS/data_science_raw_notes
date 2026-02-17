@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Jaume Amores">
 
-<title>1. Foundational models and Prompting – .</title>
+<title>Create Agent – .</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -149,8 +150,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#foundational-models" id="toc-foundational-models" class="nav-link active" data-scroll-target="#foundational-models">1.1. Foundational models</a></li>
+  <li><a href="#foundational-models-and-prompting" id="toc-foundational-models-and-prompting" class="nav-link active" data-scroll-target="#foundational-models-and-prompting">1. Foundational models and Prompting</a>
+  <ul class="collapse">
+  <li><a href="#foundational-models" id="toc-foundational-models" class="nav-link" data-scroll-target="#foundational-models">1.1. Foundational models</a></li>
   <li><a href="#prompting" id="toc-prompting" class="nav-link" data-scroll-target="#prompting">1.2. Prompting</a></li>
+  </ul></li>
   <li><a href="#tools" id="toc-tools" class="nav-link" data-scroll-target="#tools">2. Tools</a>
   <ul class="collapse">
   <li><a href="#defining-tool" id="toc-defining-tool" class="nav-link" data-scroll-target="#defining-tool">Defining tool</a>
@@ -177,13 +181,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">1. Foundational models and Prompting</h1>
+<h1 class="title">Create Agent</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jaume Amores </p>
+          </div>
+  </div>
     
   
     
@@ -194,13 +204,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div id="22be6080" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;plaintext&quot;}}">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>title: <span class="st">"Create Agent"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>author: <span class="st">"Jaume Amores"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">format</span>: html</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
+<section id="foundational-models-and-prompting" class="level1">
+<h1>1. Foundational models and Prompting</h1>
 <ul>
 <li><a href="https://academy.langchain.com/courses/take/foundation-introduction-to-langchain-python/lessons/71234850-lesson-1-foundational-models">video</a></li>
 </ul>
@@ -218,7 +223,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li>Example:</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model<span class="op">=</span>ChatGoogleGenerativeAI(model<span class="op">=</span><span class="st">"gemini-3-pro-preview"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model<span class="op">=</span>ChatGoogleGenerativeAI(model<span class="op">=</span><span class="st">"gemini-3-pro-preview"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
 </ul></li>
 <li>create_agent
 <ul>
@@ -247,6 +252,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul></li>
 <li><code>response_format</code>: indicating class with fields to fill in.</li>
 </ul>
+</section>
 </section>
 <section id="tools" class="level1">
 <h1>2. Tools</h1>
@@ -280,14 +286,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="invoke-tool" class="level3">
 <h3 class="anchored" data-anchor-id="invoke-tool">Invoke tool</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>tool.invoke({first_arg: first_val, ...})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tool.invoke({first_arg: first_val, ...})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="indicating-to-agent" class="level3">
 <h3 class="anchored" data-anchor-id="indicating-to-agent">Indicating to agent:</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>create_agent (</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    ...,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    tools<span class="op">=</span>[tool1, tool2,...]</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>create_agent (</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    ...,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    tools<span class="op">=</span>[tool1, tool2,...]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 </section>
@@ -299,7 +305,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>In create_agent, indicater checkpointer (e.g., in memory)</p></li>
 <li><p>In invoke, indicate thread where associated memory is</p></li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>config<span class="op">=</span>{<span class="st">"configurable"</span>: {<span class="st">"thread_id"</span>: <span class="st">"1"</span>}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>config<span class="op">=</span>{<span class="st">"configurable"</span>: {<span class="st">"thread_id"</span>: <span class="st">"1"</span>}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="multimedia-messages" class="level1">
 <h1>4. Multimedia messages</h1>
