@@ -4,7 +4,7 @@ title: "Data Science Raw Notes"
 
 ## LLM
 
-- [Courses](llm/langchain_courses.ipynb)
+- [Courses](llm/langchain_courses.qmd)
 - [Evaluation](llm/evals_hamel.ipynb)
 - [RAG](llm/rag_parlance.ipynb)
 - [Fine Tuning](llm/fine_tuning.ipynb)

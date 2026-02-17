@@ -1,0 +1,10 @@
+---
+title: "LangChain courses"
+---
+
+## LangChain
+
+- [Quick Start](lca-lc-quickstart/lca-lc-quickstart.ipynb)
+- [Create Agent](lca-lc-foundations/01_create_agent.ipynb)
+- [Advanced Agent](lca-lc-foundations/02_advanced_agent.ipynb)
+- [Production Ready Agent](lca-lc-foundations/03_production_ready_agent.ipynb)
