@@ -578,14 +578,14 @@
     "href": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html",
     "title": "Langchain Quick Start",
     "section": "",
-    "text": "https://github.com/langchain-ai/langchain-academy/blob/main/module-2/state-reducers.ipynb\n\n\ndef reduce_list(left: list | None, right: list | None) -&gt; list:\nclass CustomReducerState(TypedDict): foo: Annotated[list[int], reduce_list]\n\n\n\nIf we pass a message with the same ID as an existing one in our messages list, it will get overwritten!"
+    "text": "link\n\n\ndef reduce_list(left: list | None, right: list | None) -&gt; list:\n\nclass CustomReducerState(TypedDict):\n    foo: Annotated[list[int], reduce_list]\n\n\n\nIf we pass a message with the same ID as an existing one in our messages list, it will get overwritten!"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#custom-reducers",
     "href": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#custom-reducers",
     "title": "Langchain Quick Start",
     "section": "",
-    "text": "def reduce_list(left: list | None, right: list | None) -&gt; list:\nclass CustomReducerState(TypedDict): foo: Annotated[list[int], reduce_list]"
+    "text": "def reduce_list(left: list | None, right: list | None) -&gt; list:\n\nclass CustomReducerState(TypedDict):\n    foo: Annotated[list[int], reduce_list]"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#re-writing",
@@ -599,49 +599,49 @@
     "href": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#removal",
     "title": "Langchain Quick Start",
     "section": "Removal",
-    "text": "Removal\nWe can remove messages by using RemoveMessage.\ndelete_messages = [RemoveMessage(id=m.id) for m in messages[:-2]] add_messages(messages , delete_messages)"
+    "text": "Removal\nWe can remove messages by using RemoveMessage.\ndelete_messages = [RemoveMessage(id=m.id) for m in messages[:-2]]\nadd_messages(messages , delete_messages)"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#private-state",
     "href": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#private-state",
     "title": "Langchain Quick Start",
     "section": "Private State",
-    "text": "Private State\nclass OverallState(TypedDict): foo: int\nclass PrivateState(TypedDict): baz: int\ndef node_1(state: OverallState) -&gt; PrivateState: print(“—Node 1—”) return {“baz”: state[‘foo’] + 1}\ndef node_2(state: PrivateState) -&gt; OverallState: print(“—Node 2—”) return {“foo”: state[‘baz’] + 1}"
+    "text": "Private State\nclass OverallState(TypedDict):\n    foo: int\n\nclass PrivateState(TypedDict):\n    baz: int\n\ndef node_1(state: OverallState) -&gt; PrivateState:\n    print(\"---Node 1---\")\n    return {\"baz\": state['foo'] + 1}\n\ndef node_2(state: PrivateState) -&gt; OverallState:\n    print(\"---Node 2---\")\n    return {\"foo\": state['baz'] + 1}"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#input-output-schema",
     "href": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#input-output-schema",
     "title": "Langchain Quick Start",
     "section": "Input / Output Schema",
-    "text": "Input / Output Schema\nclass InputState(TypedDict): question: str\nclass OutputState(TypedDict): answer: str\nclass OverallState(TypedDict): question: str answer: str notes: str\ndef thinking_node(state: InputState): return {“answer”: “bye”, “notes”: “… his is name is Lance”}\ndef answer_node(state: OverallState) -&gt; OutputState: return {“answer”: “bye Lance”}\ngraph = StateGraph(OverallState, input_schema=InputState, output_schema=OutputState) graph.add_node(“answer_node”, answer_node)"
+    "text": "Input / Output Schema\nclass InputState(TypedDict):\n    question: str\n\nclass OutputState(TypedDict):\n    answer: str\n\nclass OverallState(TypedDict):\n    question: str\n    answer: str\n    notes: str\n\ndef thinking_node(state: InputState):\n    return {\"answer\": \"bye\", \"notes\": \"... his is name is Lance\"}\n\ndef answer_node(state: OverallState) -&gt; OutputState:\n    return {\"answer\": \"bye Lance\"}\n\ngraph = StateGraph(OverallState, input_schema=InputState, output_schema=OutputState)\ngraph.add_node(\"answer_node\", answer_node)"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#reducer",
     "href": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#reducer",
     "title": "Langchain Quick Start",
     "section": "Reducer",
-    "text": "Reducer\nfrom langchain_core.messages import RemoveMessage\ndef filter_messages(state: MessagesState): # Delete all but the 2 most recent messages delete_messages = [RemoveMessage(id=m.id) for m in state[“messages”][:-2]] return {“messages”: delete_messages}\ndef chat_model_node(state: MessagesState):\nreturn {“messages”: [llm.invoke(state[“messages”])]}\nbuilder = StateGraph(MessagesState) builder.add_node(“filter”, filter_messages) builder.add_node(“chat_model”, chat_model_node)"
+    "text": "Reducer\nfrom langchain_core.messages import RemoveMessage\n\ndef filter_messages(state: MessagesState):\n    # Delete all but the 2 most recent messages\n    delete_messages = [RemoveMessage(id=m.id) for m in state[\"messages\"][:-2]]\n    return {\"messages\": delete_messages}\n\ndef chat_model_node(state: MessagesState):    \n    return {\"messages\": [llm.invoke(state[\"messages\"])]}\n\nbuilder = StateGraph(MessagesState)\nbuilder.add_node(\"filter\", filter_messages)\nbuilder.add_node(\"chat_model\", chat_model_node)"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#filtering-messages",
     "href": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#filtering-messages",
     "title": "Langchain Quick Start",
     "section": "Filtering messages",
-    "text": "Filtering messages\ndef chat_model_node(state: MessagesState): return {“messages”: [llm.invoke(state[“messages”][-1:])]}"
+    "text": "Filtering messages\ndef chat_model_node(state: MessagesState):\n    return {\"messages\": [llm.invoke(state[\"messages\"][-1:])]}"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#trim-messages",
     "href": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#trim-messages",
     "title": "Langchain Quick Start",
     "section": "Trim messages",
-    "text": "Trim messages\nfrom langchain_core.messages import trim_messages\ndef chat_model_node(state: MessagesState): messages = trim_messages( state[“messages”], max_tokens=100, strategy=“last”, token_counter=ChatOpenAI(model=“gpt-4o”), allow_partial=False, ) return {“messages”: [llm.invoke(messages)]}"
+    "text": "Trim messages\nfrom langchain_core.messages import trim_messages\n\ndef chat_model_node(state: MessagesState):\n    messages = trim_messages(\n            state[\"messages\"],\n            max_tokens=100,\n            strategy=\"last\",\n            token_counter=ChatOpenAI(model=\"gpt-4o\"),\n            allow_partial=False,\n        )\n    return {\"messages\": [llm.invoke(messages)]}"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#sqlite",
     "href": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#sqlite",
     "title": "Langchain Quick Start",
     "section": "SQLite",
-    "text": "SQLite\nimport sqlite3 db_path = “state_db/example.db” conn = sqlite3.connect(db_path, check_same_thread=False)\nfrom langgraph.checkpoint.sqlite import SqliteSaver memory = SqliteSaver(conn)"
+    "text": "SQLite\nimport sqlite3\ndb_path = \"state_db/example.db\"\nconn = sqlite3.connect(db_path, check_same_thread=False)\n\nfrom langgraph.checkpoint.sqlite import SqliteSaver\nmemory = SqliteSaver(conn)"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#streaming-modes",
@@ -746,7 +746,7 @@
     "href": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#long-term-memory-1",
     "title": "Langchain Quick Start",
     "section": "Long term memory:",
-    "text": "Long term memory:\n\nType of memory:\n\n1 Semantic\n\nfacts, user data\nstructure: profile (dict with fields) or list of items (e.g., locations), updated after each session\nPros:\n\nSingle document (profile): easily retrieved\nList: narrow scope, easy to add\n\nCons:\n\nSingle document: difficult to maintain when it grows\nList: costly to retrieve as it grows.\n\n\n\n\n2 Episodic\n\nmemories: agent actions\n\n\n\n3 Procedural\n\nprompts\nUsing AI to generate prompts based on human feedback, tests and evaluation scores (LangSmith)\n\nvideo notebook\n\n\n\nUpdates\n\n1 Hot path\nPro: Real-time and transparent Con: delays / bad UX github code\n\n\n2 Background\nPro: no delays / good UX Con: Frequency of writing to be tuned github code"
+    "text": "Long term memory:\n\nType of memory:\n\n1 Semantic\n\nfacts, user data\nstructure: profile (dict with fields) or list of items (e.g., locations), updated after each session\nPros:\n\nSingle document (profile): easily retrieved\nList: narrow scope, easy to add\n\nCons:\n\nSingle document: difficult to maintain when it grows\nList: costly to retrieve as it grows.\n\n\n\n\n2 Episodic\n\nmemories: agent actions\n\n\n\n3 Procedural\n\nprompts\nUsing AI to generate prompts based on human feedback, tests and evaluation scores (LangSmith)\n\nlink link\n\n\n\nUpdates\n\n1 Hot path\nPro: Real-time and transparent Con: delays / bad UX link\n\n\n2 Background\nPro: no delays / good UX Con: Frequency of writing to be tuned link"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#implementation-details-1",
@@ -809,7 +809,14 @@
     "href": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#implementation-details-2",
     "title": "Langchain Quick Start",
     "section": "Implementation details",
-    "text": "Implementation details\nWhen calling a tool node it is very important that the node responds back notifying that the call was made:\ndef tool_node (...):\n    # ...\n    tool_calls = state[\"messages\"][-1].tool_calls\n    return {\"messages\": [{\"role\": \"tool\", \"content\": \"my tool response\", \"tool_call_id\": tool_calls[0][\"id\"]}]}\n\n# Deployment\n\n# Deployment concepts\n\n[notebook](https://files.cdn.thinkific.com/file_uploads/967498/attachments/5d8/68e/5fd/LangChain_Academy_-_Introduction_to_LangGraph_-_Deployment.pdf)\n\n# creating\n\n[notebook](https://github.com/langchain-ai/langchain-academy/blob/main/module-6/creating.ipynb)\n\n- langgraph cli, docker and docker compose\n\n# connecting\n\n## client / remote graph\n\n```python\n\nfrom langgraph_sdk import get_client\n\n\n# langgraph-api:\n#         image: \"lg_image\"\n#         ports:\n#             - \"8123:8000\"\n\nurl = \"http://localhost:8123\" # \nclient = get_client (url=url)\n\n# or ...\nremote_graph = RemoteGraph (graph_name, url=url)\n# (how to use remote_graph?)"
+    "text": "Implementation details\nWhen calling a tool node it is very important that the node responds back notifying that the call was made:\ndef tool_node (...):\n    # ...\n    tool_calls = state[\"messages\"][-1].tool_calls\n    return {\"messages\": [{\"role\": \"tool\", \"content\": \"my tool response\", \"tool_call_id\": tool_calls[0][\"id\"]}]}"
+  },
+  {
+    "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#client-remote-graph",
+    "href": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#client-remote-graph",
+    "title": "Langchain Quick Start",
+    "section": "client / remote graph",
+    "text": "client / remote graph\n\nfrom langgraph_sdk import get_client\n\n\n# langgraph-api:\n#         image: \"lg_image\"\n#         ports:\n#             - \"8123:8000\"\n\nurl = \"[link](http://localhost:8123)\" # \nclient = get_client (url=url)\n\n# or ...\nremote_graph = RemoteGraph (graph_name, url=url)\n# (how to use remote_graph?)"
   },
   {
     "objectID": "llm/courses/langchain/lca-lc-quickstart/lca-lc-quickstart.html#managing-runs",
